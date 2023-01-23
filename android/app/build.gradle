@@ -249,6 +249,10 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
@@ -268,6 +272,10 @@ dependencies {
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
+    }
+
+    implementation('com.twitter.sdk.android:twitter:3.0.0@aar') {
+        transitive = true
     }
 
     if (enableHermes) {
