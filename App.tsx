@@ -11,6 +11,7 @@ import MoreTokensConnectScreen from "./MoreTokensConnect";
 import TwitterScreen from "./TwitterScreen";
 import Dashboard from "./Dashboard";
 import NFTGallery from "./NFTGallery";
+import NetflixConnect from "./NetflixConnect"
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function App() {
         <Stack.Screen name="TwitterScreen" component={TwitterScreen} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="NFTGallery" component={NFTGallery} />
+        <Stack.Screen name="NetflixConnect" component={NetflixConnect} />
       </Stack.Navigator>
     </NavigationContainer>
   );

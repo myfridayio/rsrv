@@ -9,13 +9,15 @@ export default function AboutScreen({navigation}) {
                 const address = await AsyncStorage.getItem('@MyWalletAddress:key');
                 if (address !== null) {
                   setTimeout(() => {
-                    navigation.navigate('TwitterConnect')
+                    navigation.navigate('Dashboard')
                   }, 1000)
                 } else {
-                    navigation.navigate('CreateWallet')
+                    setTimeout(() => {
+                        navigation.navigate('Home')
+                    }, 1000)
                 }
               } catch (error) {
-                navigation.navigate('CreateWallet')
+                navigation.navigate('Home')
               }
         }
         getWalletAddress()

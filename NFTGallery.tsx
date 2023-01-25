@@ -21,7 +21,7 @@ export default function NFTGallery({navigation}) {
                     setCenterMessage('Something went wrong!!')
                 }
               } catch (error) {
-                navigation.navigate('Something went wrong!!')
+                setCenterMessage('Something went wrong!!')
               }
         }
         getWalletAddress()
@@ -36,15 +36,18 @@ export default function NFTGallery({navigation}) {
             .use(keypairIdentity(wallet))
             .use(bundlrStorage());
 
-        const owner = new PublicKey(walletAddress);
-        const allNFTs = await metaplex.nfts().findAllByOwner({owner: owner});
+        try{
+            const owner = new PublicKey(walletAddress);
+            const allNFTs = await metaplex.nfts().findAllByOwner({owner: owner});
+        } catch (error) {
+            setCenterMessage('Looks like you do not have any NFTs')
+        }
         
         let nftUrls : String[]= [];
         if(allNFTs.length == 0) {
             setCenterMessage('Looks like you do not have any NFTs')
         } else {
             allNFTs.forEach((nft) => {
-                //console.log(nft.uri)
                 fetch(nft.uri)
                 .then(response => response.json())
                 .then(json => {

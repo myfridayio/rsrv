@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, TextInput, Button, Image, Text } from "react-native";
+import { View, TextInput, TouchableOpacity, Image, Text, KeyboardAvoidingView } from "react-native";
 
 export default function TwitterConnectScreen({navigation}) {
 
@@ -62,32 +62,29 @@ export default function TwitterConnectScreen({navigation}) {
       }
 
     return (
-        <View style={{ flex: 1 }}>
-            <Image
-                style={{ width: '100%', height: '100%'}}
-                resizeMode='cover'
-                source={require('./images/getstarted.png')}
-            />
-            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 20}}>
-                <Button
-                    onPress={() => navigation.navigate('About')}
-                    title="Generate"
-                    color="black"       
+        <KeyboardAvoidingView style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
+                <Image
+                    style={{ width: 60, height: 60, marginLeft: 20, marginTop: 40 }}
+                    resizeMode='stretch'
+                    source={require('./images/friday_logo.png')}
                 />
-            </View>
-            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', top: 0, marginTop: 220}}>
+                <Text style={{ marginTop: 50, fontSize: 60, marginLeft: 40, fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f' }}>CONNECT YOUR TWITTER ACCOUNT</Text>
                 <TextInput
-                    style={{height: 40, backgroundColor: 'black'}}
-                    autoCapitalize='none'
-                    placeholder="Your Twitter handle name here"
-                    onChangeText={newText => setTwitterUserName(newText)}
-                    //defaultValue={twitterUserName}
-                    onSubmitEditing={()=>getTwitterId()}
-                />
+                        style={{height: 40, backgroundColor: '#f0f0f0', marginTop: 50, marginHorizontal: 40, color: "black"}}
+                        autoCapitalize='none'
+                        placeholderTextColor="#000000"
+                        placeholder="  Your Twitter handle name here"
+                        onChangeText={newText => setTwitterUserName(newText)}
+                        onSubmitEditing={()=>getTwitterId()}
+                    />
+                <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
+                    <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: '600', marginHorizontal: 30, marginBottom: 10 }}>{centerText}</Text>
+                    <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, borderWidth: 1 }}>
+                        <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Generate NFTs</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={{position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 70}}>
-                <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>{centerText}</Text>
-            </View>
-      </View>
+        </KeyboardAvoidingView>
     );
   }

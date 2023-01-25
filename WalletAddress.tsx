@@ -34,7 +34,7 @@ export default function WalletAddressScreen({route, navigation}) {
             <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
                 {showQRCode()}
                 <Text style={{fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f', textAlign:'center', fontSize: 20, marginHorizontal: 40, marginBottom: 30 }}>This is your wallet public key</Text>
-                <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, borderWidth: 1 }} onPress={() => navigation.navigate('TwitterConnect')}>
+                <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, borderWidth: 1 }} onPress={() => navigation.navigate('Dashboard')}>
                     <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Next</Text>
                 </TouchableOpacity>
             </View>

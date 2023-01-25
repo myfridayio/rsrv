@@ -76,11 +76,13 @@ export default function CreateWallet({navigation}) {
     }
 
     React.useEffect(() => {
-        setmnemonics(generateMnemonic(128))
+        const tempMnemonics = generateMnemonic(128)
+        setmnemonics(tempMnemonics)
         setWalletCreated(true)
-        const seed = Bip39.mnemonicToSeedSync(mnemonics).slice(0, 32);
+        const seed = Bip39.mnemonicToSeedSync(tempMnemonics).slice(0, 32);
         const keyPair = Keypair.fromSeed(seed);
         const walletAddress = keyPair.publicKey.toBase58()
+        console.log('new wallet address - '+walletAddress)
         storeWalletAddress(walletAddress)
         setWalletAddress(walletAddress)
       }, []);
