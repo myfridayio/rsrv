@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/AkzidenzGroteskBQ-BdCnd.ttf",
+      "sha1": "d2258b0651f2dc3785752e1cbe742e6613e568d8"
+    },
+    {
+      "path": "assets/fonts/AkzidenzGroteskBQ-Bold.ttf",
+      "sha1": "941c3e080b9ce5d55cb2a9e6887bd1c89d7d2514"
+    },
+    {
+      "path": "assets/fonts/AkzidenzGroteskBQ-Light.ttf",
+      "sha1": "fa92641de5a84c805ceeb921b848c611de883ddf"
+    },
+    {
+      "path": "assets/fonts/AkzidenzGroteskBQ-Reg.ttf",
+      "sha1": "31c0f5dce9449c4c4b4e295af32aea857905646b"
+    }
+  ]
+}

@@ -1,22 +1,23 @@
 import * as React from "react";
-import { View, Text, Button, Image } from "react-native";
+import { View, Text, Button, Image, TouchableOpacity } from "react-native";
 
 export default function HomeScreen({navigation}) {
 
     
     return (
-        <View style={{ flex: 1 }}>
-            <Image
-                style={{ width: '100%', height: '100%'}}
-                resizeMode='stretch'
-                source={require('./images/getstarted.png')}
-            />
-            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 20}}>
-                <Button
-                    onPress={() => navigation.navigate('About')}
-                    title="Get Started"
-                    color="black"       
+        <View style={{ flex: 1, backgroundColor: "#ef390f" }}>
+            <View style={{ flex: 1, position: 'absolute', width: '100%', marginTop: 100, alignItems: 'center' }}>
+                <Image
+                    style={{ width: 80, height: 80, borderWidth: 1, borderColor: 'white' }}
+                    resizeMode='stretch'
+                    source={require('./images/friday_logo.png')}
                 />
+                <Text style={{ marginTop: 100, fontSize: 50, alignContent: 'center', marginHorizontal: 50, textAlign: 'center', fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: 'white' }}>GET PAID FOR YOUR DATA</Text>
+            </View>
+            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
+                <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25 }} onPress={() => navigation.navigate('CreateWallet')}>
+                    <Text style={{ fontSize:15, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: '#ef390f', fontWeight: 'bold' }}>CREATE A WALLET</Text>
+                </TouchableOpacity>
             </View>
       </View>
     );

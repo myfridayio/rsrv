@@ -1,6 +1,6 @@
 import * as React from "react";
-import { View, Text, Button, Image, Clipboard } from "react-native";
-import { Keypair, Connection, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { View, Text, Image, TouchableOpacity, Clipboard, AsyncStorage } from "react-native";
+import { Keypair } from '@solana/web3.js';
 import {
   generateMnemonic,
 } from "@dreson4/react-native-quick-bip39";
@@ -15,7 +15,7 @@ export default function CreateWallet({navigation}) {
         if(walletCreated) {
             const codes = mnemonics.split(" ")         
             return(
-                <View style={{ position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0', marginBottom: 20, marginHorizontal: 60, paddingVertical: 40 }}>
                 <View style={{ flexDirection: 'column'}}>
                 <View style={{ flexDirection: 'row', marginBottom: 20}}>
                     <View style={{ backgroundColor: 'white', width: 100, height: 30, justifyContent: 'center', alignItems: 'center', borderRadius: 10, marginRight: 20}}>
@@ -65,11 +65,9 @@ export default function CreateWallet({navigation}) {
                         <Text style={{color: 'black', fontWeight: 'bold'}}>{codes[11]}</Text>
                     </View>
                 </View>
-                <Button
-                    onPress={() => Clipboard.setString(mnemonics)}
-                    title="Copy"
-                    color="black"       
-                />
+                <TouchableOpacity style={{ height: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', borderRadius: 25, marginTop: 20 }} onPress={() => Clipboard.setString(mnemonics)}>
+                    <Text style={{ fontSize:15, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Copy</Text>
+                </TouchableOpacity>
                 </View>
             </View>
             )
@@ -77,41 +75,49 @@ export default function CreateWallet({navigation}) {
         return null
     }
 
-     function createWallet() {
-        console.log('before if')
+    React.useEffect(() => {
+        setmnemonics(generateMnemonic(128))
+        setWalletCreated(true)
+        const seed = Bip39.mnemonicToSeedSync(mnemonics).slice(0, 32);
+        const keyPair = Keypair.fromSeed(seed);
+        const walletAddress = keyPair.publicKey.toBase58()
+        storeWalletAddress(walletAddress)
+        setWalletAddress(walletAddress)
+      }, []);
+
+     function showWalletPublicAddress() {
         if(walletCreated) {
             navigation.navigate('WalletAddress', {
                 walletAddress: walletAddress
             })
-        } else {
-            console.log('inside creating wallet')
-            setmnemonics(generateMnemonic(128))
-            setWalletCreated(true)
-            const seed = Bip39.mnemonicToSeedSync(mnemonics).slice(0, 32);
-            const keyPair = Keypair.fromSeed(seed);
-            setWalletAddress(keyPair.publicKey.toBase58())
-            console.log(mnemonics)
         }
     }
 
+    async function storeWalletAddress(address: string) {
+        try {
+            await AsyncStorage.setItem(
+              '@MyWalletAddress:key',
+              address,
+            );
+          } catch (error) {
+            // Error saving data
+          }
+    }
+
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
             <Image
-                    style={{ width: '100%', height: '100%'}}
-                    resizeMode='stretch'
-                    source={require('./images/getstarted.png')}
+                style={{ width: 60, height: 60, marginLeft: 20, marginTop: 40 }}
+                resizeMode='stretch'
+                source={require('./images/friday_logo.png')}
             />
-            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 20}}>
-                <Button
-                    onPress={createWallet}
-                    title={walletCreated ? "Next" : "Create a wallet"}
-                    color="black"      
-                />
+            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
+                {showCodes()}
+                <Text style={{fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f', textAlign:'center', fontSize: 20, marginHorizontal: 40, marginBottom: 30 }}>{walletCreated ? "Copy code and save at a secure location. This 12 word password is your only way to access your wallet." : ""}</Text>
+                <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, borderWidth: 1 }} onPress={showWalletPublicAddress}>
+                    <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Next</Text>
+                </TouchableOpacity>
             </View>
-            <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 80}}>
-            <Text style={{color: 'white', fontWeight: 'bold', textAlign:'center'}}>{walletCreated ? "Copy the codes and secure it somewhere. This is the only way to recover a wallet. Press Next after done." : ""}</Text>
-            </View>
-            {showCodes()}
       </View>
     );
   }
