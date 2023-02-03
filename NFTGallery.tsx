@@ -1,97 +1,37 @@
 import * as React from "react";
 import 'react-native-url-polyfill/auto'
-import { Metaplex, keypairIdentity, bundlrStorage } from "@metaplex-foundation/js";
-import { Connection, clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js";
-import { View, Image, FlatList, Text, AsyncStorage, StyleSheet, StatusBar } from "react-native";
+import { View, Image, FlatList, Text, StyleSheet, StatusBar } from "react-native";
+import Wallet, { NftInfo } from "./Wallet";
+
 
 export default function NFTGallery({navigation}) {
-
-    const [walletAddress, setWalletAddress] = React.useState("");
-    const [centerMessage, setCenterMessage] = React.useState("Loading NFTs.. Hang on!!")
+    const [centerMessage, setCenterMessage] = React.useState("")
     const [nftsLoaded, setNftsLoaded] = React.useState(false)
-    const [listData, setListData] = React.useState([])
+    const [nftUrls, setNftUrls] = React.useState<NftInfo[]>([])
 
     React.useEffect(() => {
-        async function getWalletAddress() {
-            try {
-                const address = await AsyncStorage.getItem('@MyWalletAddress:key');
-                if (address !== null) {
-                  setWalletAddress(address)
-                } else {
-                    setCenterMessage('Something went wrong!!')
-                }
-              } catch (error) {
-                setCenterMessage('Something went wrong!!')
-              }
-        }
-        getWalletAddress()
-        getNFTs()
+        setCenterMessage('Loading NFTs...')
+        Wallet.shared().then(async (wallet) => {
+            const urls = await wallet.getNftInfo()
+            console.log(urls)
+            setNftUrls(urls)
+            setNftsLoaded(true)
+        })
+        .catch(error => {
+            console.error(error)
+            setCenterMessage('Error loading NFTs!')
+        })
     }, [])
 
-    async function getNFTs() {
-        const connection = new Connection(clusterApiUrl("devnet"));
-        const wallet = Keypair.generate();
-
-        const metaplex = Metaplex.make(connection)
-            .use(keypairIdentity(wallet))
-            .use(bundlrStorage());
-
-        try{
-            const owner = new PublicKey(walletAddress);
-            const allNFTs = await metaplex.nfts().findAllByOwner({owner: owner});
-        } catch (error) {
-            setCenterMessage('Looks like you do not have any NFTs')
-        }
-        
-        let nftUrls : String[]= [];
-        if(allNFTs.length == 0) {
-            setCenterMessage('Looks like you do not have any NFTs')
-        } else {
-            allNFTs.forEach((nft) => {
-                fetch(nft.uri)
-                .then(response => response.json())
-                .then(json => {
-                    if(json.image != undefined) {
-                        nftUrls.push(json.image)
-                    }
-                })
-                .catch(error => {
-                    //nothing here
-                });
-            });
-            setTimeout(() => {
-                setNftsLoaded(true)
-                setListData(nftUrls)
-            }, 3000)
-        }
-    }
-
-    function showNFTs() {
-        if(nftsLoaded) {
-            return(
-                <FlatList
-                    style={{ marginVertical: 20 }}
-                    data={listData}
-                    renderItem={({item}) => <Item uri={item} />}
-                />
-            )
-        }
-        return(
-            <View style={{ position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: '#ef390f', fontWeight: 'bold' }}>{centerMessage}</Text>
-            </View>
-        )
-    }
-
-    const Item = ({uri}) => (
+    const Item = (nft: NftInfo) => (
         <View style={styles.item}>
+            <Text>{nft.name}</Text>
           <Image
-            style={{height: 150, width: 150}}
-            source={{uri: uri,}}
-        />
+            style={{ height: 150, width: 150 }}
+            source={{ uri: nft.image }} />
         </View>
-      );
-    
+    )
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <Image
@@ -99,7 +39,19 @@ export default function NFTGallery({navigation}) {
                 resizeMode='stretch'
                 source={require('./images/friday_logo.png')}
             />
-            {showNFTs()}
+        {
+            nftsLoaded ?
+                <FlatList
+                    style={{ marginVertical: 20 }}
+                    data={nftUrls}
+                    renderItem={({item}) => <Item image={item.image} name={item.name} />} />
+             :
+             <View style={{ position: 'absolute', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: '#ef390f', fontWeight: 'bold' }}>
+                  {centerMessage}
+                </Text>
+             </View>
+        }
       </View>
     );
   }

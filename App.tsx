@@ -1,17 +1,17 @@
-import * as React from "react";
-import { View, Text, Button, Image } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as React from "react"
+import { NavigationContainer } from "@react-navigation/native"
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import HomeScreen from './Home'
 import AboutScreen from './About'
-import CreateWallet from "./CreateWallet";
-import WalletAddressScreen from "./WalletAddress";
-import TwitterConnectScreen from "./TwitterConnect";
-import MoreTokensConnectScreen from "./MoreTokensConnect";
-import TwitterScreen from "./TwitterScreen";
-import Dashboard from "./Dashboard";
-import NFTGallery from "./NFTGallery";
+import CreateWallet from "./CreateWallet"
+import WalletAddressScreen from "./WalletAddress"
+import TwitterConnectScreen from "./TwitterConnect"
+import MoreTokensConnectScreen from "./MoreTokensConnect"
+import TwitterScreen from "./TwitterScreen"
+import Dashboard from "./Dashboard"
+import NFTGallery from "./NFTGallery"
 import NetflixConnect from "./NetflixConnect"
+import Mercedes from './Mercedes'
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +31,7 @@ export default function App() {
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="NFTGallery" component={NFTGallery} />
         <Stack.Screen name="NetflixConnect" component={NetflixConnect} />
+        <Stack.Screen name="Mercedes" component={Mercedes} />
       </Stack.Navigator>
     </NavigationContainer>
   );

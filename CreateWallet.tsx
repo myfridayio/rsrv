@@ -1,5 +1,6 @@
 import * as React from "react";
-import { View, Text, Image, TouchableOpacity, Clipboard, AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, Image, TouchableOpacity, Clipboard } from "react-native";
 import { Keypair } from '@solana/web3.js';
 import {
   generateMnemonic,
@@ -10,10 +11,10 @@ export default function CreateWallet({navigation}) {
     const [walletCreated, setWalletCreated] = React.useState(false)
     const [mnemonics, setmnemonics] = React.useState("")
     const [walletAddress, setWalletAddress] = React.useState("")
-    
+
     function showCodes() {
         if(walletCreated) {
-            const codes = mnemonics.split(" ")         
+            const codes = mnemonics.split(" ")
             return(
                 <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0', marginBottom: 20, marginHorizontal: 60, paddingVertical: 40 }}>
                 <View style={{ flexDirection: 'column'}}>

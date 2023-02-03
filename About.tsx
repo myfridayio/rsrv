@@ -1,5 +1,6 @@
 import * as React from "react";
-import { View, Text, AsyncStorage, Image } from "react-native";
+import { View, Text, Image } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AboutScreen({navigation}) {
 
