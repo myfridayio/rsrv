@@ -3058,10 +3058,10 @@
   "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.5.tgz"
   "version" "15.7.5"
 
-"@types/react-native@^0.70.6":
-  "integrity" "sha512-jvs5QMOrlyi0ScfT5Brha2roDoOWtbIOadNkp0jsueVen5+pH4SQAYtzL6xu0+dIcx3J/5LtZ/JYby2C1/zUug=="
-  "resolved" "https://registry.npmjs.org/@types/react-native/-/react-native-0.70.8.tgz"
-  "version" "0.70.8"
+"@types/react-native@^0.70.10":
+  "integrity" "sha512-m9B9hJk1w/c04zj5PCYTjJNXt+1UvKtzJj4nO/BjiS4s/zmUdkLdnbLqRQCQiTA0wuvvMbrffuPdheRtYu/M1Q=="
+  "resolved" "https://registry.npmjs.org/@types/react-native/-/react-native-0.70.10.tgz"
+  "version" "0.70.10"
   dependencies:
     "@types/react" "*"
 

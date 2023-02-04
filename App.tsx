@@ -9,7 +9,6 @@ import TwitterConnectScreen from "./TwitterConnect"
 import MoreTokensConnectScreen from "./MoreTokensConnect"
 import TwitterScreen from "./TwitterScreen"
 import Dashboard from "./Dashboard"
-import NFTGallery from "./NFTGallery"
 import NetflixConnect from "./NetflixConnect"
 import Mercedes from './Mercedes'
 
@@ -18,9 +17,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="About" screenOptions={{
-    headerShown: false
-  }}>
+      <Stack.Navigator initialRouteName="About" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
         <Stack.Screen name="CreateWallet" component={CreateWallet} />
@@ -29,7 +26,6 @@ export default function App() {
         <Stack.Screen name="MoreTokensConnect" component={MoreTokensConnectScreen} />
         <Stack.Screen name="TwitterScreen" component={TwitterScreen} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
-        <Stack.Screen name="NFTGallery" component={NFTGallery} />
         <Stack.Screen name="NetflixConnect" component={NetflixConnect} />
         <Stack.Screen name="Mercedes" component={Mercedes} />
       </Stack.Navigator>

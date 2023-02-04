@@ -2,32 +2,44 @@ import * as React from "react"
 import { View, TextInput, TouchableOpacity, Image, Text, KeyboardAvoidingView } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import RNFS from 'react-native-fs'
+import Wallet from "./Wallet"
+import { FakeNav } from "./Types"
 
 const TOKEN = 'AAAAAAAAAAAAAAAAAAAAAA7TjwEAAAAAjQjSffSrlDSlMU2E8iVIbRzO2iw%3DrA7RWtjtutQYqwwMfQeXUQ2kPjRC4pZ0G4POVJnEMlHkceoaqj'
 
 const LOCAL_BASE = 'http://10.0.2.2:3131/mint'
+const TWITTER_BASE = 'https://api.twitter.com/2/'
 
-const twitter = async (url) => {
+const twitter = async (path: string) => {
+    const url = new URL(path, TWITTER_BASE).toString()
+    console.log(url)
     const config = { method: 'GET', headers: { 'Authorization': `Bearer ${TOKEN}` } }
     const response = await fetch(url, config)
     return response.json()
 }
 
-const local = async (walletPK, type, person) => {
+const local = async (walletPK: string, type: string, person: string) => {
     await fetch(`${LOCAL_BASE}?ownerKey=${walletPK}&type=${type}&person=${person}`)
 }
 
-export default function TwitterConnectScreen({navigation}) {
+export default function TwitterConnectScreen({ navigation }: { navigation: FakeNav }) {
 
-    const [centerText, setCenterText] = React.useState(null)
-    const [twitterHandle, setTwitterHandle] = React.useState(null)
-    const [twitterId, setTwitterId] = React.useState(null)
+    const [centerText, setCenterText] = React.useState<string | null>(null)
+    const [twitterHandle, setTwitterHandle] = React.useState<string | null>(null)
+    const [twitterId, setTwitterId] = React.useState<string | null>(null)
+    const [alreadyIssued, setAlreadyIssued] = React.useState<boolean | undefined>()
+    const [password, setPassword] = React.useState<string | undefined>()
 
-    /*
     React.useEffect(() => {
-        getTwitterId()
-    }, [twitterHandle])
-*/
+        AsyncStorage.getItem('@Friday:twitterIssued')
+        .then(issued => setAlreadyIssued(!!issued))
+    }, [])
+
+    React.useEffect(() => {
+        if (alreadyIssued) {
+            // navigation.goBack()
+        }
+    }, [alreadyIssued])
 
     React.useEffect(() => {
         checkFollowing()
@@ -45,7 +57,7 @@ export default function TwitterConnectScreen({navigation}) {
         }
 
         try {
-            const json = await twitter(`https://api.twitter.com/2/users/by/username/${username}`)
+            const json = await twitter(`users/by/username/${username}`)
 
             const { data: { id } } = json
 
@@ -59,12 +71,14 @@ export default function TwitterConnectScreen({navigation}) {
             }
         } catch(error) {
             console.error(error)
+            setCenterText('Error loading twitter info')
         }
     }
 
     const checkFollowing = async () => {
         console.log('checkFollowing')
         if (!twitterId) {
+            console.log('no twitter id')
             return
         }
 
@@ -74,29 +88,36 @@ export default function TwitterConnectScreen({navigation}) {
             return
         }
 
-        const json = await twitter(`https://api.twitter.com/2/users/${twitterId}/following`)
+        const json = await twitter(`users/${twitterId}/following`)
         console.log(json)
 
-        let list: string[] = [];
-        json.data.forEach((element: { username: string; }) => {
-            list.push(element.username);
-            console.log(element.username)
-        });
+        const following = json.data.map((element: { username: string; }) => element.username)
 
-        const person = twitterHandle.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
-        const walletPK = await AsyncStorage.getItem('@MyWalletAddress:key');
+        const person = twitterHandle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
+        const walletPK = await (await Wallet.shared()).publicKey
+        if (!walletPK) {
+            setCenterText('Errore retrieving wallet public key')
+            return
+        }
 
-        if(list.includes('MercedesAMGF1') && list.includes('LewisHamilton') && list.includes('GeorgeRussell63')) {
+        const teamMerc = ['MercedesAMGF1', 'LewisHamilton', 'GeorgeRussell63']
+
+        console.log('following', ...teamMerc.map(f => following.includes(f)))
+        console.log(following)
+
+        if(following.includes('MercedesAMGF1') && following.includes('LewisHamilton') && following.includes('GeorgeRussell63')) {
             console.log('You are a true fan. You are entitled to get a twitter nft and a Mercedes NFT')
+            setCenterText('Minting NFTs...')
             await local(walletPK, 'twitter', person)
             await local(walletPK, 'mercedes', person)
             await AsyncStorage.setItem('@Friday:twitterIssued', 'both')
-            setCenterText('You are a true fan. You are entitled to get a twitter NFT and a Mercedes NFT')
+            navigation.goBack()
         } else {
             console.log('you only get a twitter nft')
+            setCenterText('Minting NFT...')
             await local(walletPK, 'twitter', person)
             await AsyncStorage.setItem('@Friday:twitterIssued', 'justtwitter')
-            setCenterText('You are only entitled to get a twitter NFT')
+            navigation.goBack()
         }
     }
 
@@ -108,18 +129,27 @@ export default function TwitterConnectScreen({navigation}) {
                     resizeMode='stretch'
                     source={require('./images/friday_logo.png')}
                 />
-                <Text style={{ marginTop: 50, fontSize: 60, marginLeft: 40, fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f' }}>CONNECT YOUR TWITTER ACCOUNT</Text>
+                <Text style={{ marginTop: 50, fontSize: 60, marginLeft: 40, marginBottom: 30, fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f' }}>Log into Twitter</Text>
                 <TextInput
-                        style={{height: 40, backgroundColor: '#f0f0f0', marginTop: 50, marginHorizontal: 40, color: "black"}}
+                        style={{height: 40, backgroundColor: '#f0f0f0', marginTop: 20, marginHorizontal: 40, color: "black"}}
                         autoCapitalize='none'
                         placeholderTextColor="#000000"
-                        placeholder="  Your Twitter handle name here"
+                        placeholder="e.g. '@jack' or 'jack'"
                         onChangeText={setTwitterHandle}
                     />
-                <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
+                <TextInput
+                        style={{height: 40, backgroundColor: '#f0f0f0', marginTop: 20, marginHorizontal: 40, color: "black"}}
+                        autoCapitalize='none'
+                        placeholderTextColor="#000000"
+                        placeholder="*******"
+                        secureTextEntry={true}
+                        onChangeText={setPassword}
+                    />
+                    
+                <View style={{ width: '100%', justifyContent: 'center', bottom: 0, marginTop: 30}}>
                     <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: '600', marginHorizontal: 30, marginBottom: 10 }}>{centerText}</Text>
                     <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, borderWidth: 1 }} onPress={()=>getTwitterId()}>
-                        <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Generate NFTs</Text>
+                        <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Check Eligibility</Text>
                     </TouchableOpacity>
                 </View>
             </View>

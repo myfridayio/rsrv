@@ -1,11 +1,14 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Metaplex, keypairIdentity, bundlrStorage, Nft, FindNftsByOwnerOutput } from "@metaplex-foundation/js";
+import { Metaplex, keypairIdentity, bundlrStorage, Nft, Metadata } from "@metaplex-foundation/js";
 import { Connection, clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js";
 
 export interface NftInfo {
-    image?: string,
-    name: string
+    json: {
+        image: string | null,
+        name: string,
+    },
+    mintAddress: PublicKey,
 }
 
 export default class Wallet {
@@ -53,15 +56,17 @@ export default class Wallet {
             .use(bundlrStorage())
 
         const owner = new PublicKey(wallet.publicKey!)
-        const allNFTs: Nft[] = await metaplex.nfts().findAllByOwner({owner: owner}) as Nft[]
+        const allNFTs = await metaplex.nfts().findAllByOwner({owner: owner}) as Metadata[]
 
-        const nftUrls: NftInfo[] = (await Promise.all(allNFTs.map(async (nft) => {
-            console.log('GOT ONE', nft)
+        const info: NftInfo[] = (await Promise.all(allNFTs.map(async (nft: Metadata) => {
+            console.log('GOT ONE')
+            console.log(nft)
             const response = await fetch(nft.uri)
-            const json = await response.json()
-            return { image: json.image, name: json.name } as NftInfo
+            const json = (await response.json()) as { image: string | null, name: string }
+            console.log(Object.keys(nft.mintAddress), nft.mintAddress, nft.mintAddress.toString())
+            return { ...nft, json } as NftInfo
         }))).filter(x => !!x)
 
-        return nftUrls
+        return info
     }
 }
