@@ -1,9 +1,12 @@
 import * as React from "react";
 import { View, Text, Button, Image, TouchableOpacity } from "react-native";
+import { FakeNav } from "./Types";
 
-export default function HomeScreen({navigation}) {
+interface Props {
+    navigation: FakeNav
+}
 
-    
+export default function HomeScreen({ navigation }: Props) {
     return (
         <View style={{ flex: 1, backgroundColor: "#ef390f" }}>
             <View style={{ flex: 1, position: 'absolute', width: '100%', marginTop: 100, alignItems: 'center' }}>

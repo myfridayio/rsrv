@@ -30,6 +30,11 @@ export default class Wallet {
         return this._shared
     }
 
+    static async reset() {
+        await AsyncStorage.removeItem('@MyWalletAddress:key')
+        this._shared = null
+    }
+
     async load(cycle=0): Promise<Wallet> {
         if (this.isLoaded) {
             return this
@@ -59,11 +64,8 @@ export default class Wallet {
         const allNFTs = await metaplex.nfts().findAllByOwner({owner: owner}) as Metadata[]
 
         const info: NftInfo[] = (await Promise.all(allNFTs.map(async (nft: Metadata) => {
-            console.log('GOT ONE')
-            console.log(nft)
             const response = await fetch(nft.uri)
             const json = (await response.json()) as { image: string | null, name: string }
-            console.log(Object.keys(nft.mintAddress), nft.mintAddress, nft.mintAddress.toString())
             return { ...nft, json } as NftInfo
         }))).filter(x => !!x)
 

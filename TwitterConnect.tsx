@@ -18,7 +18,7 @@ const twitter = async (path: string) => {
     return response.json()
 }
 
-const local = async (walletPK: string, type: string, person: string) => {
+const generate = async (walletPK: string, type: string, person: string) => {
     await fetch(`${LOCAL_BASE}?ownerKey=${walletPK}&type=${type}&person=${person}`)
 }
 
@@ -108,15 +108,16 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
         if(following.includes('MercedesAMGF1') && following.includes('LewisHamilton') && following.includes('GeorgeRussell63')) {
             console.log('You are a true fan. You are entitled to get a twitter nft and a Mercedes NFT')
             setCenterText('Minting NFTs...')
-            await local(walletPK, 'twitter', person)
-            await local(walletPK, 'mercedes', person)
-            await AsyncStorage.setItem('@Friday:twitterIssued', 'both')
+            await generate(walletPK, 'twitter', person)
+            await generate(walletPK, 'mercedes', person)
+            await AsyncStorage.setItem('@Friday:twitterIssued', 'true')
+            await AsyncStorage.setItem('@Friday:mercedesIssued', 'true')
             navigation.goBack()
         } else {
             console.log('you only get a twitter nft')
             setCenterText('Minting NFT...')
-            await local(walletPK, 'twitter', person)
-            await AsyncStorage.setItem('@Friday:twitterIssued', 'justtwitter')
+            await generate(walletPK, 'twitter', person)
+            await AsyncStorage.setItem('@Friday:twitterIssued', 'true')
             navigation.goBack()
         }
     }

@@ -11,6 +11,7 @@ import TwitterScreen from "./TwitterScreen"
 import Dashboard from "./Dashboard"
 import NetflixConnect from "./NetflixConnect"
 import Mercedes from './Mercedes'
+import Menu from './Menu'
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function App() {
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="NetflixConnect" component={NetflixConnect} />
         <Stack.Screen name="Mercedes" component={Mercedes} />
+        <Stack.Screen name="Menu" component={Menu} />
       </Stack.Navigator>
     </NavigationContainer>
   );
