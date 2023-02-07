@@ -6,8 +6,9 @@ import {
   generateMnemonic,
 } from "@dreson4/react-native-quick-bip39";
 import * as Bip39 from 'bip39'
+import { FakeNav } from "./Types";
 
-export default function CreateWallet({navigation}) {
+export default function CreateWallet({navigation}: { navigation: FakeNav }) {
     const [walletCreated, setWalletCreated] = React.useState(false)
     const [mnemonics, setmnemonics] = React.useState("")
     const [walletAddress, setWalletAddress] = React.useState("")

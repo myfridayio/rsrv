@@ -2,15 +2,17 @@ import * as React from 'react'
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native"
 
 interface Props {
-    title: string,
+    children?: React.ReactNode
     onPress: (() => void) | (() => Promise<void>),
-    style?: {} | null
+    style?: {} | null,
+    icon?: React.ReactNode
 }
 
-export default function Button({ title, style, onPress }: Props) {
+export default function Button({ children, icon, style, onPress }: Props) {
     return (
         <TouchableOpacity style={{ ...styles.button, ...style }} onPress={onPress}>
-            <Text style={styles.buttonText}>{title}</Text>
+            {!!icon && <View style={{ marginLeft: -8, marginRight: 8 }}>{icon}</View>}
+            {typeof children === 'string' ? <Text style={styles.text}>{children}</Text> : children}
         </TouchableOpacity>
     )
 }
@@ -18,7 +20,7 @@ export default function Button({ title, style, onPress }: Props) {
 const styles = StyleSheet.create({
     button: {
         paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingHorizontal: 25,
         borderRadius: 22,
         height: 44,
         flexDirection: 'row',
@@ -27,11 +29,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#F4401F',
     },
 
-    buttonText: {
+    text: {
         color: 'white',
         fontWeight: 'bold',
-        marginLeft: 25,
-        marginRight: 25,
         textTransform: 'uppercase'
-    },
+
+    }
 })

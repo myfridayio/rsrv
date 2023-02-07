@@ -2,6 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Metaplex, keypairIdentity, bundlrStorage, Nft, Metadata } from "@metaplex-foundation/js";
 import { Connection, clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js";
+import _ from 'underscore'
 
 export interface NftInfo {
     json: {

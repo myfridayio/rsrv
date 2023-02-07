@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import RNFS from 'react-native-fs'
 import Wallet from "./Wallet"
 import { FakeNav } from "./Types"
+import _ from "underscore"
 
 const TOKEN = 'AAAAAAAAAAAAAAAAAAAAAA7TjwEAAAAAjQjSffSrlDSlMU2E8iVIbRzO2iw%3DrA7RWtjtutQYqwwMfQeXUQ2kPjRC4pZ0G4POVJnEMlHkceoaqj'
 
@@ -63,6 +64,8 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
 
             if (id) {
                 console.log('got twitter id', id)
+                await AsyncStorage.setItem('@Friday:twitter:handle', username)
+                await AsyncStorage.setItem('@Friday:twitter:id', id)
                 setTwitterId(id)
                 setCenterText('')
             } else {
@@ -73,6 +76,19 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
             console.error(error)
             setCenterText('Error loading twitter info')
         }
+    }
+
+    const getFollowing = async (refresh = false) => {
+        const saved = await AsyncStorage.getItem('@Friday:twitter:following')
+        if (saved && !refresh) {
+            return JSON.parse(saved)
+        }
+
+        const followingResponse = await twitter(`users/${twitterId}/following`)
+        const following = followingResponse.data.map(({ username }: { username: string }) => username)
+        await AsyncStorage.setItem('@Friday:twitter:following', JSON.stringify(following))
+        await AsyncStorage.setItem('@Friday:twitter:date', new Date().toISOString())
+        return following
     }
 
     const checkFollowing = async () => {
@@ -88,10 +104,7 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
             return
         }
 
-        const json = await twitter(`users/${twitterId}/following`)
-        console.log(json)
-
-        const following = json.data.map((element: { username: string; }) => element.username)
+        const following = await getFollowing()
 
         const person = twitterHandle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
         const walletPK = await (await Wallet.shared()).publicKey
@@ -100,12 +113,9 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
             return
         }
 
-        const teamMerc = ['MercedesAMGF1', 'LewisHamilton', 'GeorgeRussell63']
+        const teamMercedes = ['MercedesAMGF1', 'LewisHamilton', 'GeorgeRussell63']
 
-        console.log('following', ...teamMerc.map(f => following.includes(f)))
-        console.log(following)
-
-        if(following.includes('MercedesAMGF1') && following.includes('LewisHamilton') && following.includes('GeorgeRussell63')) {
+        if (_.every(teamMercedes, (x) => following.includes(x))) {
             console.log('You are a true fan. You are entitled to get a twitter nft and a Mercedes NFT')
             setCenterText('Minting NFTs...')
             await generate(walletPK, 'twitter', person)

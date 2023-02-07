@@ -32,9 +32,7 @@ export default function Menu({ navigation }: { navigation: FakeNav }) {
 
     return (
         <View style={style.container}>
-            <Button
-                title="Reset App"
-                onPress={reset}/>
+            <Button onPress={reset}>Reset App</Button>
         </View>
     )
 }

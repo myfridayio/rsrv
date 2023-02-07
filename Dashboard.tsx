@@ -62,7 +62,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
                         resizeMode='stretch'
                         source={require('./images/collection-mercedes.png')}
                     />
-                    <Button style={{ marginTop: 20 }} title="Check Eligibility" onPress={() => navigation.navigate('Mercedes')}/>
+                    <Button style={{ marginTop: 20 }} onPress={() => navigation.navigate('Mercedes')}>Check Availability</Button>
                 </View>}
                 {nfts.map(nft => <NftView key={nft.mintAddress.toString()} nft={nft}/>)}
                 {/*
