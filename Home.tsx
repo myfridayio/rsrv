@@ -5,19 +5,38 @@ import { generateMnemonic } from "@dreson4/react-native-quick-bip39"
 import * as Bip39 from 'bip39'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import Wallet from "./Wallet"
+import Biometrics from 'react-native-biometrics'
+import * as Keychain from 'react-native-keychain'
 
 interface Props {
     navigation: FakeNav
 }
 
 export default function HomeScreen({ navigation }: Props) {
-    const createWallet = async () => {
+    const generateKey = async () => {
         const tempMnemonics = generateMnemonic(128)
-        const seed = Bip39.mnemonicToSeedSync(tempMnemonics).slice(0, 32);
-        const keyPair = Keypair.fromSeed(seed);
-        const walletAddress = keyPair.publicKey.toBase58()
-        await Wallet.store(new PublicKey(walletAddress))
-        navigation.navigate('Dashboard')
+        const seed = Bip39.mnemonicToSeedSync(tempMnemonics).slice(0, 32)
+        const keypair = Keypair.fromSeed(seed)
+        const publicKey = keypair.publicKey.toBase58()
+        const privateKey = JSON.stringify(keypair.secretKey)
+        Keychain.setGenericPassword(publicKey, privateKey)
+        await Wallet.store(new PublicKey(publicKey))
+    }
+
+    const createWallet = async () => {
+        const biometrics = new Biometrics()
+        biometrics.simplePrompt({promptMessage: 'Confirm fingerprint'})
+        .then(async ( { success }: { success: boolean}) => {
+            if (success) {
+                console.log('successful biometrics provided')
+                await generateKey()
+                navigation.navigate('Dashboard')
+            } else {
+                console.log('user cancelled biometric prompt')
+            }
+        })
+/*
+        */
     }
 
     return (
