@@ -1,13 +1,22 @@
 import * as React from "react"
 import { View, Text, Button, Image, TouchableOpacity } from "react-native"
 import { FakeNav } from "./Types"
+import { generateMnemonic } from "@dreson4/react-native-quick-bip39"
+import * as Bip39 from 'bip39'
+import { Keypair, PublicKey } from '@solana/web3.js'
+import Wallet from "./Wallet"
 
 interface Props {
     navigation: FakeNav
 }
 
 export default function HomeScreen({ navigation }: Props) {
-    const createWallet = () => {
+    const createWallet = async () => {
+        const tempMnemonics = generateMnemonic(128)
+        const seed = Bip39.mnemonicToSeedSync(tempMnemonics).slice(0, 32);
+        const keyPair = Keypair.fromSeed(seed);
+        const walletAddress = keyPair.publicKey.toBase58()
+        await Wallet.store(new PublicKey(walletAddress))
         navigation.navigate('Dashboard')
     }
 
