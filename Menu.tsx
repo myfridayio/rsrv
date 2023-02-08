@@ -36,7 +36,7 @@ export default function Menu({ navigation }: { navigation: FakeNav }) {
             })
         })
     }
-/* ik9St3XCJzGnEbz */
+
     return (
         <View style={style.container}>
             <View style={{ paddingLeft: 20, paddingTop: 40, width: '100%'}}>
