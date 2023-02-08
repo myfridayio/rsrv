@@ -1,12 +1,13 @@
 import * as React from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, Image, TouchableOpacity, Clipboard } from "react-native";
-import { Keypair } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import {
   generateMnemonic,
 } from "@dreson4/react-native-quick-bip39";
 import * as Bip39 from 'bip39'
 import { FakeNav } from "./Types";
+import Wallet from "./Wallet";
 
 export default function CreateWallet({navigation}: { navigation: FakeNav }) {
     const [walletCreated, setWalletCreated] = React.useState(false)
@@ -90,22 +91,13 @@ export default function CreateWallet({navigation}: { navigation: FakeNav }) {
       }, []);
 
      function showWalletPublicAddress() {
-        if(walletCreated) {
-            navigation.navigate('WalletAddress', {
-                walletAddress: walletAddress
-            })
+        if (walletCreated) {
+            navigation.navigate('Dashboard')
         }
     }
 
     async function storeWalletAddress(address: string) {
-        try {
-            await AsyncStorage.setItem(
-              '@MyWalletAddress:key',
-              address,
-            );
-          } catch (error) {
-            // Error saving data
-          }
+        await Wallet.store(new PublicKey(address))
     }
 
     return (
