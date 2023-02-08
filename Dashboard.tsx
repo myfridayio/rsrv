@@ -63,7 +63,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
                     <Image style={styles.logo} resizeMode='stretch' source={require('./images/friday_logo.png')}/>
                 </TouchableOpacity>
             </View>
-            <View style={{ alignSelf: 'stretch', flexDirection: 'column', alignItems: 'center', bottom: 0, marginBottom: 30 }}>
+            <View style={styles.list}>
                 {shouldOffer &&
                 <View style={styles.offer}>
                     <Text style={styles.offerTitle}>Mercedes F1 Team Badge</Text>
@@ -74,16 +74,8 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
                     />
                     <Button style={{ marginTop: 20 }} onPress={() => navigation.navigate('Mercedes')}>Check Eligibility</Button>
                 </View>}
+                {!!nfts && !!nfts.length && <Text style={styles.header}>Your NFTs</Text>}
                 {nfts.map(nft => <NftView key={nft.mintAddress.toString()} nft={nft}/>)}
-                {/*
-                <TouchableOpacity style={{  }} onPress={() => navigation.navigate('NetflixConnect')}>
-                    <Image
-                        style={{ width: 100, height: 100 }}
-                        resizeMode='stretch'
-                        source={require('./images/netflix_icon.png')}
-                    />
-                </TouchableOpacity>
-            */}
             </View>
             <View/>
             <Text style={styles.message}>{message || ''}</Text>
@@ -93,6 +85,10 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
 
 
 const styles = StyleSheet.create({
+    header: {
+        marginTop: 30, fontWeight: 'bold', fontSize: 20, color: 'black'
+    },
+
     container: {
         flex: 1,
         flexDirection: 'column',
@@ -100,6 +96,10 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: 'white',
         //marginTop: StatusBar.currentHeight || 0
+    },
+
+    list: {
+        alignSelf: 'stretch', flexDirection: 'column', alignItems: 'center', bottom: 0, marginBottom: 30
     },
 
     logo: {
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
       padding: 16,
       marginRight: 'auto',
       marginLeft: 'auto',
-      marginTop: 30,
+      marginTop: 20,
       alignItems: 'center',
       backgroundColor: '#F4401F',
       borderRadius: 2
