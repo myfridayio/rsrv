@@ -7,12 +7,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 const INFO_URL = 'https://www.netflix.com/account/getmyinfo'
 const LOGIN_URL = 'https://www.netflix.com/login'
 const LOGIN_URL_HTTP = 'http://www.netflix.com/login'
+const SIGNOUT_URL = 'https://www.netflix.com/SignOut'
+const LOGOUT_URL = 'https://www.netflix.com/logout'
 
 export default function NetflixConnectScreen({ navigation }:  { navigation: FakeNav }) {
     const ref = React.useRef<WebView>(null)
 
     const checkIfLoggedIn = (navState: {url: string}) => {
+
         if (navState.url === INFO_URL) {
+            console.log('we did it yay')
             AsyncStorage.setItem('@Friday:netflix:date', new Date().toISOString())
             .then(navigation.goBack)
         } else if (navState.url === `${LOGIN_URL}?nextpage=https%3A%2F%2Fwww.netflix.com%2Faccount%2Fgetmyinfo`) {
@@ -28,9 +32,11 @@ export default function NetflixConnectScreen({ navigation }:  { navigation: Fake
         if ( url === INFO_URL || url.toLowerCase().startsWith(LOGIN_URL) || url.toLowerCase().startsWith(LOGIN_URL_HTTP)) {
             // console.log('cool')
             return true
+        } else if (url.startsWith(LOGOUT_URL) || url.startsWith(SIGNOUT_URL)) {
+            return true
         } else {
-            // console.log('uncool')
-            // console.log(url)
+            console.log('uncool')
+            console.log(url)
             return false
         }
     }
@@ -46,7 +52,7 @@ export default function NetflixConnectScreen({ navigation }:  { navigation: Fake
                 <Text style={{ marginTop: 30, fontSize: 60, marginLeft: 40, fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f' }}>CONNECT YOUR NETFLIX ACCOUNT</Text>
                 <WebView
                     ref={ref}
-                    source={{ uri: 'https://www.netflix.com/account/getmyinfo' }}
+                    source={{ uri: INFO_URL }}
                     style={{ marginTop: 20, width: '100%', height: 400 }}
                     injectedJavaScript="/*setTimeout(function() { alert('hi'); }, 200)*/"
                     onNavigationStateChange={checkIfLoggedIn}
