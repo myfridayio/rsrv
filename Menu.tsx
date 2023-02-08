@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as React from "react"
 import { View, Text, TouchableOpacity, Image } from "react-native"
-import Wallet, { NftInfo } from './Wallet'
+import Wallet from './Wallet'
 import { FakeNav } from "./Types"
 import { StyleSheet } from 'react-native'
 import { Button } from "./views"

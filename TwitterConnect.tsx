@@ -38,7 +38,7 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
 
     React.useEffect(() => {
         if (alreadyIssued) {
-            // navigation.goBack()
+            navigation.goBack()
         }
     }, [alreadyIssued])
 

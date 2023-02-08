@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, TouchableOpacity, Image, Text, KeyboardAvoidingView } from "react-native"
+import { View, Image, Text, KeyboardAvoidingView } from "react-native"
 import { WebView } from 'react-native-webview'
 import { FakeNav } from "./Types"
 import AsyncStorage from '@react-native-async-storage/async-storage'

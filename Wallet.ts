@@ -4,13 +4,14 @@ import { Metaplex, keypairIdentity, bundlrStorage, Nft, Metadata } from "@metapl
 import { Connection, clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js";
 import _ from 'underscore'
 
-export interface NftInfo {
-    json: {
-        image: string | null,
-        name: string,
-    },
-    mintAddress: PublicKey,
-}
+
+const connection = new Connection(clusterApiUrl("devnet"))
+const tempKeypair = Keypair.generate() // should this be my keypair? confused...
+
+const metaplex = Metaplex.make(connection)
+    .use(keypairIdentity(tempKeypair))
+    .use(bundlrStorage())
+
 
 export default class Wallet {
 
@@ -49,27 +50,74 @@ export default class Wallet {
     }
 
 
-    async getNftInfo(): Promise<NftInfo[]> {
-        const wallet = await this.load()
-        if (!wallet.publicKey) {
-            return []
-        }
-        const connection = new Connection(clusterApiUrl("devnet"))
-        const tempKeypair = Keypair.generate() // should this be my keypair? confused...
+    async getNfts(): Promise<Metadata[]> {
+        const me = await this.publicKeyOrFail()
+        const allNFTs = await metaplex.nfts().findAllByOwner({ owner: me }) as Metadata[]
 
-        const metaplex = Metaplex.make(connection)
-            .use(keypairIdentity(tempKeypair))
-            .use(bundlrStorage())
-
-        const owner = new PublicKey(wallet.publicKey!)
-        const allNFTs = await metaplex.nfts().findAllByOwner({owner: owner}) as Metadata[]
-
-        const info: NftInfo[] = (await Promise.all(allNFTs.map(async (nft: Metadata) => {
+        return (await Promise.all(allNFTs.map(async (nft: Metadata) => {
             const response = await fetch(nft.uri)
             const json = (await response.json()) as { image: string | null, name: string }
-            return { ...nft, json } as NftInfo
+            return { ...nft, json, jsonLoaded: true } as Metadata
         }))).filter(x => !!x)
-
-        return info
     }
+
+    async publicKeyOrFail(): Promise<PublicKey> {
+        const pk = (await this.load()).publicKey
+        if (pk) {
+            return new PublicKey(pk)
+        } else {
+            throw 'Invalid State: publicKey is null'
+        }
+    }
+
+    async getTwitter() {
+        const nfts = await this.getNfts()
+        for (const nft of nfts) {
+            if (nft.name === 'Twitter Data Owner') {
+                return nft
+            }
+        }
+        return null
+    }
+
+    async getMercedes() {
+        const nfts = await this.getNfts()
+        for (const nft of nfts) {
+            if (nft.name === 'Mercedes F1 Fan') {
+                return nft
+            }
+        }
+        return null
+    }
+
+    async grantTwitter() {
+        let twitter = await this.getTwitter()
+        if (twitter) {
+            console.log('already got twitter')
+            return twitter
+        }
+        const me = await this.publicKeyOrFail()
+        const handle = await AsyncStorage.getItem('@Friday:twitter:handle')
+        const person = handle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
+        await generate(me.toString(), 'twitter', person)
+        return this.getTwitter()
+    }
+
+    async grantMercedes() {
+        let mercedes = await this.getMercedes()
+        if (mercedes) {
+            console.log('already got mercedes')
+            return mercedes
+        }
+        const me = await this.publicKeyOrFail()
+        const handle = await AsyncStorage.getItem('@Friday:twitter:handle')
+        const person = handle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
+        await generate(me.toString(), 'mercedes', person)
+        return this.getMercedes()
+    }
+}
+
+const LOCAL_BASE = 'http://10.0.2.2:3131/mint'
+const generate = async (walletPK: string, type: string, person: string) => {
+    await fetch(`${LOCAL_BASE}?ownerKey=${walletPK}&type=${type}&person=${person}`)
 }

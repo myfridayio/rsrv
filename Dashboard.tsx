@@ -1,24 +1,25 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native"
-import Wallet, { NftInfo } from './Wallet'
+import Wallet from './Wallet'
 import { FakeNav } from "./Types"
 import { Button } from './views'
+import { Metadata } from "@metaplex-foundation/js";
 
 
-const NftView = ({ nft }: { nft: NftInfo }) => (
+const NftView = ({ nft }: { nft: Metadata }) => (
     <View style={styles.item}>
-        <Text style={styles.nftTitle}>{nft.json.name}</Text>
+        <Text style={styles.nftTitle}>{nft.json!.name}</Text>
         <Image
             style={ styles.nftImage }
-            source={{ uri: nft.json.image || undefined }} />
+            source={{ uri: nft.json!.image || undefined }} />
     </View>
 )
 
 export default function Dashboard({ navigation }: { navigation: FakeNav }) {
 
     const [alreadyIssued, setAlreadyIssued] = React.useState(false)
-    const [nfts, setNfts] = React.useState<NftInfo[]>([])
+    const [nfts, setNfts] = React.useState<Metadata[]>([])
     const [message, setMessage] = React.useState("")
 
     const checkIssued = () => {
@@ -33,7 +34,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
 
         setMessage('Loading NFTs...')
         Wallet.shared().then(async (wallet) => {
-            setNfts(await wallet.getNftInfo())
+            setNfts(await wallet.getNfts())
             setMessage("Got NFTs")
             setTimeout(() => setMessage(''), 500)
         })
