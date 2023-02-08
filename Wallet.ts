@@ -33,18 +33,22 @@ export default class Wallet {
     }
 
     static async reset() {
-        await AsyncStorage.removeItem('@MyWalletAddress:key')
+        await AsyncStorage.removeItem('@Friday:publicKey')
         this._shared = null
+    }
+
+    static async store(publicKey: PublicKey) {
+        await AsyncStorage.setItem('@Friday:publicKey', publicKey.toString())
     }
 
     async load(cycle=0): Promise<Wallet> {
         if (this.isLoaded) {
             return this
         }
-        await AsyncStorage.getItem('@MyWalletAddress:key')
+        await AsyncStorage.getItem('@Friday:publicKey')
         .then((publicKey: string | null) => {
             this.isLoaded = true
-            this.publicKey = publicKey || this.publicKey
+            this.publicKey = publicKey
         })
         return this
     }
