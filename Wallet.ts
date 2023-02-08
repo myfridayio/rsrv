@@ -93,7 +93,6 @@ export default class Wallet {
     async grantTwitter() {
         let twitter = await this.getTwitter()
         if (twitter) {
-            console.log('already got twitter')
             return twitter
         }
         const me = await this.publicKeyOrFail()
@@ -106,7 +105,6 @@ export default class Wallet {
     async grantMercedes() {
         let mercedes = await this.getMercedes()
         if (mercedes) {
-            console.log('already got mercedes')
             return mercedes
         }
         const me = await this.publicKeyOrFail()

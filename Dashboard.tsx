@@ -21,22 +21,24 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
     const [alreadyIssued, setAlreadyIssued] = React.useState(false)
     const [nfts, setNfts] = React.useState<Metadata[]>([])
     const [message, setMessage] = React.useState("")
+    const [shouldOffer, setShouldOffer] = React.useState(true)
 
-    const checkIssued = () => {
-        AsyncStorage.getItem('@Friday:twitterIssued')
-        .then(issued => setAlreadyIssued(!!issued))
+    const checkEligibility = () => {
+        AsyncStorage.getItem('@Friday:mercedes:ineligible')
+        .then(ineligibleDate => { if (ineligibleDate) { setShouldOffer(false) } })
+        AsyncStorage.getItem('@Friday:mercedes:eligible')
+        .then(eligibleDate => { if (eligibleDate) { setShouldOffer(false) } })
     }
 
-    React.useEffect(() => navigation.addListener('focus', checkIssued), [])
+    React.useEffect(() => navigation.addListener('focus', checkEligibility), [])
 
     React.useEffect(() => {
-        checkIssued()
+        checkEligibility()
 
         setMessage('Loading NFTs...')
         Wallet.shared().then(async (wallet) => {
-            setNfts(await wallet.getNfts())
-            setMessage("Got NFTs")
-            setTimeout(() => setMessage(''), 500)
+            setNfts([await wallet.getMercedes(), await wallet.getTwitter()].filter(x => !!x) as Metadata[])
+            setMessage("")
         })
         .catch(error => {
             console.error(error)
@@ -56,7 +58,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
                 </TouchableOpacity>
             </View>
             <View style={{ alignSelf: 'stretch', flexDirection: 'column', alignItems: 'center', bottom: 0, marginBottom: 30 }}>
-                {!alreadyIssued &&
+                {shouldOffer &&
                 <View style={styles.offer}>
                     <Text style={styles.offerTitle}>Mercedes F1 Team Badge</Text>
                     <Image

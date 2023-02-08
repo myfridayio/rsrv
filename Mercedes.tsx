@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import _ from 'underscore'
 import Wallet from "./Wallet";
 import { walletAdapterIdentity } from "@metaplex-foundation/js";
+import { sleep } from "./lib/util";
 
 const TEAM_TWITTER_ACCOUNTS = ['MercedesAMGF1', 'LewisHamilton', 'GeorgeRussell63']
 const NETFLIX_TITLE = 'Drive to Survive'
@@ -59,21 +60,32 @@ export default function Mercedes({ navigation }: Props) {
             const following = JSON.parse(followingJson) as string[]
 
             if (_.every(TEAM_TWITTER_ACCOUNTS, handle => following.includes(handle))) {
+                await AsyncStorage.setItem('@Friday:mercedes:eligible', new Date().toISOString())
                 console.log('eligible')
                 setEligibility(Eligibility.Issuing)
                 setMessage('Generating Twitter NFT')
                 await wallet.grantTwitter()
                 setMessage('Twitter NFT Generated')
-                setTimeout(() => setMessage('Generating Mercedes NFT'), 2000)
+                await sleep(1000)
+                setMessage('Generating Mercedes NFT')
                 await wallet.grantMercedes()
                 setEligibility(Eligibility.Issued)
+                navigation.goBack()
 
             } else {
+                await AsyncStorage.setItem('@Friday:mercedes:ineligible', new Date().toISOString())
                 setMessage('Not eligible for Mercedes NFT')
-                eligible(Eligibility.Ineligible, "Not eligible for Mercedes F1 Team Badge")
-                setTimeout(() => setMessage('Generating Twitter NFT'), 2000)
-                await wallet.grantTwitter()
-                setMessage('Granted Twitter NFT')
+                if (await wallet.getTwitter()) {
+                    await sleep(800)
+                    navigation.goBack()
+                } else {
+                    await sleep(2000)
+                    setMessage('Generating Twitter NFT')
+                    await wallet.grantTwitter()
+                    setMessage('Granted Twitter NFT')
+                    await sleep(500)
+                    navigation.goBack()
+                }
             }
         } catch (e) {
             setTimeout(() => {
