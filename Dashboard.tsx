@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as React from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native"
 import Wallet, { NftInfo } from './Wallet'
@@ -56,13 +56,14 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
             </View>
             <View style={{ alignSelf: 'stretch', flexDirection: 'column', alignItems: 'center', bottom: 0, marginBottom: 30 }}>
                 {!alreadyIssued &&
-                <View style={{ padding: 20 }}>
+                <View style={styles.offer}>
+                    <Text style={styles.offerTitle}>Mercedes F1 Team Badge</Text>
                     <Image
                         style={{ width: 250, height: 250 }}
                         resizeMode='stretch'
                         source={require('./images/collection-mercedes.png')}
                     />
-                    <Button style={{ marginTop: 20 }} onPress={() => navigation.navigate('Mercedes')}>Check Availability</Button>
+                    <Button style={{ marginTop: 20 }} onPress={() => navigation.navigate('Mercedes')}>Check Eligibility</Button>
                 </View>}
                 {nfts.map(nft => <NftView key={nft.mintAddress.toString()} nft={nft}/>)}
                 {/*
@@ -113,9 +114,20 @@ const styles = StyleSheet.create({
     nftTitle: {
         marginBottom: 10, fontWeight: "bold", color: "white"
     },
+    
+    offer: {
+        backgroundColor: 'black',
+        paddingVertical: 20,
+        paddingHorizontal: 30,
+        borderRadius: 1
+    },
 
-    title: {
-      fontSize: 32,
+    offerTitle: {
+        marginBottom: 20,
+        fontSize: 20,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: 'white'
     },
 
     button: {
