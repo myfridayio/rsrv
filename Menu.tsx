@@ -5,6 +5,9 @@ import Wallet from './Wallet'
 import { FakeNav } from "./Types"
 import { StyleSheet } from 'react-native'
 import { Button } from "./views"
+import { WebView } from 'react-native-webview'
+
+const INFO_URL = 'https://www.netflix.com/account/getmyinfo'
 
 const style = StyleSheet.create({
     container: {
@@ -22,7 +25,8 @@ export default function Menu({ navigation }: { navigation: FakeNav }) {
     const reset = () => {
         const keys = ['@Friday:twitter:id', '@Friday:twitter:handle', '@Friday:twitter:following', '@Friday:twitter:date',
                     '@Friday:mercedes:ineligible', '@Friday:mercedes:eligible',
-                    '@Friday:netflix:date', '@Friday:twitterIssued', '@Friday:netflixIssued']
+                    '@Friday:netflix:date', '@Friday:twitterIssued', '@Friday:netflixIssued',
+                    '@Friday:publicKey']
         AsyncStorage.multiRemove(keys)
         .then(() => Wallet.reset())
         .then(() => {
@@ -32,7 +36,7 @@ export default function Menu({ navigation }: { navigation: FakeNav }) {
             })
         })
     }
-
+/* ik9St3XCJzGnEbz */
     return (
         <View style={style.container}>
             <View style={{ paddingLeft: 20, paddingTop: 40, width: '100%'}}>
@@ -45,6 +49,10 @@ export default function Menu({ navigation }: { navigation: FakeNav }) {
                 </TouchableOpacity>
             </View>
             <Button style={{ marginHorizontal: 80, marginTop: 30 }} onPress={reset}>Reset App</Button>
+            <WebView
+                    source={{ uri: INFO_URL }}
+                    style={{ marginTop: 20, width: '100%', height: 400 }}
+                />
         </View>
     )
 }
