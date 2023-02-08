@@ -70,6 +70,8 @@ export default function Mercedes({ navigation }: Props) {
                 setMessage('Generating Mercedes NFT')
                 await wallet.grantMercedes()
                 setEligibility(Eligibility.Issued)
+                setMessage('Generated Mercedes NFT!')
+                await sleep(2000)
                 navigation.goBack()
 
             } else {

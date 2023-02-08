@@ -20,7 +20,10 @@ const style = StyleSheet.create({
 export default function Menu({ navigation }: { navigation: FakeNav }) {
 
     const reset = () => {
-        AsyncStorage.removeItem('@Friday:twitterIssued')
+        const keys = ['@Friday:twitter:id', '@Friday:twitter:handle', '@Friday:twitter:following', '@Friday:twitter:date',
+                    '@Friday:mercedes:ineligible', '@Friday:mercedes:eligible',
+                    '@Friday:netflix:date', '@Friday:twitterIssued', '@Friday:netflixIssued']
+        AsyncStorage.multiRemove(keys)
         .then(() => Wallet.reset())
         .then(() => {
             navigation.reset({

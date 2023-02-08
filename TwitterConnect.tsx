@@ -5,6 +5,7 @@ import RNFS from 'react-native-fs'
 import Wallet from "./Wallet"
 import { FakeNav } from "./Types"
 import _ from "underscore"
+import { NavigationHelpersContext } from "@react-navigation/native"
 
 const TOKEN = 'AAAAAAAAAAAAAAAAAAAAAA7TjwEAAAAAjQjSffSrlDSlMU2E8iVIbRzO2iw%3DrA7RWtjtutQYqwwMfQeXUQ2kPjRC4pZ0G4POVJnEMlHkceoaqj'
 
@@ -98,38 +99,8 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
             return
         }
 
-        const alreadyIssued = await AsyncStorage.getItem('@Friday:twitterIssued')
-        if (alreadyIssued) {
-            console.log('skipping mint already done')
-            return
-        }
-
-        const following = await getFollowing()
-
-        const person = twitterHandle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
-        const walletPK = await (await Wallet.shared()).publicKey
-        if (!walletPK) {
-            setCenterText('Errore retrieving wallet public key')
-            return
-        }
-
-        const teamMercedes = ['MercedesAMGF1', 'LewisHamilton', 'GeorgeRussell63']
-
-        if (_.every(teamMercedes, (x) => following.includes(x))) {
-            console.log('You are a true fan. You are entitled to get a twitter nft and a Mercedes NFT')
-            setCenterText('Minting NFTs...')
-            await generate(walletPK, 'twitter', person)
-            await generate(walletPK, 'mercedes', person)
-            await AsyncStorage.setItem('@Friday:twitterIssued', 'true')
-            await AsyncStorage.setItem('@Friday:mercedesIssued', 'true')
-            navigation.goBack()
-        } else {
-            console.log('you only get a twitter nft')
-            setCenterText('Minting NFT...')
-            await generate(walletPK, 'twitter', person)
-            await AsyncStorage.setItem('@Friday:twitterIssued', 'true')
-            navigation.goBack()
-        }
+        await getFollowing(true)
+        navigation.goBack()
     }
 
     return (

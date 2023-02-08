@@ -5,6 +5,7 @@ import Wallet from './Wallet'
 import { FakeNav } from "./Types"
 import { Button } from './views'
 import { Metadata } from "@metaplex-foundation/js";
+import { sleep } from "./lib/util";
 
 
 const NftView = ({ nft }: { nft: Metadata }) => (
@@ -18,7 +19,6 @@ const NftView = ({ nft }: { nft: Metadata }) => (
 
 export default function Dashboard({ navigation }: { navigation: FakeNav }) {
 
-    const [alreadyIssued, setAlreadyIssued] = React.useState(false)
     const [nfts, setNfts] = React.useState<Metadata[]>([])
     const [message, setMessage] = React.useState("")
     const [shouldOffer, setShouldOffer] = React.useState(true)
@@ -30,20 +30,26 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
         .then(eligibleDate => { if (eligibleDate) { setShouldOffer(false) } })
     }
 
-    React.useEffect(() => navigation.addListener('focus', checkEligibility), [])
+    const loadNfts = async () => {
+        const wallet = await Wallet.shared()
+        setNfts([await wallet.getMercedes(), await wallet.getTwitter()].filter(x => !!x) as Metadata[])
+    }
+
+    const loadData = async () => {
+        await Promise.all([loadNfts(), checkEligibility()])
+    }
+
+    const loadDataTwice = async () => {
+        await loadData()
+        await sleep(500)
+        await loadData()
+    }
+
+    React.useEffect(() => navigation.addListener('focus', loadDataTwice), [])
 
     React.useEffect(() => {
-        checkEligibility()
-
-        setMessage('Loading NFTs...')
-        Wallet.shared().then(async (wallet) => {
-            setNfts([await wallet.getMercedes(), await wallet.getTwitter()].filter(x => !!x) as Metadata[])
-            setMessage("")
-        })
-        .catch(error => {
-            console.error(error)
-            setMessage('Error loading NFTs!')
-        })
+        loadData()
+        return navigation.addListener('focus', loadData)
     }, [])
 
     nfts.forEach(nft => {
