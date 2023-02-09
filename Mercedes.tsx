@@ -175,15 +175,15 @@ export default function Mercedes({ navigation }: Props) {
 
                 await AsyncStorage.setItem('@Friday:mercedes:eligible', new Date().toISOString())
 
-                completeDoing('Twitter connected')
-                await sleep(500)
-                completeDoing('Twitter NFT earned')
-                await sleep(250)
-                startDoing('Issuing Twitter NFT')
-                const twitterIssue = wallet.grantTwitter()
-                .then(() => {
-                    completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
-                })
+                // completeDoing('Twitter connected')
+                // await sleep(500)
+                // completeDoing('Twitter NFT earned')
+                // await sleep(250)
+                // startDoing('Issuing Twitter NFT')
+                // const twitterIssue = wallet.grantTwitter()
+                // .then(() => {
+                //     completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
+                // })
 
                 const mercedesIssue = doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[0]}`, 3000)
                 .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[1]}`, 3000))
@@ -196,21 +196,21 @@ export default function Mercedes({ navigation }: Props) {
                     completeDoing('Issuing Mercedes F1 Fan NFT', 'Issued Mercedes F1 Fan NFT')
                 })
 
-                await Promise.all([sleep(2000), twitterIssue, mercedesIssue]).then(() => sleep(2000))
+                await Promise.all([sleep(2000), /*twitterIssue, */mercedesIssue]).then(() => sleep(2000))
                 navigation.goBack()
 
             } else {
                 await AsyncStorage.setItem('@Friday:mercedes:ineligible', new Date().toISOString())
 
-                completeDoing('Twitter connected')
-                await sleep(500)
-                completeDoing('Twitter NFT earned')
-                await sleep(250)
-                startDoing('Issuing Twitter NFT')
-                const twitterIssue = wallet.grantTwitter()
-                .then(() => {
-                    completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
-                })
+                // completeDoing('Twitter connected')
+                // await sleep(500)
+                // completeDoing('Twitter NFT earned')
+                // await sleep(250)
+                // startDoing('Issuing Twitter NFT')
+                // const twitterIssue = wallet.grantTwitter()
+                // .then(() => {
+                //     completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
+                // })
                 
                 errorDoing('Ineligible for Mercedes NFT')
 
@@ -224,7 +224,8 @@ export default function Mercedes({ navigation }: Props) {
     }
 
     React.useEffect(() => {
-        if (isTwitterConnected && isNetflixConnected && !csvEntries) {
+        if (isTwitterConnected && isNetflixConnected) {
+            console.log('loading netflix data')
             loadNetflixCsv().then(parseCsv).then(setCsvEntries)
         }
     }, [isTwitterConnected, isNetflixConnected])
@@ -248,12 +249,20 @@ export default function Mercedes({ navigation }: Props) {
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Mercedes F1 Team Badge</Text>
             </View>
-            <View style={{ marginBottom: 30 }}>
+            <View style={{ marginBottom: 10 }}>
                 <Image
                             style={{ width: 100, height: 100 }}
                             resizeMode='stretch'
                             source={require('./images/collection-mercedes.png')}
                         />
+            </View>
+            <View style={{ flexDirection: 'column', width: '100%', marginBottom: 10, alignItems: 'center'}}>
+                <View style={{ flexDirection: 'row', width: '70%', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12 }}>- Must follow @MercedesAMGF1, @LewisHamilton, @GeorgeRussell63 on Twitter</Text>
+                </View>
+                <View style={{ flexDirection: 'row', width: '70%', alignItems: 'center'}}>
+                    <Text style={{ fontSize: 12 }}>- Must have watched 'Drive to Survive' on Netflix</Text>
+                </View>
             </View>
             <Connectable
                 name={twitterHandle ? `@${twitterHandle}` : "Twitter"}
