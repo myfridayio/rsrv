@@ -4,7 +4,7 @@ import { FakeNav } from "./Types"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
 import { faEyeSlash, faEye } from "@fortawesome/free-regular-svg-icons"
-import { faCheckDouble } from "@fortawesome/free-solid-svg-icons"
+import { faCheckDouble, faX } from "@fortawesome/free-solid-svg-icons"
 import { Button } from './views'
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import _ from 'underscore'
@@ -185,11 +185,11 @@ export default function Mercedes({ navigation }: Props) {
                     completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
                 })
 
-                const mercedesIssue = doSuccessfully(TEAM_TWITTER_ACCOUNTS[0], 3000)
-                .then(() => doSuccessfully(TEAM_TWITTER_ACCOUNTS[1], 3000))
-                .then(() => doSuccessfully(TEAM_TWITTER_ACCOUNTS[2], 3000))
+                const mercedesIssue = doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[0]}`, 3000)
+                .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[1]}`, 3000))
+                .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[2]}`, 3000))
                 .then(() => doSuccessfully(`Watched "Drive to Survive"`, 3000))
-                .then(() => completeDoing('Checking eligibility', 'Checked eligibility'))
+                .then(() => completeDoing('Checking eligibility', 'Mercedes F1 Fan NFT earned'))
                 .then(() => startDoing('Issuing Mercedes F1 Fan NFT'))
                 .then(() => wallet.grantMercedes())
                 .then(() => {
@@ -224,31 +224,15 @@ export default function Mercedes({ navigation }: Props) {
     }
 
     React.useEffect(() => {
+        if (isTwitterConnected && isNetflixConnected && !csvEntries) {
+            loadNetflixCsv().then(parseCsv).then(setCsvEntries)
+        }
+    }, [isTwitterConnected, isNetflixConnected])
+
+    React.useEffect(() => {
         checkConnected()
-        loadNetflixCsv().then(parseCsv).then(setCsvEntries)
         return navigation.addListener('focus', checkConnected)
     }, [])
-
-    const ActivityCenter = () => {
-        if (true) {
-            return null
-        }
-        return (
-            <View style={styles.taskList}>
-                {done.map((task: string) => (
-                <View style={styles.taskEntry}>
-                    <Text><FontAwesomeIcon icon={faCheck}/> <Text style={[styles.task, styles.taskDone]}>{task}</Text></Text>
-                </View>
-                ))}
-                {doing.map((task: string) =>
-                (
-                    <View style={styles.taskEntry}>
-                        <ActivityIndicator size="small" color={Colors.red}/><Text style={[styles.task, styles.taskActive]}> {doing}</Text>
-                    </View>
-                ))}
-            </View>
-        )
-    }
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', width: '100%', backgroundColor: 'white' }}>
@@ -291,8 +275,8 @@ export default function Mercedes({ navigation }: Props) {
             <View style={styles.buttonContainer}>
                 <Button icon={<FontAwesomeIcon icon={faCheckDouble} color="white"/>} disabled={!isNetflixConnected || !isTwitterConnected} onPress={checkEligibility}>Check Eligibility</Button>
             </View>
-            <View style={{ marginTop: 30 }}>
-                <ActivityCenter/>
+            <View style={{ marginTop: 10, width: '100%' }}>
+                <ActivityCenter doing={doing} done={done}/>
             </View>
             {showNetflix && !!csvEntries && !!csvEntries.length &&
             <View>
@@ -341,8 +325,30 @@ const Connectable = ({ name, isConnected, canDisplay, isDisplaying, display, onP
     )
 }
 
-  let lastLength = 0
-  const renderLine = ({ item }: { item: NFLXRecord }) => {
+interface DoneTask {
+    task: string,
+    succeeded: boolean,
+}
+
+const ActivityCenter = ({ done, doing }: { done: DoneTask[], doing: string[] }) => {
+    return (
+        <View style={styles.taskList}>
+            {done.map(task => (
+            <View style={styles.taskEntry}>
+                <Text><FontAwesomeIcon icon={task.succeeded ? faCheck : faX} color={task.succeeded ? 'green' : 'red'}/> <Text style={[styles.task, styles.taskDone]}>{task.task}</Text></Text>
+            </View>
+            ))}
+            {doing.map((task: string) =>
+            (
+                <View style={styles.taskEntry}>
+                    <ActivityIndicator size="small" color={Colors.red}/><Text style={[styles.task, styles.taskActive]}> {task}</Text>
+                </View>
+            ))}
+        </View>
+    )
+}
+
+const renderLine = ({ item }: { item: NFLXRecord }) => {
     return (
         <View style={styles.item}>
             <Text style={styles.itemTitle}>{item.title}</Text>
@@ -356,16 +362,18 @@ const Connectable = ({ name, isConnected, canDisplay, isDisplaying, display, onP
             </Text>
         </View>
     )
-  }
+}
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     task: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: '500',
     },
 
     taskEntry: {
-        padding: 8,
+        paddingVertical: 2,
+        width: '50%',
+        flexDirection: 'row',
     },
 
     taskList: {
@@ -375,7 +383,7 @@ const Connectable = ({ name, isConnected, canDisplay, isDisplaying, display, onP
     },
 
     taskDone: {
-        color: '#333'
+        color: '#666'
     },
 
     taskActive: {
@@ -421,4 +429,4 @@ const Connectable = ({ name, isConnected, canDisplay, isDisplaying, display, onP
         fontSize: 14,
         color: Colors.red
     },
-  })
+})
