@@ -1,14 +1,24 @@
-import * as React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from "react-native";
-import { FakeNav } from "./Types";
+import * as React from "react"
+import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator, FlatList, ScrollView } from "react-native"
+import { FakeNav } from "./Types"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
+import { faEyeSlash, faEye } from "@fortawesome/free-regular-svg-icons"
 import { Button } from './views'
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import _ from 'underscore'
-import Wallet from "./Wallet";
-import { walletAdapterIdentity } from "@metaplex-foundation/js";
-import { sleep } from "./lib/util";
+import Wallet from "./Wallet"
+import { sleep, commafy } from "./lib/util"
+import loadResource from './lib/util/local'
+import { parse } from 'csv-parse'
+import Colors from './lib/ui/color'
+
+import netflixCsv from './assets/netflix-hue.csv'
+import { faToiletPaperSlash } from "@fortawesome/free-solid-svg-icons"
+
+const loadNetflixCsv = async () => {
+    return loadResource(netflixCsv)
+}
 
 const TEAM_TWITTER_ACCOUNTS = ['MercedesAMGF1', 'LewisHamilton', 'GeorgeRussell63']
 const NETFLIX_TITLE = 'Drive to Survive'
@@ -26,12 +36,90 @@ enum Eligibility {
     Error
 }
 
+interface NFLXRecord {
+    title: string,
+    duration: string,
+    startTime: string,
+    bookmark: string,
+    deviceType: string,
+    latestBookmark: string,
+    profileName: string,
+    supplementalVideoType: string,
+    attributes: string,
+    country: string,
+}
+
+const fixColumn = (c: string): string => {
+    if (!c) {
+        return c
+    }
+    const words = c.toLowerCase().split(/\s+/).map(s => s.trim()).filter(x => !!x)
+    let ret = words[0]
+    for (const word of words.slice(1)) {
+        ret += word[0].toUpperCase() + word.slice(1)
+    }
+    return ret
+}
+
+const fixColumns = (header: string[]): string[] => {
+    return header.map(fixColumn)
+}
+
+const parseCsv = async (csv: string): Promise<NFLXRecord[]> => {
+    return new Promise<NFLXRecord[]>((resolve, reject) => {
+
+        const records: NFLXRecord[] = []
+        const parser = parse({ columns: fixColumns })
+        let it = true
+        parser.on('readable', () => {
+            let record
+            while ((record = parser.read()) !== null) {
+                if (it) {
+                    it = false
+                    console.log("GOT ONE")
+                    console.log(record)
+                    console.log('----')
+                }
+                records.push(record as NFLXRecord)
+            }
+        })
+        parser.on('error', reject)
+        parser.on('end', () => {
+            resolve(records)
+        })
+        parser.write(csv)
+        parser.end()
+    })
+
+}
+
 export default function Mercedes({ navigation }: Props) {
     const [isTwitterConnected, setIsTwitterConnected] = React.useState(false)
     const [isNetflixConnected, setIsNetflixConnected] = React.useState(false)
     const [eligibility, setEligibility] = React.useState<Eligibility>(Eligibility.Unknown)
     const [twitterHandle, setTwitterHandle] = React.useState<string | null>(null)
     const [message, setMessage] = React.useState("")
+    const [csvEntries, setCsvEntries] = React.useState<NFLXRecord[]>([])
+    const [devices, setDevices] = React.useState<string[]>([])
+    const [profiles, setProfiles] = React.useState<string[]>([])
+    const [titleCount, setTitleCount] = React.useState(0)
+    const [recordCount, setRecordCount] = React.useState(0)
+    const [showNetflix, setShowNetflix] = React.useState(false)
+
+    React.useEffect(() => {
+        const devices = new Set<string>()
+        const profiles = new Set<string>()
+        const titles = new Set<string>()
+        csvEntries.forEach(entry => {
+            devices.add(entry.deviceType)
+            profiles.add(entry.profileName)
+            titles.add(entry.title)
+        })
+        setDevices(Array.from(devices))
+        setProfiles(Array.from(profiles))
+        setTitleCount(titles.size)
+        setRecordCount(csvEntries.length)
+    }, [csvEntries])
 
 
     const checkConnected = () => {
@@ -99,12 +187,13 @@ export default function Mercedes({ navigation }: Props) {
 
     React.useEffect(() => {
         checkConnected()
+        loadNetflixCsv().then(parseCsv).then(setCsvEntries)
         return navigation.addListener('focus', checkConnected)
     }, [])
 
     React.useEffect(() => {
         if (isTwitterConnected && isNetflixConnected) {
-            console.log('holy crap')
+            console.log('N+T connected')
             setEligibility(Eligibility.Evaluating)
             setMessage("Checking eligibility")
             checkEligibility()
@@ -173,7 +262,11 @@ export default function Mercedes({ navigation }: Props) {
             <View style={styles.buttonContainer}>
                 { isNetflixConnected ?
                 <View>
-                <Text style={{ color: 'black', fontSize: 16 }}><FontAwesomeIcon icon={faCheck}/> Netflix Connected</Text>
+                    <Text style={{ color: 'black', fontSize: 16 }}>
+                        <FontAwesomeIcon icon={faCheck} style={{ marginRight: 8, paddingRight: 10 }}/>
+                        &nbsp;Netflix Connected&nbsp;
+                        <Button onPress={() => setShowNetflix(!showNetflix)} small backgroundColor="#888"><FontAwesomeIcon icon={showNetflix ? faEyeSlash : faEye} color="white"/></Button>
+                    </Text>
                 </View>
                 :
                 <Button style={{ backgroundColor: '#000'}} onPress={() => navigation.navigate('NetflixConnect')}
@@ -188,8 +281,35 @@ export default function Mercedes({ navigation }: Props) {
             <View style={{ marginTop: 30 }}>
                 <StatusBlock/>
             </View>
+            {showNetflix && !!csvEntries && !!csvEntries.length &&
+            <View>
+                <Text>{commafy(recordCount)} records, {commafy(titleCount)} titles, {commafy(devices.length)} devices, {commafy(profiles.length)} profiles</Text>
+                <FlatList
+                    data={csvEntries}
+                    initialNumToRender={40}
+                    renderItem={renderLine}
+                    keyExtractor={(item: NFLXRecord) => `${item.startTime}_${item.title}`}
+                />
+            </View>
+            }
         </View>
     );
+  }
+
+  let lastLength = 0
+  const renderLine = ({ item }: { item: NFLXRecord }) => {
+    return (
+        <View style={styles.item}>
+            <Text style={styles.itemTitle}>{item.title}</Text>
+            <Text style={styles.itemText}>
+                <Text>{item.startTime}</Text> for <Text>{item.duration}</Text> to <Text>{item.bookmark}</Text>
+            </Text>
+            <Text style={styles.itemText}>
+                <Text style={styles.profileName}>{item.profileName} </Text>
+                on <Text style={styles.deviceType}>{item.deviceType} </Text>
+            </Text>
+        </View>
+    )
   }
 
   const styles = StyleSheet.create({
@@ -206,7 +326,30 @@ export default function Mercedes({ navigation }: Props) {
         color: 'black',
     },
 
+    item: {
+        padding: 4
+    },
+
     buttonContainer: {
         paddingVertical: 10
+    },
+
+    profileName: {
+        fontWeight: '500'
+    },
+
+    itemText: {
+        fontSize: 14,
+        color: '#333',
+    },
+
+    deviceType: {
+        fontWeight: '500'
+    },
+
+    itemTitle: {
+        fontWeight: '500',
+        fontSize: 14,
+        color: Colors.red
     },
   })

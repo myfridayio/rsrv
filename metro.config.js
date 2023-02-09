@@ -15,10 +15,11 @@ module.exports = {
     }),
   },
   resolver: {
-    sourceExts: ['js', 'jsx', 'ts', 'tsx', 'json', 'png'],
+    sourceExts: ['js', 'jsx', 'ts', 'tsx', 'json'],
+    assetExts: ['txt', 'csv', 'png'],
   },
   extraNodeModules: {
     stream: require.resolve('readable-stream'),
     crypto: require.resolve('react-native-crypto-js'),
-}
+  },
 };

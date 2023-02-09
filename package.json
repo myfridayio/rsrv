@@ -24,6 +24,7 @@
     "@types/underscore": "^1.11.4",
     "assert": "^2.0.0",
     "bip39": "^3.0.4",
+    "csv-parse": "^5.3.5",
     "firebase": "^9.16.0",
     "path": "^0.12.7",
     "react": "18.1.0",

@@ -7,6 +7,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import Wallet from "./Wallet"
 import Biometrics from 'react-native-biometrics'
 import * as Keychain from 'react-native-keychain'
+import { walletAdapterIdentity } from "@metaplex-foundation/js"
 
 interface Props {
     navigation: FakeNav
@@ -24,6 +25,10 @@ export default function HomeScreen({ navigation }: Props) {
     }
 
     const createWallet = async () => {
+        if ((await Wallet.shared()).publicKey) {
+            navigation.navigate('Dashboard')
+            return
+        }
         const biometrics = new Biometrics()
         biometrics.simplePrompt({promptMessage: 'Confirm fingerprint'})
         .then(async ( { success }: { success: boolean}) => {
@@ -35,9 +40,15 @@ export default function HomeScreen({ navigation }: Props) {
                 console.log('user cancelled biometric prompt')
             }
         })
-/*
-        */
     }
+
+    React.useEffect(() => {
+        Wallet.shared().then(wallet => {
+            if (wallet.publicKey) {
+                navigation.navigate('Dashboard')
+            }
+        })
+    }, [])
 
     return (
         <View style={{ flex: 1, backgroundColor: "#ef390f" }}>
