@@ -38,7 +38,15 @@ export default class Wallet {
     }
 
     static async store(publicKey: PublicKey) {
+        const wallet = await Wallet.shared()
         await AsyncStorage.setItem('@Friday:publicKey', publicKey.toString())
+        wallet.publicKey = publicKey.toString()
+    }
+
+    static async reload() {
+        const wallet = await this.shared()
+        wallet.isLoaded = false
+        await wallet.load()
     }
 
     async load(cycle=0): Promise<Wallet> {

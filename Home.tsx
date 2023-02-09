@@ -20,6 +20,7 @@ export default function HomeScreen({ navigation }: Props) {
         const keypair = Keypair.fromSeed(seed)
         const publicKey = keypair.publicKey.toBase58()
         const privateKey = JSON.stringify(keypair.secretKey)
+        console.log(publicKey)
         Keychain.setGenericPassword(publicKey, privateKey)
         await Wallet.store(new PublicKey(publicKey))
     }

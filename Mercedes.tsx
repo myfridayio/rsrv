@@ -4,6 +4,7 @@ import { FakeNav } from "./Types"
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
 import { faEyeSlash, faEye } from "@fortawesome/free-regular-svg-icons"
+import { faCheckDouble } from "@fortawesome/free-solid-svg-icons"
 import { Button } from './views'
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import _ from 'underscore'
@@ -12,9 +13,11 @@ import { sleep, commafy } from "./lib/util"
 import loadResource from './lib/util/local'
 import { parse } from 'csv-parse'
 import Colors from './lib/ui/color'
+import { AnyThunk } from "./lib/util/f"
 
 import netflixCsv from './assets/netflix-hue.csv'
 import { faToiletPaperSlash } from "@fortawesome/free-solid-svg-icons"
+import { FindAllSupportsOnlyThreeFiltersMaxError } from "@metaplex-foundation/js"
 
 const loadNetflixCsv = async () => {
     return loadResource(netflixCsv)
@@ -96,15 +99,35 @@ const parseCsv = async (csv: string): Promise<NFLXRecord[]> => {
 export default function Mercedes({ navigation }: Props) {
     const [isTwitterConnected, setIsTwitterConnected] = React.useState(false)
     const [isNetflixConnected, setIsNetflixConnected] = React.useState(false)
-    const [eligibility, setEligibility] = React.useState<Eligibility>(Eligibility.Unknown)
     const [twitterHandle, setTwitterHandle] = React.useState<string | null>(null)
-    const [message, setMessage] = React.useState("")
     const [csvEntries, setCsvEntries] = React.useState<NFLXRecord[]>([])
     const [devices, setDevices] = React.useState<string[]>([])
     const [profiles, setProfiles] = React.useState<string[]>([])
     const [titleCount, setTitleCount] = React.useState(0)
     const [recordCount, setRecordCount] = React.useState(0)
     const [showNetflix, setShowNetflix] = React.useState(false)
+
+    const [doing, setDoing] = React.useState<string[]>([])
+    const [done, setDone] = React.useState<{task: string, succeeded: boolean}[]>([])
+
+    const startDoing = (task: string) => {
+        setDoing(doing => doing.concat([task]))
+    }
+
+    const stopDoing = (task: string) => {
+        setDoing(doing => doing.filter(t => t !== task))
+    }
+
+    const completeDoing = (task: string, completedName?: string) => {
+        stopDoing(task)
+        const after = completedName || task
+        setDone(done => done.concat([{ task: after, succeeded: true }]))
+    }
+
+    const errorDoing = (task: string) => {
+        stopDoing(task)
+        setDone(done => done.concat([{ task, succeeded: false }]))
+    }
 
     React.useEffect(() => {
         const devices = new Set<string>()
@@ -131,57 +154,72 @@ export default function Mercedes({ navigation }: Props) {
     }
 
     const checkEligibility = async () => {
-        const eligible = (eligibility: Eligibility, msg: string) => {
-            setTimeout(() => {
-                setEligibility(eligibility)
-                setMessage(msg)
-            }, 800)
+        startDoing('Checking eligibility')
+
+        const doSuccessfully = async (task: string, ms: number) => {
+            startDoing(task)
+            await sleep(ms)
+            completeDoing(task)
         }
 
         try {
             const followingJson = await AsyncStorage.getItem('@Friday:twitter:following')
             if (!followingJson) {
-                return eligible(Eligibility.Error, "Malformed data")
+                return errorDoing('Error: Missing twitter data')
             }
 
             const wallet = await Wallet.shared()
             const following = JSON.parse(followingJson) as string[]
 
             if (_.every(TEAM_TWITTER_ACCOUNTS, handle => following.includes(handle))) {
+
                 await AsyncStorage.setItem('@Friday:mercedes:eligible', new Date().toISOString())
-                console.log('eligible')
-                setEligibility(Eligibility.Issuing)
-                setMessage('Generating Twitter NFT')
-                await wallet.grantTwitter()
-                setMessage('Twitter NFT Generated')
-                await sleep(1000)
-                setMessage('Generating Mercedes NFT')
-                await wallet.grantMercedes()
-                setEligibility(Eligibility.Issued)
-                setMessage('Generated Mercedes NFT!')
-                await sleep(2000)
+
+                completeDoing('Twitter connected')
+                await sleep(500)
+                completeDoing('Twitter NFT earned')
+                await sleep(250)
+                startDoing('Issuing Twitter NFT')
+                const twitterIssue = wallet.grantTwitter()
+                .then(() => {
+                    completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
+                })
+
+                const mercedesIssue = doSuccessfully(TEAM_TWITTER_ACCOUNTS[0], 3000)
+                .then(() => doSuccessfully(TEAM_TWITTER_ACCOUNTS[1], 3000))
+                .then(() => doSuccessfully(TEAM_TWITTER_ACCOUNTS[2], 3000))
+                .then(() => doSuccessfully(`Watched "Drive to Survive"`, 3000))
+                .then(() => completeDoing('Checking eligibility', 'Checked eligibility'))
+                .then(() => startDoing('Issuing Mercedes F1 Fan NFT'))
+                .then(() => wallet.grantMercedes())
+                .then(() => {
+                    completeDoing('Issuing Mercedes F1 Fan NFT', 'Issued Mercedes F1 Fan NFT')
+                })
+
+                await Promise.all([sleep(2000), twitterIssue, mercedesIssue]).then(() => sleep(2000))
                 navigation.goBack()
 
             } else {
                 await AsyncStorage.setItem('@Friday:mercedes:ineligible', new Date().toISOString())
-                setMessage('Not eligible for Mercedes NFT')
-                if (await wallet.getTwitter()) {
-                    await sleep(800)
-                    navigation.goBack()
-                } else {
-                    await sleep(2000)
-                    setMessage('Generating Twitter NFT')
-                    await wallet.grantTwitter()
-                    setMessage('Granted Twitter NFT')
-                    await sleep(500)
-                    navigation.goBack()
-                }
+
+                completeDoing('Twitter connected')
+                await sleep(500)
+                completeDoing('Twitter NFT earned')
+                await sleep(250)
+                startDoing('Issuing Twitter NFT')
+                const twitterIssue = wallet.grantTwitter()
+                .then(() => {
+                    completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
+                })
+                
+                errorDoing('Ineligible for Mercedes NFT')
+
+                await Promise.all([sleep(2000), twitterIssue]).then(() => sleep(2000))
+                navigation.goBack()
             }
         } catch (e) {
-            setTimeout(() => {
-                setEligibility(Eligibility.Error)
-                setMessage("Processing error")
-            })
+            console.error(e)
+            errorDoing('Processing error')
         }
     }
 
@@ -191,36 +229,25 @@ export default function Mercedes({ navigation }: Props) {
         return navigation.addListener('focus', checkConnected)
     }, [])
 
-    React.useEffect(() => {
-        if (isTwitterConnected && isNetflixConnected) {
-            console.log('N+T connected')
-            setEligibility(Eligibility.Evaluating)
-            setMessage("Checking eligibility")
-            checkEligibility()
+    const ActivityCenter = () => {
+        if (true) {
+            return null
         }
-    }, [isTwitterConnected, isNetflixConnected])
-
-    const StatusBlock = () => {
-        switch (eligibility) {
-            case Eligibility.Unknown:
-                return null
-            case Eligibility.Evaluating:
-            case Eligibility.Issuing:
-                return (
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size="large" color="#F4401F"/>
-                        {!!message && <Text style={{ marginLeft: 30, fontSize: 18 }}>{message}</Text>}
+        return (
+            <View style={styles.taskList}>
+                {done.map((task: string) => (
+                <View style={styles.taskEntry}>
+                    <Text><FontAwesomeIcon icon={faCheck}/> <Text style={[styles.task, styles.taskDone]}>{task}</Text></Text>
+                </View>
+                ))}
+                {doing.map((task: string) =>
+                (
+                    <View style={styles.taskEntry}>
+                        <ActivityIndicator size="small" color={Colors.red}/><Text style={[styles.task, styles.taskActive]}> {doing}</Text>
                     </View>
-                )
-            case Eligibility.Ineligible:
-                return (
-                    <View>
-                        <Text>INELIGIBLE {message}</Text>
-                    </View>
-                )
-            default:
-                return null
-        }
+                ))}
+            </View>
+        )
     }
 
     return (
@@ -244,42 +271,28 @@ export default function Mercedes({ navigation }: Props) {
                             source={require('./images/collection-mercedes.png')}
                         />
             </View>
+            <Connectable
+                name={twitterHandle ? `@${twitterHandle}` : "Twitter"}
+                isConnected={isTwitterConnected}
+                onPress={() => navigation.navigate('TwitterConnect')}
+                buttonColor='#50A8EF'
+                icon={<Image style={{ width: 30, height: 30 }} resizeMode='stretch' source={require('./images/twitter_logo.png')}/>}
+            />
+            <Connectable
+                name={"Netflix"}
+                isConnected={isNetflixConnected}
+                canDisplay
+                isDisplaying={showNetflix}
+                display={setShowNetflix}
+                onPress={() => navigation.navigate('NetflixConnect')}
+                buttonColor='#000'
+                icon={<Image style={{ width: 30, height: 30 }} resizeMode='stretch' source={require('./images/netflix_icon.png')}/>}
+            />
             <View style={styles.buttonContainer}>
-                {isTwitterConnected ?
-                <View>
-                    <Text style={{ color: 'black', fontSize: 16 }}><FontAwesomeIcon icon={faCheck}/> {twitterHandle ? `@${twitterHandle}` : 'Twitter Connected'}</Text>
-                </View>
-                :
-                <Button style={{ backgroundColor: '#50A8EF'}} onPress={() => navigation.navigate('TwitterConnect')}
-                    icon={<Image
-                            style={{ width: 30, height: 30 }}
-                            resizeMode='stretch'
-                            source={require('./images/twitter_logo.png')}
-                        />}>
-                    Connect Twitter
-                </Button>}
-            </View>
-            <View style={styles.buttonContainer}>
-                { isNetflixConnected ?
-                <View>
-                    <Text style={{ color: 'black', fontSize: 16 }}>
-                        <FontAwesomeIcon icon={faCheck} style={{ marginRight: 8, paddingRight: 10 }}/>
-                        &nbsp;Netflix Connected&nbsp;
-                        <Button onPress={() => setShowNetflix(!showNetflix)} small backgroundColor="#888"><FontAwesomeIcon icon={showNetflix ? faEyeSlash : faEye} color="white"/></Button>
-                    </Text>
-                </View>
-                :
-                <Button style={{ backgroundColor: '#000'}} onPress={() => navigation.navigate('NetflixConnect')}
-                    icon={<Image
-                            style={{ width: 30, height: 30 }}
-                            resizeMode='stretch'
-                            source={require('./images/netflix_icon.png')}
-                        />}>
-                    Connect Netflix
-                </Button>}
+                <Button icon={<FontAwesomeIcon icon={faCheckDouble} color="white"/>} disabled={!isNetflixConnected || !isTwitterConnected} onPress={checkEligibility}>Check Eligibility</Button>
             </View>
             <View style={{ marginTop: 30 }}>
-                <StatusBlock/>
+                <ActivityCenter/>
             </View>
             {showNetflix && !!csvEntries && !!csvEntries.length &&
             <View>
@@ -294,7 +307,39 @@ export default function Mercedes({ navigation }: Props) {
             }
         </View>
     );
-  }
+}
+
+interface ConnectableProps {
+    name: string,
+    isConnected: boolean,
+    canDisplay?: boolean,
+    isDisplaying?: boolean,
+    display?: (should: boolean) => void,
+    onPress: AnyThunk,
+    icon: React.ReactNode,
+    buttonColor: string,
+}
+
+const Connectable = ({ name, isConnected, canDisplay, isDisplaying, display, onPress, icon, buttonColor } : ConnectableProps) => {
+    return (
+        <View style={styles.buttonContainer}>
+        { isConnected ?
+        <View>
+            <Text style={{ color: 'black', fontSize: 16 }}>
+                <FontAwesomeIcon icon={faCheck} style={{ marginRight: 8, paddingRight: 10 }}/>
+                <Text> {name} Connected </Text>
+                {canDisplay &&
+                    <Button onPress={() => display!(!isDisplaying)} small backgroundColor='#888'>
+                        <FontAwesomeIcon icon={isDisplaying ? faEyeSlash : faEye} color="white"/>
+                    </Button>
+                }
+            </Text>
+        </View>
+        :
+        <Button style={{ backgroundColor: buttonColor }} onPress={onPress} icon={icon} title={`Connect ${name}`}/>}
+    </View>
+    )
+}
 
   let lastLength = 0
   const renderLine = ({ item }: { item: NFLXRecord }) => {
@@ -307,12 +352,36 @@ export default function Mercedes({ navigation }: Props) {
             <Text style={styles.itemText}>
                 <Text style={styles.profileName}>{item.profileName} </Text>
                 on <Text style={styles.deviceType}>{item.deviceType} </Text>
+                at <Text style={styles.deviceType}>{item.country} </Text>
             </Text>
         </View>
     )
   }
 
   const styles = StyleSheet.create({
+    task: {
+        fontSize: 18,
+        fontWeight: '500',
+    },
+
+    taskEntry: {
+        padding: 8,
+    },
+
+    taskList: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '100%',
+    },
+
+    taskDone: {
+        color: '#333'
+    },
+
+    taskActive: {
+        color: '#111'
+    },
+
     titleContainer: {
         paddingVertical: 10,
         marginVertical: 30,

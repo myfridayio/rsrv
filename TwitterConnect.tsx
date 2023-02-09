@@ -131,7 +131,7 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
                 <View style={{ width: '100%', justifyContent: 'center', bottom: 0, marginTop: 30}}>
                     <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: '600', marginHorizontal: 30, marginBottom: 10 }}>{centerText}</Text>
                     <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, borderWidth: 1 }} onPress={()=>getTwitterId()}>
-                        <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Check Eligibility</Text>
+                        <Text style={{ fontSize:20, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: 'grey', fontWeight: 'bold' }}>Fetch Twitter Data</Text>
                     </TouchableOpacity>
                 </View>
             </View>

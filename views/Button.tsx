@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native"
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
 
 interface Props {
     children?: React.ReactNode
@@ -11,15 +11,18 @@ interface Props {
     small?: boolean,
     backgroundColor?: string,
     textColor?: string,
+    disabled?: boolean,
+    title?: string,
 }
 
-export default function Button({ children, icon, style, large, medium, small, backgroundColor, textColor, onPress }: Props) {
+export default function Button({ children, icon, style, large, medium, small, backgroundColor, textColor, disabled, title, onPress }: Props) {
     const sizeStyle = small ? styles.small : ( medium ? styles.medium : styles.large )
     const colorStyle = backgroundColor ? { backgroundColor } : null
+    const buttonText = title || (typeof children === 'string' && children)
     return (
-        <TouchableOpacity style={{ ...styles.button, ...colorStyle, ...sizeStyle, ...style }} onPress={onPress}>
+        <TouchableOpacity style={{ ...styles.button, ...colorStyle, ...sizeStyle, ...style, opacity: disabled ? 0.7 : 1.0 }} onPress={onPress} disabled={disabled || false}>
             {!!icon && <View style={{ marginLeft: -8, marginRight: 8 }}>{icon}</View>}
-            {typeof children === 'string' ? <Text style={styles.text}>{children}</Text> : children}
+            {!!buttonText ? <Text style={styles.text}>{buttonText}</Text> : children}
         </TouchableOpacity>
     )
 }

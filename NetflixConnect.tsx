@@ -16,7 +16,7 @@ export default function NetflixConnectScreen({ navigation }:  { navigation: Fake
     const checkIfLoggedIn = (navState: {url: string}) => {
 
         if (navState.url === INFO_URL) {
-            console.log('we did it yay')
+            console.log('Netflix login success')
             AsyncStorage.setItem('@Friday:netflix:date', new Date().toISOString())
             .then(navigation.goBack)
         } else if (navState.url === `${LOGIN_URL}?nextpage=https%3A%2F%2Fwww.netflix.com%2Faccount%2Fgetmyinfo`) {
@@ -24,7 +24,7 @@ export default function NetflixConnectScreen({ navigation }:  { navigation: Fake
         } else {
             console.log('url', navState.url, typeof navState.url)
         }
-        // console.log(navState)
+        console.log(navState)
         // console.log(ref)
     }
 
