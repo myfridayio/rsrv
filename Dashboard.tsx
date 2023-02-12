@@ -64,7 +64,13 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
                 </TouchableOpacity>
             </View>
             <View style={styles.list}>
-                {shouldOffer &&
+                <Text style={styles.header}>Your NFTs</Text>
+                {(!nfts || !nfts.length) && <Text>No NFTs in your wallet</Text>}
+                {nfts.map(nft => <NftView key={nft.mintAddress.toString()} nft={nft}/>)}
+            </View>
+            {shouldOffer &&
+            <View style={styles.list}>
+                <Text style={styles.header}>Your Offers</Text>
                 <View style={styles.offer}>
                     <Text style={styles.offerTitle}>Mercedes F1 Team Badge</Text>
                     <Image
@@ -73,11 +79,8 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
                         source={require('./images/collection-mercedes.png')}
                     />
                     <Button style={{ marginTop: 20 }} onPress={() => navigation.navigate('Mercedes')}>Check Eligibility</Button>
-                </View>}
-                {!!nfts && !!nfts.length && <Text style={styles.header}>Your NFTs</Text>}
-                {nfts.map(nft => <NftView key={nft.mintAddress.toString()} nft={nft}/>)}
-            </View>
-            <View/>
+                </View>
+            </View>}
             <Text style={styles.message}>{message || ''}</Text>
         </View>
     );
@@ -86,7 +89,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
 
 const styles = StyleSheet.create({
     header: {
-        marginTop: 30, fontWeight: 'bold', fontSize: 20, color: 'black'
+        marginTop: 10, marginBottom: 20, fontWeight: 'bold', fontSize: 20, color: 'black'
     },
 
     container: {
