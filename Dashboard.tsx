@@ -31,7 +31,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
     }
 
     const loadNfts = async () => {
-        const wallet = await Wallet.shared()
+        const wallet = (await Wallet.shared())!
         setNfts([await wallet.getMercedes(), await wallet.getTwitter()].filter(x => !!x) as Metadata[])
     }
 
@@ -51,10 +51,6 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
         loadData()
         return navigation.addListener('focus', loadData)
     }, [])
-
-    nfts.forEach(nft => {
-        console.log(`https://explorer.solana.com/address/${nft.mintAddress.toString()}?cluster=devnet`)
-    })
 
     return (
         <View style={styles.container}>
