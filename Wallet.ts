@@ -1,12 +1,17 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Metaplex, keypairIdentity, bundlrStorage, Nft, Metadata } from "@metaplex-foundation/js";
-import { Connection, clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js";
+import { Metaplex, keypairIdentity, bundlrStorage, Nft, Metadata, JsonMetadata } from "@metaplex-foundation/js"
+import { Connection, clusterApiUrl, Keypair, PublicKey } from "@solana/web3.js"
 import _ from 'underscore'
+import * as Bip39 from 'bip39'
+import * as Keychain from 'react-native-keychain'
+import { generateMnemonic } from "@dreson4/react-native-quick-bip39"
+import { repeatUntil } from './lib/util/f'
 
 
 const connection = new Connection(clusterApiUrl("devnet"))
 const tempKeypair = Keypair.generate() // should this be my keypair? confused...
+
 
 const metaplex = Metaplex.make(connection)
     .use(keypairIdentity(tempKeypair))
@@ -14,20 +19,30 @@ const metaplex = Metaplex.make(connection)
 
 
 export default class Wallet {
+    private _publicKey: PublicKey
+    private _publicKeyString: string
 
-    isLoaded: boolean = false
-    publicKey: string | null = null
-    lastError: string | null = null
+    private constructor(publicKey: PublicKey) {
+        this._publicKey = publicKey
+        this._publicKeyString = publicKey.toString()
+    }
 
-    private constructor() {
+    get publicKey() {
+        return this._publicKey
+    }
+
+    get publicKeyString() {
+        return this._publicKeyString
     }
 
     private static _shared: Wallet | null
-    static async shared(): Promise<Wallet> {
+    static async shared() {
         if (!this._shared) {
-            const wallet = new Wallet()
-            this._shared = wallet
-            await wallet.load()
+            const keyString = await AsyncStorage.getItem('@Friday:publicKey')
+            if (!keyString) {
+                return null
+            }
+            this._shared = new Wallet(new PublicKey(keyString))
         }
         return this._shared
     }
@@ -38,48 +53,49 @@ export default class Wallet {
     }
 
     static async store(publicKey: PublicKey) {
-        const wallet = await Wallet.shared()
         await AsyncStorage.setItem('@Friday:publicKey', publicKey.toString())
-        wallet.publicKey = publicKey.toString()
+        return this.reload()
     }
 
     static async reload() {
-        const wallet = await this.shared()
-        wallet.isLoaded = false
-        await wallet.load()
+        this._shared = null
+        return this.shared()
     }
 
-    async load(cycle=0): Promise<Wallet> {
-        if (this.isLoaded) {
-            return this
-        }
-        await AsyncStorage.getItem('@Friday:publicKey')
-        .then((publicKey: string | null) => {
-            this.isLoaded = true
-            this.publicKey = publicKey
+    static async create() {
+        const tempMnemonics = generateMnemonic(128)
+        const seed = Bip39.mnemonicToSeedSync(tempMnemonics).slice(0, 32)
+        const keypair = Keypair.fromSeed(seed)
+        const publicKey = keypair.publicKey.toBase58()
+        const privateKey = JSON.stringify(keypair.secretKey)
+        console.log(`${publicKey}`)
+        Keychain.setGenericPassword(publicKey, privateKey)
+
+        const wallet = (await this.store(new PublicKey(publicKey)))!
+        await connection.requestAirdrop(wallet.publicKey, 1e8)
+        const checkAccount = async () => connection.getAccountInfo(wallet.publicKey, 'processed')
+        const isNotNull = (a: {}) => a !== null
+
+        const started = new Date().getTime()
+        repeatUntil(checkAccount, isNotNull, 1000, 10000)
+        .then(info => {
+            console.log(`WALLET: https://explorer.solana.com/address/${publicKey}?cluster=devnet`)
         })
-        return this
+        .catch(e => {
+            console.log('unable to retrieve account info')
+            console.error(e)
+        })
     }
 
 
     async getNfts(): Promise<Metadata[]> {
-        const me = await this.publicKeyOrFail()
-        const allNFTs = await metaplex.nfts().findAllByOwner({ owner: me }) as Metadata[]
+        const allNFTs = await metaplex.nfts().findAllByOwner({ owner: this.publicKey }) as Metadata[]
 
         return (await Promise.all(allNFTs.map(async (nft: Metadata) => {
             const response = await fetch(nft.uri)
-            const json = (await response.json()) as { image: string | null, name: string }
+            const json = (await response.json()) as JsonMetadata
             return { ...nft, json, jsonLoaded: true } as Metadata
         }))).filter(x => !!x)
-    }
-
-    async publicKeyOrFail(): Promise<PublicKey> {
-        const pk = (await this.load()).publicKey
-        if (pk) {
-            return new PublicKey(pk)
-        } else {
-            throw 'Invalid State: publicKey is null'
-        }
     }
 
     async getTwitter() {
@@ -107,10 +123,9 @@ export default class Wallet {
         if (twitter) {
             return twitter
         }
-        const me = await this.publicKeyOrFail()
         const handle = await AsyncStorage.getItem('@Friday:twitter:handle')
         const person = handle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
-        await generate(me.toString(), 'twitter', person)
+        await generate(this._publicKeyString, 'twitter', person)
         return this.getTwitter()
     }
 
@@ -119,10 +134,9 @@ export default class Wallet {
         if (mercedes) {
             return mercedes
         }
-        const me = await this.publicKeyOrFail()
         const handle = await AsyncStorage.getItem('@Friday:twitter:handle')
         const person = handle!.includes('kiril') ? 'kiril' : 'hue' // LMFAO right?
-        await generate(me.toString(), 'mercedes', person)
+        await generate(this._publicKeyString, 'mercedes', person)
         return this.getMercedes()
     }
 }

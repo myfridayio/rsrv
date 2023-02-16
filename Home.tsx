@@ -1,51 +1,42 @@
 import * as React from "react"
-import { View, Text, Button, Image, TouchableOpacity } from "react-native"
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native"
 import { FakeNav } from "./Types"
-import { generateMnemonic } from "@dreson4/react-native-quick-bip39"
-import * as Bip39 from 'bip39'
-import { Keypair, PublicKey } from '@solana/web3.js'
 import Wallet from "./Wallet"
 import Biometrics from 'react-native-biometrics'
-import * as Keychain from 'react-native-keychain'
-import { walletAdapterIdentity } from "@metaplex-foundation/js"
+import Colors from './lib/ui/color'
 
 interface Props {
     navigation: FakeNav
 }
 
 export default function HomeScreen({ navigation }: Props) {
-    const generateKey = async () => {
-        const tempMnemonics = generateMnemonic(128)
-        const seed = Bip39.mnemonicToSeedSync(tempMnemonics).slice(0, 32)
-        const keypair = Keypair.fromSeed(seed)
-        const publicKey = keypair.publicKey.toBase58()
-        const privateKey = JSON.stringify(keypair.secretKey)
-        console.log(publicKey)
-        Keychain.setGenericPassword(publicKey, privateKey)
-        await Wallet.store(new PublicKey(publicKey))
-    }
+    const [creating, setCreating] = React.useState(false)
 
     const createWallet = async () => {
-        if ((await Wallet.shared()).publicKey) {
-            navigation.navigate('Dashboard')
+        if (await Wallet.shared()) {
+            navigation.navigate('Dashboard') // already initialized wtf?
             return
         }
+
+        setCreating(true)
         const biometrics = new Biometrics()
         biometrics.simplePrompt({promptMessage: 'Confirm fingerprint'})
         .then(async ( { success }: { success: boolean}) => {
             if (success) {
                 console.log('successful biometrics provided')
-                await generateKey()
+                await Wallet.create()
                 navigation.navigate('Dashboard')
             } else {
                 console.log('user cancelled biometric prompt')
             }
         })
+        .finally(() => setCreating(false))
     }
 
     React.useEffect(() => {
         Wallet.shared().then(wallet => {
-            if (wallet.publicKey) {
+            if (wallet) {
+                console.log('to dash')
                 navigation.navigate('Dashboard')
             }
         })
@@ -62,7 +53,8 @@ export default function HomeScreen({ navigation }: Props) {
                 <Text style={{ marginTop: 100, fontSize: 50, alignContent: 'center', marginHorizontal: 50, textAlign: 'center', fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: 'white' }}>GET PAID FOR YOUR DATA</Text>
             </View>
             <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
-                <TouchableOpacity style={{ height: 50, alignItems: 'center', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25 }} onPress={createWallet}>
+                <TouchableOpacity style={{ height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginHorizontal: 60, backgroundColor: 'white', borderRadius: 25, opacity: creating ? 0.7 : 1.0 }} disabled={creating} onPress={createWallet}>
+                    {creating && <ActivityIndicator size="small" color={Colors.red} style={{ marginRight: 20 }}/>}
                     <Text style={{ fontSize:15, alignItems: 'center', justifyContent: 'center', fontFamily: 'AkzidenzGroteskBQ-Reg', color: '#ef390f', fontWeight: 'bold' }}>Create Wallet</Text>
                 </TouchableOpacity>
             </View>
