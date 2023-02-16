@@ -73,16 +73,9 @@ const parseCsv = async (csv: string): Promise<NFLXRecord[]> => {
 
         const records: NFLXRecord[] = []
         const parser = parse({ columns: fixColumns })
-        let it = true
         parser.on('readable', () => {
             let record
             while ((record = parser.read()) !== null) {
-                if (it) {
-                    it = false
-                    console.log("GOT ONE")
-                    console.log(record)
-                    console.log('----')
-                }
                 records.push(record as NFLXRecord)
             }
         })
@@ -106,6 +99,7 @@ export default function Mercedes({ navigation }: Props) {
     const [titleCount, setTitleCount] = React.useState(0)
     const [recordCount, setRecordCount] = React.useState(0)
     const [showNetflix, setShowNetflix] = React.useState(false)
+    const [showCheckButton, setShowCheckButton] = React.useState(true)
 
     const [doing, setDoing] = React.useState<string[]>([])
     const [done, setDone] = React.useState<{task: string, succeeded: boolean}[]>([])
@@ -155,6 +149,7 @@ export default function Mercedes({ navigation }: Props) {
 
     const checkEligibility = async () => {
         startDoing('Checking eligibility')
+        setShowCheckButton(false)
 
         const doSuccessfully = async (task: string, ms: number) => {
             startDoing(task)
@@ -168,7 +163,7 @@ export default function Mercedes({ navigation }: Props) {
                 return errorDoing('Error: Missing twitter data')
             }
 
-            const wallet = await Wallet.shared()
+            const wallet = (await Wallet.shared())!
             const following = JSON.parse(followingJson) as string[]
 
             if (_.every(TEAM_TWITTER_ACCOUNTS, handle => following.includes(handle))) {
@@ -185,15 +180,18 @@ export default function Mercedes({ navigation }: Props) {
                 //     completeDoing('Issuing Twitter NFT', 'Issued Twitter NFT')
                 // })
 
-                const mercedesIssue = doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[0]}`, 3000)
-                .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[1]}`, 3000))
-                .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[2]}`, 3000))
+                const mercedesIssue = doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[0]}`, 2000)
+                .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[1]}`, 2000))
+                .then(() => doSuccessfully(`Follows @${TEAM_TWITTER_ACCOUNTS[2]}`, 2000))
                 .then(() => doSuccessfully(`Watched "Drive to Survive"`, 3000))
                 .then(() => completeDoing('Checking eligibility', 'Mercedes F1 Fan NFT earned'))
                 .then(() => startDoing('Issuing Mercedes F1 Fan NFT'))
                 .then(() => wallet.grantMercedes())
                 .then(() => {
                     completeDoing('Issuing Mercedes F1 Fan NFT', 'Issued Mercedes F1 Fan NFT')
+                }).then(() => wallet.getMercedes())
+                .then(nft => {
+                    console.log(`MERCEDES: https://explorer.solana.com/address/${nft!.mintAddress.toString()}?cluster=devnet`)
                 })
 
                 await Promise.all([sleep(2000), /*twitterIssue, */mercedesIssue]).then(() => sleep(2000))
@@ -214,7 +212,8 @@ export default function Mercedes({ navigation }: Props) {
                 
                 errorDoing('Ineligible for Mercedes NFT')
 
-                await Promise.all([sleep(2000), twitterIssue]).then(() => sleep(2000))
+                // await Promise.all([sleep(2000), twitterIssue]).then(() => sleep(2000))
+                await sleep(2000)
                 navigation.goBack()
             }
         } catch (e) {
@@ -224,11 +223,16 @@ export default function Mercedes({ navigation }: Props) {
     }
 
     React.useEffect(() => {
-        if (isTwitterConnected && isNetflixConnected) {
-            console.log('loading netflix data')
-            loadNetflixCsv().then(parseCsv).then(setCsvEntries)
+        if (isTwitterConnected) {
+            AsyncStorage.getItem('@Friday:twitter:following').then(json => console.log(`TWITTER\n${json}\nEND TWITTER`))
         }
-    }, [isTwitterConnected, isNetflixConnected])
+    }, [isTwitterConnected])
+
+    React.useEffect(() => {
+        if (isNetflixConnected) {
+            loadNetflixCsv().then(csv => console.log('NETFLIX\n'+csv+'\nEND NETFLIX'))//parseCsv).then(setCsvEntries)
+        }
+    }, [isNetflixConnected])
 
     React.useEffect(() => {
         checkConnected()
@@ -274,20 +278,21 @@ export default function Mercedes({ navigation }: Props) {
             <Connectable
                 name={"Netflix"}
                 isConnected={isNetflixConnected}
-                canDisplay
+                canDisplay={false}
                 isDisplaying={showNetflix}
                 display={setShowNetflix}
                 onPress={() => navigation.navigate('NetflixConnect')}
                 buttonColor='#000'
                 icon={<Image style={{ width: 30, height: 30 }} resizeMode='stretch' source={require('./images/netflix_icon.png')}/>}
             />
+            {showCheckButton &&
             <View style={styles.buttonContainer}>
                 <Button icon={<FontAwesomeIcon icon={faCheckDouble} color="white"/>} disabled={!isNetflixConnected || !isTwitterConnected} onPress={checkEligibility}>Check Eligibility</Button>
-            </View>
+            </View>}
             <View style={{ marginTop: 10, width: '100%' }}>
                 <ActivityCenter doing={doing} done={done}/>
             </View>
-            {showNetflix && !!csvEntries && !!csvEntries.length &&
+            {/*showNetflix && !!csvEntries && !!csvEntries.length &&
             <View>
                 <Text>{commafy(recordCount)} records, {commafy(titleCount)} titles, {commafy(devices.length)} devices, {commafy(profiles.length)} profiles</Text>
                 <FlatList
@@ -297,7 +302,7 @@ export default function Mercedes({ navigation }: Props) {
                     keyExtractor={(item: NFLXRecord) => `${item.startTime}_${item.title}`}
                 />
             </View>
-            }
+            */}
         </View>
     );
 }
@@ -343,13 +348,13 @@ const ActivityCenter = ({ done, doing }: { done: DoneTask[], doing: string[] }) 
     return (
         <View style={styles.taskList}>
             {done.map(task => (
-            <View style={styles.taskEntry}>
+            <View key={task.task} style={styles.taskEntry}>
                 <Text><FontAwesomeIcon icon={task.succeeded ? faCheck : faX} color={task.succeeded ? 'green' : 'red'}/> <Text style={[styles.task, styles.taskDone]}>{task.task}</Text></Text>
             </View>
             ))}
             {doing.map((task: string) =>
             (
-                <View style={styles.taskEntry}>
+                <View key={task} style={styles.taskEntry}>
                     <ActivityIndicator size="small" color={Colors.red}/><Text style={[styles.task, styles.taskActive]}> {task}</Text>
                 </View>
             ))}
