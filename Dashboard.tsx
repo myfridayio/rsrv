@@ -49,6 +49,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
 
     React.useEffect(() => {
         loadData()
+        navigation.navigate('Connect', {})
         return navigation.addListener('focus', loadData)
     }, [])
 

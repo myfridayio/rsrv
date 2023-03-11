@@ -21,6 +21,21 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <intent-filter android:label="@string/auth_spotify_http">
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="http"
+                android:host="myfriday.io"
+                android:pathPrefix="/auth-spotify" />
+        </intent-filter>
+        <intent-filter android:label="@string/auth_spotify_friday">
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="friday"
+                android:host="auth-spotify" />
+        </intent-filter>
       </activity>
     </application>
 </manifest>
