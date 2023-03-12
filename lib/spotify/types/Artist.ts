@@ -1,3 +1,5 @@
+import type Image from './Image'
+
 export default interface Artist {
   name: string,
   id: string,
@@ -7,5 +9,5 @@ export default interface Artist {
   external_urls: { [key: string]: string },
   followers: { href: string, total: number },
   genres: string[],
-  images: { url: string, height: number, width: number }[]
+  images: Image[]
 }

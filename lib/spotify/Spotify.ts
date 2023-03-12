@@ -3,7 +3,7 @@ import { EmitterSubscription, Linking } from 'react-native'
 import { EventEmitter } from 'eventemitter3'
 import querystring from 'querystring'
 import { AuthState, AuthStateChangeHandler } from './auth'
-import { BatchQuery, Batch, BatchResponse, Artist, LinearBatchResponse } from './types'
+import { BatchQuery, Batch, BatchResponse, Artist, Track, LinearBatchResponse } from './types'
 
 const CLIENT_ID     = '5adf97582e2149e9a9b0f3a91131c028'
 const CLIENT_SECRET = '14b1696fcf904b48ac1ec1e2ca3c9a47'
@@ -175,11 +175,18 @@ export default class Spotify {
     return artists
   }
 
-  async getSavedTracks() {
-
+  async getTopTracks(offset: number | undefined = undefined): Promise<Track[]> {
+    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+    const batch: LinearBatchResponse<Track> = await this.call('me/top/tracks', params)
+    const { items: artists, offset: responseOffset } = batch
+    if (batch.next) {
+      const count = artists.length
+      return artists.concat(await this.getTopTracks(responseOffset + count))
+    }
+    return artists
   }
 
-  async getTopTracks() {
+  async getSavedTracks() {
 
   }
 

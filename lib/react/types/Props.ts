@@ -5,6 +5,7 @@ type RootStackParamList = {
   Connect: undefined
 }
 
+
 type Props<Screen extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Screen>
 
 export default Props
