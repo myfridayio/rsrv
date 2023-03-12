@@ -7,6 +7,8 @@ import { Props } from '../lib/react/types'
 import color from "../lib/ui/color"
 import _ from 'underscore'
 
+const ARTISTS = new Set<string>(["Robby Krieger", "Talib Kweli", "Tribe Friday", "The Doors", "Bartees Strange", "Revenge Wife", "Christian Crosby"])
+
 const Connect = ({ navigation }: Props<'Connect'>) => {
   const [followedArtists, setFollowedArtists] = React.useState<Artist[]>([])
   const [topArtists, setTopArtists] = React.useState<Artist[]>([])
@@ -33,27 +35,17 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     // followedArtists.forEach(a => console.log(a.name))
     // topArtists.forEach(a => console.log('TOP', a.name))
     // topTracks.forEach(t => console.log('Track:', t.name))
-    let tempScore = 0
-    for (const artist of followedArtists) {
-      if (artist.name === 'Tribe Friday') {
-        console.log('adding 5 to score because user follows Tribe Friday')
-        tempScore += 5
-      }
-    }
+    const followedArtistCount = followedArtists.filter(a => ARTISTS.has(a.name)).length
+    console.log('got', followedArtistCount, ' followed artists')
+    const topArtistCount = topArtists.filter(a => ARTISTS.has(a.name)).length
+    console.log('got', topArtistCount, ' top artists')
+    const topTrackCount = topTracks.filter(t => ARTISTS.has(t.name)).length
+    console.log('got', topTrackCount, ' top tracks')
 
-    for (const artist of topArtists) {
-      if (artist.name === 'Tribe Friday') {
-        tempScore += 100
-      }
-    }
+    const score = followedArtistCount + topArtistCount + topTrackCount
+    console.log('score', score)
 
-    for (const track of topTracks) {
-      if (_.any(track.artists, a => a.name === 'Tribe Friday')) {
-        tempScore += 100
-      }
-    }
-
-    setScore(tempScore)
+    setScore(score)
   }, [followedArtists, topArtists, topTracks])
 
   const authenticate = () => {
