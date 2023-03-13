@@ -3,7 +3,7 @@ import { EmitterSubscription, Linking } from 'react-native'
 import { EventEmitter } from 'eventemitter3'
 import querystring from 'querystring'
 import { AuthState, AuthStateChangeHandler } from './auth'
-import { BatchQuery, Playlist, BatchResponse, Artist, Track, LinearBatchResponse } from './types'
+import { BatchQuery, Playlist, BatchResponse, Artist, Track, LinearBatchResponse, Batch, PlayedItem } from './types'
 import PlaylistItem from './types/PlaylistItem'
 
 const CLIENT_ID     = '5adf97582e2149e9a9b0f3a91131c028'
@@ -161,6 +161,14 @@ export default class Spotify {
     } else {
       throw `ERROR @ ${url.toString()} - ${response.status} - ${response.statusText}`
     }
+  }
+
+  async getRecentlyPlayedTracks(afterTrackId: string | undefined = undefined): Promise<Track[]> {
+    const params = { limit: 50, ...(afterTrackId && { after: afterTrackId }) }
+    const batch: Batch<PlayedItem> = await this.call('me/player/recently-played', params)
+    const { items, cursors: { after } } = batch
+    const tracks = items.map(item => item.track)
+    return after ? tracks.concat(await this.getRecentlyPlayedTracks(after)) : tracks
   }
 
   async getFollowedArtists(afterArtistId: string | undefined = undefined) : Promise<Artist[]> {

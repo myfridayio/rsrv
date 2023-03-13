@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, Image } from "react-native"
+import { View, Text, Image, SafeAreaView } from "react-native"
 import { Button } from "../views"
 import Spotify, { AuthState } from '../lib/spotify'
 import { Artist, Playlist, Track } from '../lib/spotify/types'
@@ -79,6 +79,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [followedArtists, setFollowedArtists] = React.useState<Artist[]>([])
   const [topArtists, setTopArtists] = React.useState<Artist[]>([])
   const [topTracks, setTopTracks] = React.useState<Track[]>([])
+  const [recentTracks, setRecentTracks] = React.useState<Track[]>([])
   const [myTracks, setMyTracks] = React.useState<Track[]>([])
   const [playlistTracks, setPlaylistTracks] = React.useState<Track[]>([])
   const [matchedArtists, setMatchedArtists] = React.useState<Artist[]>([])
@@ -115,6 +116,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       }, 10000)
 
       Promise.all([
+        Spotify.shared().getRecentlyPlayedTracks().then(ts => { console.log('got', ts.length, 'recently played tracks'); setRecentTracks(ts)}),
         Spotify.shared().getFollowedArtists().then(as => { console.log('got followed artists', as.length); setFollowedArtists(as) } ),
         Spotify.shared().getTopArtists().then(as => { console.log('got top artists', as.length); setTopArtists(as) } ),
         Spotify.shared().getTopTracks().then(ts => { console.log('got top tracks', ts.length); setTopTracks(ts) } ),
@@ -153,44 +155,52 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     if (!dataSyncDone) return
 
     console.log('scoring')
+
+    const firstArtistMatch = (track: Track) => track.artists.find(a => ARTIST_NAMES.has(a.name))
+    const getArtistIdentifier = (a: Artist) => a.id || a.name
+    const tracksToArtists = (tracks: Track[]) => tracks.map(firstArtistMatch) as Artist[]
+
+    const recentTrackMatches = recentTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
+    const recentArtistMatches = _.uniq(tracksToArtists(recentTrackMatches), false, getArtistIdentifier)
+    const recentMatchCount = recentArtistMatches.length
+
     const followedMatches = followedArtists.filter(a => ARTIST_NAMES.has(a.name))
     const followedArtistCount = followedMatches.length
 
     const topArtistMatches = topArtists.filter(a => ARTIST_NAMES.has(a.name))
-    const topArtistCount = topArtistMatches.length
     
     const topTrackMatches = topTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const topTrackCount = topTrackMatches.length
+    const topTrackArtistMatches = _.uniq(tracksToArtists(topTrackMatches), false, getArtistIdentifier)
 
     const myTrackMatches = myTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const myTrackArtistMatches = myTrackMatches.map(t => t.artists.find(a => ARTIST_NAMES.has(a.name))).filter(x => !!x) as Artist[]
-    const myTrackCount = myTrackMatches.length
+    const myTrackArtistMatches = _.uniq(tracksToArtists(myTrackMatches), false, getArtistIdentifier)
+    const myTrackCount = myTrackArtistMatches.length
 
     const playlistTrackMatches = playlistTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const playlistArtistMatches = playlistTracks.map(t => t.artists.find(a => ARTIST_NAMES.has(a.name))).filter(x => !!x) as Artist[]
-    const playlistTrackCount = playlistTrackMatches.length
+    const playlistArtistMatches = _.uniq(tracksToArtists(playlistTrackMatches), false, getArtistIdentifier)
 
-    const topCount = topArtistCount + topTrackCount
-    const savedCount = myTrackCount + playlistTrackCount
+    const topArtistsMatched = _.uniq(topArtistMatches.concat(topTrackArtistMatches), false, getArtistIdentifier)
+    const topCount = topArtistMatches.length
 
-    const TOP_SCORE = 20
-    const FOLLOWED_SCORE = 10
-    const SAVED_SCORE = 5
+    const savedArtistsMatched = _.uniq(myTrackArtistMatches.concat(playlistArtistMatches), false, getArtistIdentifier)
+    const savedCount = savedArtistsMatched.length
 
-    const score = topCount * TOP_SCORE + followedArtistCount * FOLLOWED_SCORE + savedCount * SAVED_SCORE
+    const TOP_PTS = 50
+    const FOLLOWED_PTS = 10
+    const RECENT_PTS = 5
+    const SAVED_PTS = 1
 
-    const matchesWithDupes = followedMatches.concat(topArtistMatches).concat(myTrackArtistMatches).concat(playlistArtistMatches)
-    console.log('have', matchesWithDupes.length, 'undeduplicated matches')
-    const matchedIds = new Set<string>()
-    const dedupedMatches: Artist[] = []
-    matchesWithDupes.forEach((a => {
-      if (matchedIds.has(a.id)) return
-      dedupedMatches.push(a)
-    }))
-    console.log('have', dedupedMatches.length, 'deduplicated matches')
-    setMatchedArtists(dedupedMatches)
+    const savedScore = savedCount * SAVED_PTS
+    const recentScore = recentMatchCount * RECENT_PTS
+    const followedScore = followedArtistCount * FOLLOWED_PTS
+    const topScore = topCount * TOP_PTS
 
-    console.log('score', score)
+    const score = savedScore + recentScore + followedScore + topScore
+    console.log('saved', savedScore, '+ recent', recentScore, '+ followed', followedScore, '+ top', topScore, '=', score)
+
+    const allMatched = recentArtistMatches.concat(followedMatches).concat(topArtistsMatched).concat(savedArtistsMatched)
+    const dedupedMatched = _.uniq(allMatched, false, getArtistIdentifier)
+    console.log('have', allMatched.length, 'deduped to', dedupedMatched.length, 'matches')
 
     setScore(score)
   }, [dataSyncDone])
@@ -287,23 +297,25 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       start={{ x: 0.0, y: 0.0 }} end={{x: 1.2, y: 1.0}}
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
       colors={['#5504F1', '#FF48C0', '#FF88BB', '#FF2D1D']}
-      style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100%', width: '100%' }}>
+      style={{ height: '100%', width: '100%' }}>
+      <SafeAreaView style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100%', width: '100%' }}>
 
-      <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '100%', paddingRight: 20, paddingVertical: 20 }}>
-          <Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>
+        <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '100%', paddingRight: 20, paddingVertical: 20 }}>
+            <Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>
+          </View>
+          <Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>
         </View>
-        <Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>
-      </View>
-      <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
-        {centerContent()}
-      </View>
+        <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
+          {centerContent()}
+        </View>
 
-      <View style={{ height: 75, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        <Image source={require('../images/afa_logo.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-        <Image source={require('../images/give-a-note.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-        <Image source={require('../images/lilfri.png')} style={{ width: 20, height: 20, marginLeft: 20 }}/>
-      </View>
+        <View style={{ height: 75, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <Image source={require('../images/afa_logo.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+          <Image source={require('../images/give-a-note.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+          <Image source={require('../images/lilfri.png')} style={{ width: 20, height: 20, marginLeft: 20 }}/>
+        </View>
+      </SafeAreaView>
     </LinearGradient>
   )
 }
