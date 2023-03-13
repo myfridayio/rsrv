@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, Image, SafeAreaView } from "react-native"
+import { View, Text, Image, SafeAreaView, Share } from "react-native"
 import { Button } from "../views"
 import Spotify, { AuthState } from '../lib/spotify'
 import { Artist, Playlist, Track } from '../lib/spotify/types'
@@ -236,7 +236,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   const share = () => {
-
+    Share.share({ message: 'Music Unites Us! Download now at https://www.myfriday.io/music_unites_us' })
   }
 
   const checkTwitter = () => {
