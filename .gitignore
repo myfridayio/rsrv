@@ -3,3 +3,4 @@ android/app/build
 android/.gradle
 .DS_Storeandroid/.gradle/*
 yarn-error.log
+ios/Pods
