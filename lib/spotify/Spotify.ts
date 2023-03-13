@@ -3,7 +3,8 @@ import { EmitterSubscription, Linking } from 'react-native'
 import { EventEmitter } from 'eventemitter3'
 import querystring from 'querystring'
 import { AuthState, AuthStateChangeHandler } from './auth'
-import { BatchQuery, Batch, BatchResponse, Artist, Track, LinearBatchResponse } from './types'
+import { BatchQuery, Playlist, BatchResponse, Artist, Track, LinearBatchResponse } from './types'
+import PlaylistItem from './types/PlaylistItem'
 
 const CLIENT_ID     = '5adf97582e2149e9a9b0f3a91131c028'
 const CLIENT_SECRET = '14b1696fcf904b48ac1ec1e2ca3c9a47'
@@ -48,6 +49,7 @@ export default class Spotify {
 
   private setAuthState(authState: AuthState) {
     if (authState === this._authState) return
+    console.log('auth state ->', authState)
     const before = this._authState
     this._authState = authState
     this.emitter.emit('authStateChange', { before, after: authState })
@@ -87,7 +89,11 @@ export default class Spotify {
   }
 
   private async refreshAccessTokenIfNeeded() {
-    console.log('expires at', this.expiresIn, 'now =', new Date().getTime())
+    if (!this.accessToken) {
+      this.setAuthState(AuthState.UNAUTHENTICATED)
+      throw "nope"
+    }
+    // console.log('expires at', this.expiresIn, 'now =', new Date().getTime(), 'token =', !!this.accessToken, this.authState)
     if (this.expiresIn && new Date().getTime() >= this.expiresIn - 1000) {
       await this.refreshAccessToken()
     }
@@ -178,19 +184,47 @@ export default class Spotify {
   async getTopTracks(offset: number | undefined = undefined): Promise<Track[]> {
     const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
     const batch: LinearBatchResponse<Track> = await this.call('me/top/tracks', params)
-    const { items: artists, offset: responseOffset } = batch
+    const { items: tracks, offset: responseOffset } = batch
     if (batch.next) {
-      const count = artists.length
-      return artists.concat(await this.getTopTracks(responseOffset + count))
+      const count = tracks.length
+      return tracks.concat(await this.getTopTracks(responseOffset + count))
     }
-    return artists
+    return tracks
   }
 
-  async getSavedTracks() {
-
+  async getSavedTracks(offset: number | undefined = undefined): Promise<Track[]> {
+    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+    const batch: LinearBatchResponse<Track> = await this.call('me/tracks', params)
+    const { items: tracks, offset: responseOffset } = batch
+    if (batch.next) {
+      const count = tracks.length
+      return tracks.concat(await this.getTopTracks(responseOffset + count))
+    }
+    return tracks
   }
 
-  async getPlaylists() {
+  async getPlaylists(offset: number | undefined = undefined): Promise<Playlist[]> {
+    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+    const batch: LinearBatchResponse<Playlist> = await this.call('me/playlists', params)
+    const { items: playlists, offset: responseOffset } = batch
+    if (batch.next) {
+      const count = playlists.length
+      return playlists.concat(await this.getPlaylists(responseOffset + count))
+    }
+    console.log('playlists')
+    playlists.forEach(p => console.log('>', p.name, p.tracks))
+    return playlists
+  }
 
+  async getTracksForPlaylist(playlistId: string, offset: number | undefined = undefined): Promise<Track[]> {
+    const params: BatchQuery = { limit: 50, ...(offset && { offset }) }
+    const batch: LinearBatchResponse<PlaylistItem> = await this.call(`playlists/${playlistId}/tracks`, params)
+    const { items, offset: responseOffset } = batch
+    const tracks = items.map(i => i.track)
+    if (batch.next) {
+      const count = items.length
+      return tracks.concat(await this.getTracksForPlaylist(playlistId, responseOffset + count))
+    }
+    return tracks
   }
 }

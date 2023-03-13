@@ -13,16 +13,17 @@ interface Props {
     textColor?: string,
     disabled?: boolean,
     title?: string,
+    textStyle?: {} | null
 }
 
-export default function Button({ children, icon, style, large, medium, small, backgroundColor, textColor, disabled, title, onPress }: Props) {
+export default function Button({ children, icon, style, large, medium, small, backgroundColor, textColor, textStyle, disabled, title, onPress }: Props) {
     const sizeStyle = small ? styles.small : ( medium ? styles.medium : styles.large )
     const colorStyle = backgroundColor ? { backgroundColor } : null
     const buttonText = title || (typeof children === 'string' && children)
     return (
-        <TouchableOpacity style={{ ...styles.button, ...colorStyle, ...sizeStyle, ...style, opacity: disabled ? 0.7 : 1.0 }} onPress={onPress} disabled={disabled || false}>
+        <TouchableOpacity style={{ ...styles.button, ...colorStyle, ...sizeStyle, opacity: disabled ? 0.7 : 1.0, ...style }} onPress={onPress} disabled={disabled || false}>
             {!!icon && <View style={{ marginLeft: -8, marginRight: 8 }}>{icon}</View>}
-            {!!buttonText ? <Text style={styles.text}>{buttonText}</Text> : children}
+            {!!buttonText ? <Text style={{...styles.text, ...textStyle, ...(textColor ? { color: textColor } : null)}}>{buttonText}</Text> : children}
         </TouchableOpacity>
     )
 }

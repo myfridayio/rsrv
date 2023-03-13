@@ -37,6 +37,7 @@
     "react-native-fs": "^2.20.0",
     "react-native-get-random-values": "^1.8.0",
     "react-native-keychain": "^8.1.1",
+    "react-native-linear-gradient": "^2.6.2",
     "react-native-login-twitter": "^3.0.4",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-quick-base64": "^2.0.5",
