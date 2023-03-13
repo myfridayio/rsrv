@@ -260,18 +260,9 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     }
 
     setCreatingWallet(true)
-    const biometrics = new Biometrics()
-    biometrics.simplePrompt({promptMessage: 'Secure Access'})
-    .then(async ( { success }: { success: boolean}) => {
-      if (success) {
-        console.log('successful biometrics provided')
-        await Wallet.create()
-        setViewState(ViewState.Prompt)
-      } else {
-        console.log('user cancelled biometric prompt')
-      }
+    Wallet.create().then(() => {
+      setViewState(ViewState.Prompt)
     })
-    .finally(() => setCreatingWallet(false))
   }
 
   const share = () => {
@@ -303,7 +294,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     return (
       <>
         <Text style={{ marginTop: 50, fontSize: 80, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Are you a true fan?</Text>
-        <Text style={{ fontSize: 18, color: 'white', width: 250, textAlign: 'center', lineHeight: 28}}>Connect Spotify to check what artists you listen to, and Twitter for whether you follow the artists or our sponsors.</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 28}}>Connect Spotify to check what artists you listen to, and Twitter for whether you follow the artists or our sponsors.</Text>
         <Button onPress={authenticate} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal' }} style={{ width: 200, marginBottom: 50 }}>CHECK SPOTIFY</Button>
       </>
     )
