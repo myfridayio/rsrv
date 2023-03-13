@@ -1,10 +1,10 @@
-import SpotifyWebApi from 'spotify-web-api-node'
 import { EmitterSubscription, Linking } from 'react-native'
 import { EventEmitter } from 'eventemitter3'
 import querystring from 'querystring'
 import { AuthState, AuthStateChangeHandler } from './auth'
-import { BatchQuery, Playlist, BatchResponse, Artist, Track, LinearBatchResponse, Batch, PlayedItem } from './types'
-import PlaylistItem from './types/PlaylistItem'
+import { BatchQuery, Playlist, BatchResponse, Artist, Track, LinearBatchResponse, Batch, PlayedItem, Credentials, PlaylistItem } from './types'
+import Cache from './Cache'
+import { createSftBuilder } from '@metaplex-foundation/js'
 
 const CLIENT_ID     = '5adf97582e2149e9a9b0f3a91131c028'
 const CLIENT_SECRET = '14b1696fcf904b48ac1ec1e2ca3c9a47'
@@ -29,13 +29,19 @@ export default class Spotify {
   private emitter = new EventEmitter()
 
   private linkListener: EmitterSubscription
-  private expiresIn: number | undefined
   private _authState = AuthState.UNAUTHENTICATED
-  private accessToken: string | undefined
-  private refreshToken: string | undefined
+  private _creds: Credentials | null = null
 
   constructor() {
     this.linkListener = Linking.addEventListener('url', ({ url }) => this.onUrl(url))
+    Cache.shared().getCredentials().then(creds => {
+      if (creds) {
+        console.log('yay got creds')
+        this.setCreds(creds)
+      } else {
+        console.log('no stored creds')
+      }
+    })
   }
 
   get authState() { return this._authState }
@@ -67,9 +73,6 @@ export default class Spotify {
       this.setAuthState(AuthState.UNAUTHENTICATED)
     } else {
       this.acquireAccessToken(code)
-      .then(() => {
-        this.setAuthState(AuthState.AUTHENTICATED)
-      })
       .catch(e => {
         console.error(e)
         this.setAuthState(AuthState.UNAUTHENTICATED)
@@ -87,14 +90,18 @@ export default class Spotify {
     }
     return `${base}?${querystring.stringify(params)}`
   }
+  
+  isExpired() {
+    return this._creds && new Date().getTime() >= this._creds.expire_millis - 1000
+  }
 
   private async refreshAccessTokenIfNeeded() {
-    if (!this.accessToken) {
+    if (!this._creds) {
       this.setAuthState(AuthState.UNAUTHENTICATED)
-      throw "nope"
+      throw "Spotify Not Authenticated"
     }
-    // console.log('expires at', this.expiresIn, 'now =', new Date().getTime(), 'token =', !!this.accessToken, this.authState)
-    if (this.expiresIn && new Date().getTime() >= this.expiresIn - 1000) {
+
+    if (this.isExpired()) {
       await this.refreshAccessToken()
     }
   }
@@ -106,19 +113,30 @@ export default class Spotify {
     }
   }
 
+  private setCreds(creds: Credentials) {
+    this._creds = creds
+    if (creds && creds.access_token) {
+      this.setAuthState(AuthState.AUTHENTICATED)
+    }
+    Cache.shared().setCredentials(creds)
+  }
+
   private async refreshAccessToken() {
+    const creds = this._creds
+    if (!creds) {
+      throw "Not Authenticated"
+    }
     console.log('refreshing access token')
     const url = new URL(ACCOUNT_BASE_URL)
     url.pathname = '/api/token'
-    const body = new URLSearchParams({ grant_type: 'refresh_token', client_id: CLIENT_ID }).toString()
+    const body = new URLSearchParams({ grant_type: 'refresh_token', refresh_token: creds.refresh_token }).toString()
     const headers = this.basicPostHeaders()
 
     const result = await fetch(url.toString(), { method: 'post', body, headers })
     const { access_token, expires_in } = await result.json()
-    console.log('got access token', access_token)
+    console.log('refresh got access token', access_token, 'expires_in', expires_in)
 
-    this.accessToken = access_token
-    this.expiresIn = new Date().getTime() + (expires_in * 1000)
+    this.setCreds({ ...creds, access_token, expire_millis: new Date().getTime() + (expires_in * 1000) })
   }
 
   private async acquireAccessToken(code: string) {
@@ -135,10 +153,7 @@ export default class Spotify {
     }
 
     console.log('acquired', access_token, 'for', expires_in)
-
-    this.accessToken = access_token
-    this.refreshToken = refresh_token
-    this.expiresIn = new Date().getTime() + (expires_in * 1000)
+    this.setCreds({ access_token, refresh_token, expire_millis: new Date().getTime() + (expires_in * 1000) })
   }
 
   askUserToAuthenticate() {
@@ -153,7 +168,7 @@ export default class Spotify {
     url.pathname = `/v1/${path.startsWith('/') ? path.substring(1) : path}`
     url.search = `?${querystring.stringify(params)}`
 
-    const headers = { Authorization: `Bearer ${this.accessToken}`}
+    const headers = { Authorization: `Bearer ${this._creds!.access_token}`}
     const response = await fetch(url.toString(), { method: 'GET', headers })
     if (response.ok) {
       console.log('SUCCESS @', url.toString())
@@ -164,50 +179,127 @@ export default class Spotify {
   }
 
   async getRecentlyPlayedTracks(): Promise<Track[]> {
+    const saved = await Cache.shared().getRecentlyPlayedTracks()
+    if (saved) {
+      return saved
+    }
+    
     const params = { limit: 50 }
     const batch: Batch<PlayedItem> = await this.call('me/player/recently-played', params)
     const { items } = batch
-    return items.map(item => item.track)
+    const tracks = items.map(item => item.track)
+
+    await Cache.shared().setRecentlyPlayedTracks(tracks)
+    return tracks
   }
 
   async getFollowedArtists() : Promise<Artist[]> {
+    const saved = await Cache.shared().getFollowedArtists()
+    if (saved) {
+      return saved
+    }
+    
     const params: BatchQuery = { type: 'artist', limit: 50 }
     const batch: BatchResponse<Artist, 'artists'> = await this.call('me/following', params)
-    return batch.artists.items
+    const artists = batch.artists.items
+    
+    await Cache.shared().setFollowedArtists(artists)
+    return artists
   }
 
   async getTopArtists(): Promise<Artist[]> {
+    const saved = await Cache.shared().getTopArtists()
+    if (saved) {
+      return saved
+    }
+
     const params: BatchQuery = { time_range: 'long_term', limit: 50 }
     const batch: LinearBatchResponse<Artist> = await this.call('me/top/artists', params)
-    return batch.items
+    const artists = batch.items
+
+    await Cache.shared().setTopArtists(artists)
+    return artists
   }
 
   async getTopTracks(): Promise<Track[]> {
+    const saved = await Cache.shared().getTopTracks()
+    if (saved) {
+      return saved
+    }
+
     const params: BatchQuery = { time_range: 'long_term', limit: 50 }
     const batch: LinearBatchResponse<Track> = await this.call('me/top/tracks', params)
-    return batch.items
+    const tracks = batch.items
+
+    await Cache.shared().setTopTracks(tracks)
+    return tracks
   }
 
   async getSavedTracks(): Promise<Track[]> {
+    const saved = await Cache.shared().getSavedTracks()
+    if (saved) {
+      console.log('cache hit saved tracks')
+      return saved
+    }
+
     const params = { limit: 50 }
     const batch: LinearBatchResponse<Track> = await this.call('me/tracks', params)
-    return batch.items
+    const tracks = batch.items
+
+    await Cache.shared().setSavedTracks(tracks)
+    return tracks
+  }
+
+  async getPlaylistTracks(): Promise<Track[]> {
+    const playlists = await this.getPlaylists()
+    const trackLists = await Promise.all(playlists.map(p => this.getTracksForPlaylist(p.id)))
+    const ids = new Set<string>()
+    const combinedTracks: Track[] = []
+    trackLists.forEach(tracks => {
+      tracks.forEach(track => {
+        if (!track.id || ids.has(track.id)) return
+        ids.add(track.id)
+        combinedTracks.push(track)
+      })
+    })
+    return combinedTracks
   }
 
   async getPlaylists(): Promise<Playlist[]> {
+    const saved = await Cache.shared().getPlaylists()
+    if (saved) {
+      console.log('cache hit playlists')
+      return saved
+    }
+
     const params: BatchQuery = { time_range: 'long_term', limit: 50 }
     const batch: LinearBatchResponse<Playlist> = await this.call('me/playlists', params)
-    return batch.items
+    const playlists = batch.items
+
+    await Cache.shared().setPlaylists(playlists)
+    return playlists
   }
 
   async getTracksForPlaylist(playlistId: string, offset: number | undefined = undefined): Promise<Track[]> {
+    if (!offset) {
+      const saved = await Cache.shared().getPlaylistTracks(playlistId)
+      if (saved) {
+        console.log('cache hit playlist tracks')
+        return saved
+      }
+    }
+
     const params: BatchQuery = { limit: 50, ...(offset && { offset }) }
     const batch: LinearBatchResponse<PlaylistItem> = await this.call(`playlists/${playlistId}/tracks`, params)
     const { items, offset: responseOffset } = batch
-    const tracks = items.map(i => i.track)
+    let tracks = items.map(i => i.track)
     if (batch.next) {
       const count = items.length
-      return tracks.concat(await this.getTracksForPlaylist(playlistId, responseOffset + count))
+      tracks = tracks.concat(await this.getTracksForPlaylist(playlistId, responseOffset + count))
+    }
+
+    if (!offset) {
+      await Cache.shared().setPlaylistTracks(playlistId, tracks)
     }
     return tracks
   }

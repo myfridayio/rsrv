@@ -44,14 +44,14 @@ const styles = StyleSheet.create({
     },
 
     medium: {
-        paddingVertical: 6,
+        paddingVertical: 4,
         paddingHorizontal: 16,
         borderRadius: 15,
         height: 30
     },
 
     small: {
-        paddingVertical: 4,
+        paddingVertical: 2,
         paddingHorizontal: 10,
         borderRadius: 10,
         height: 20

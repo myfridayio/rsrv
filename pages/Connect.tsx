@@ -7,6 +7,10 @@ import { Props } from '../lib/react/types'
 import _ from 'underscore'
 import LinearGradient from 'react-native-linear-gradient'
 import { Svg, Defs, Path, Text as SvgText, TextPath } from "react-native-svg"
+import Wallet from "../Wallet"
+import Biometrics from 'react-native-biometrics'
+import { getHandle, saveHandle, getFollows } from "../lib/twitter"
+import DialogInput from 'react-native-dialog-input'
 
 type ArtistConfig = {
   name: string,
@@ -57,9 +61,11 @@ const DISPLAY_ARTISTS = ARTISTS.filter(a => a.display)
 
 const ARTIST_NAMES = new Set<string>(ARTISTS.map(a => a.name))
 
+const TWITTERS = ['sxsw', 'AFAmgmt', 'GiveANote', 'netflix', 'unclenearest', 'AmerSongwriter', 'Duravo_Luggage', 'BoozyBites', 'gibsonguitar', 'Fender', 'AlvarezGuitar', 'BlackstarAmps', 'casalumbre_', 'VidlLife']
+
 enum ViewState {
-  Default,
-  Authenticating,
+  Splash,
+  Prompt,
   Scoring,
   Scored,
 }
@@ -74,7 +80,7 @@ const ArtistImage = ({ source }: { source: any }) => {
 }
 
 const Connect = ({ navigation }: Props<'Connect'>) => {
-  const [viewState, setViewState] = React.useState<ViewState>(ViewState.Default)
+  const [viewState, setViewState] = React.useState<ViewState>(ViewState.Splash)
 
   const [followedArtists, setFollowedArtists] = React.useState<Artist[]>([])
   const [topArtists, setTopArtists] = React.useState<Artist[]>([])
@@ -85,14 +91,22 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [matchedArtists, setMatchedArtists] = React.useState<Artist[]>([])
 
   const [dataSyncDone, setDataSyncDone] = React.useState(false)
+  const [isGettingTwitterHandle, setGettingTwitterHandle] = React.useState(false)
+  const [twitterHandle, setTwitterHandle] = React.useState<string>()
+  const [twitterFollows, setTwitterFollows] = React.useState<string[]>([])
+  const [isCreatingWallet, setCreatingWallet] = React.useState(false)
 
   const [authState, setAuthState] = React.useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [score, setScore] = React.useState(0)
   const [displayingArtist, setDisplayingArtist] = React.useState(_.sample(DISPLAY_ARTISTS, 1)[0])
 
   React.useEffect(() => {
+    Wallet.shared().then(wallet => { if (wallet) { setViewState(viewState => viewState === ViewState.Splash ? ViewState.Prompt : viewState) }})
+    getHandle().then(handle => { if (handle) { setTwitterHandle(handle) } })
+
+    const unFollowAuthState = Spotify.shared().onAuthStateChange(({ after }) => { setAuthState(after)})
     setAuthState(Spotify.shared().authState)
-    return Spotify.shared().onAuthStateChange(({ after }) => { setAuthState(after)})
+    return unFollowAuthState
   }, [])
 
   React.useEffect(() => {
@@ -121,27 +135,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         Spotify.shared().getTopArtists().then(as => { console.log('got top artists', as.length); setTopArtists(as) } ),
         Spotify.shared().getTopTracks().then(ts => { console.log('got top tracks', ts.length); setTopTracks(ts) } ),
         Spotify.shared().getSavedTracks().then(ts => { console.log('got saved tracks', ts.length); setMyTracks(ts) } ),
-        Spotify.shared().getPlaylists().then(ps => Promise.all(ps.map(p => Spotify.shared().getTracksForPlaylist(p.id))))
-        .then(playlistTracks => {
-          const trackIds = new Set<string>()
-          const dedupedTracks: Track[] = []
-          playlistTracks.forEach(tracks => {
-            tracks.forEach(track => {
-              if (!track || !track.id) return
-              if (!trackIds.has(track.id)) {
-                trackIds.add(track.id)
-                dedupedTracks.push(track)
-              }
-            })
-          })
-          console.log('from playlists got', dedupedTracks.length, 'unique tracks')
-          setPlaylistTracks(dedupedTracks)
-        })
+        Spotify.shared().getPlaylistTracks().then(ts => { console.log('got', ts.length, 'playlist tracks'); setPlaylistTracks(ts) } ),
       ])
       .then(() => {
         setDataSyncDone(true)
-      })
-      .then(() => {
         if (isTimeUp) {
           showScore()
         } else {
@@ -174,7 +171,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
     const myTrackMatches = myTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
     const myTrackArtistMatches = _.uniq(tracksToArtists(myTrackMatches), false, getArtistIdentifier)
-    const myTrackCount = myTrackArtistMatches.length
 
     const playlistTrackMatches = playlistTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
     const playlistArtistMatches = _.uniq(tracksToArtists(playlistTrackMatches), false, getArtistIdentifier)
@@ -195,8 +191,11 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     const followedScore = followedArtistCount * FOLLOWED_PTS
     const topScore = topCount * TOP_PTS
 
-    const score = savedScore + recentScore + followedScore + topScore
-    console.log('saved', savedScore, '+ recent', recentScore, '+ followed', followedScore, '+ top', topScore, '=', score)
+    const twitterScore = _.intersection(TWITTERS.map(t => t.toLowerCase()), twitterFollows.map(t => t.toLowerCase())).length
+    console.log('found', twitterScore, 'matching twitter follows of', twitterFollows.length)
+
+    const score = savedScore + recentScore + followedScore + topScore + twitterScore
+    console.log('saved', savedScore, '+ recent', recentScore, '+ followed', followedScore, '+ top', topScore, '+ twitter', twitterScore, '=', score)
 
     const allMatched = recentArtistMatches.concat(followedMatches).concat(topArtistsMatched).concat(savedArtistsMatched)
     const dedupedMatched = _.uniq(allMatched, false, getArtistIdentifier)
@@ -204,11 +203,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
     setMatchedArtists(dedupedMatched)
     setScore(score)
-  }, [dataSyncDone])
+  }, [dataSyncDone, twitterFollows])
 
   const authenticate = () => {
     if (authState !== AuthState.AUTHENTICATED) {
-      setViewState(ViewState.Authenticating)
       console.log('authenticating')
       Spotify.shared().askUserToAuthenticate()
     } else {
@@ -216,11 +214,53 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     }
   }
 
+  const createWallet = async () => {
+    if (await Wallet.shared()) {
+      setViewState(ViewState.Prompt)
+      return
+    }
+
+    setCreatingWallet(true)
+    const biometrics = new Biometrics()
+    biometrics.simplePrompt({promptMessage: 'Confirm fingerprint'})
+    .then(async ( { success }: { success: boolean}) => {
+      if (success) {
+        console.log('successful biometrics provided')
+        await Wallet.create()
+        setViewState(ViewState.Prompt)
+      } else {
+        console.log('user cancelled biometric prompt')
+      }
+    })
+    .finally(() => setCreatingWallet(false))
+  }
+
   const share = () => {
 
   }
 
-  const StartScene = () => {
+  const checkTwitter = () => {
+    setGettingTwitterHandle(true)
+  }
+
+  React.useEffect(() => {
+    if (twitterHandle) {
+      saveHandle(twitterHandle)
+      getFollows(twitterHandle).then(setTwitterFollows)
+    }
+  }, [twitterHandle])
+
+  const SplashScene = () => {
+    return (
+      <>
+        <Text style={{ fontSize: 70, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Fandom</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet, connect Spotify, and see your score.</Text>
+        <Button onPress={createWallet} medium backgroundColor="white" textColor="#FF5C+B8" textStyle={{ fontWeight: 'normal', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
+      </>
+    )
+  }
+
+  const PromptScene = () => {
     return (
       <>
         <Text style={{ marginTop: 50, fontSize: 80, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Are you a true fan?</Text>
@@ -233,7 +273,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     React.useEffect(() => {
       const interval = setInterval(() => {
         setDisplayingArtist(_.sample(DISPLAY_ARTISTS, 1)[0])
-      }, 2000)
+      }, 1500)
       return () => {
         clearInterval(interval)
       }
@@ -256,11 +296,24 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         <Text style={{ fontSize: 150, fontWeight: '800', color: 'white' }}>{score}</Text>
         <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
         <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginVertical: 20, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
-        <Text style={{ color: 'white', fontSize: 16, fontWeight: '500', marginTop: 20 }}>SCORING:</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>In a Playlist - 1 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Recently Played - 5 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Following - 10 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Top Artist - 50 pt</Text>
+
+        {!twitterHandle && <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>}
+        <DialogInput
+          isDialogVisible={isGettingTwitterHandle}
+          title={"Twitter Handle"}
+          hintInput={"@yourname"}
+          submitInput={ (text: string) => { setTwitterHandle(text.trim()); setGettingTwitterHandle(false) } }
+          closeDialog={ () => setGettingTwitterHandle(false) }
+        ></DialogInput>
+
+        <Text style={{ color: 'white', fontSize: 16, fontWeight: '500', marginTop: 10 }}>SCORING:</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>In a Playlist - 1 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>Recently Played - 5 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>Following - 10 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>Top Artist - 50 pt</Text>
+        {!!twitterHandle &&
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 4, fontStyle: 'italic' }}>Twitter Follow - 1 pt</Text>
+        }
       </View>
     )
   }
@@ -282,15 +335,11 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   const centerContent = () => {
     switch (viewState) {
-      case ViewState.Default: 
-      case ViewState.Authenticating:
-        return <StartScene/>
-      case ViewState.Scoring:
-        return <WaitingScene/>
-      case ViewState.Scored:
-        return <ScoreScene/>
-      default:
-        return null
+      case ViewState.Splash: return <SplashScene/>
+      case ViewState.Prompt: return <PromptScene/>
+      case ViewState.Scoring: return <WaitingScene/>
+      case ViewState.Scored: return <ScoreScene/>
+      default: return null
     }
   }
 
