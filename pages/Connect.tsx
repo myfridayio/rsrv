@@ -335,9 +335,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
 
         {twitterHandle ?
-        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
+        <Text style={{ fontSize: 14, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
         :
-         <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>}
+        <>
+          <Text style={{ fontSize: 14, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic', marginVertical: 10 }}>Boost your score:</Text>
+          <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>
+        </>
+         }
         <DialogInput
           isDialogVisible={isGettingTwitterHandle}
           title={"Twitter Handle"}
