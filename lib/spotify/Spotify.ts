@@ -163,65 +163,41 @@ export default class Spotify {
     }
   }
 
-  async getRecentlyPlayedTracks(afterTrackId: string | undefined = undefined): Promise<Track[]> {
-    const params = { limit: 50, ...(afterTrackId && { after: afterTrackId }) }
+  async getRecentlyPlayedTracks(): Promise<Track[]> {
+    const params = { limit: 50 }
     const batch: Batch<PlayedItem> = await this.call('me/player/recently-played', params)
-    const { items, cursors: { after } } = batch
-    const tracks = items.map(item => item.track)
-    return after ? tracks.concat(await this.getRecentlyPlayedTracks(after)) : tracks
+    const { items } = batch
+    return items.map(item => item.track)
   }
 
-  async getFollowedArtists(afterArtistId: string | undefined = undefined) : Promise<Artist[]> {
-    const params: BatchQuery = { type: 'artist', limit: 50, ...(afterArtistId && { after: afterArtistId }) }
+  async getFollowedArtists() : Promise<Artist[]> {
+    const params: BatchQuery = { type: 'artist', limit: 50 }
     const batch: BatchResponse<Artist, 'artists'> = await this.call('me/following', params)
-    const { artists: { cursors: { after } } } = batch
-    return after ? batch.artists.items.concat(await this.getFollowedArtists(after)) : batch.artists.items
+    return batch.artists.items
   }
 
-  async getTopArtists(offset: number | undefined = undefined): Promise<Artist[]> {
-    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+  async getTopArtists(): Promise<Artist[]> {
+    const params: BatchQuery = { time_range: 'long_term', limit: 50 }
     const batch: LinearBatchResponse<Artist> = await this.call('me/top/artists', params)
-    const { items: artists, offset: responseOffset } = batch
-    if (batch.next) {
-      const count = artists.length
-      return artists.concat(await this.getTopArtists(responseOffset + count))
-    }
-    return artists
+    return batch.items
   }
 
-  async getTopTracks(offset: number | undefined = undefined): Promise<Track[]> {
-    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+  async getTopTracks(): Promise<Track[]> {
+    const params: BatchQuery = { time_range: 'long_term', limit: 50 }
     const batch: LinearBatchResponse<Track> = await this.call('me/top/tracks', params)
-    const { items: tracks, offset: responseOffset } = batch
-    if (batch.next) {
-      const count = tracks.length
-      return tracks.concat(await this.getTopTracks(responseOffset + count))
-    }
-    return tracks
+    return batch.items
   }
 
-  async getSavedTracks(offset: number | undefined = undefined): Promise<Track[]> {
-    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+  async getSavedTracks(): Promise<Track[]> {
+    const params = { limit: 50 }
     const batch: LinearBatchResponse<Track> = await this.call('me/tracks', params)
-    const { items: tracks, offset: responseOffset } = batch
-    if (batch.next) {
-      const count = tracks.length
-      return tracks.concat(await this.getTopTracks(responseOffset + count))
-    }
-    return tracks
+    return batch.items
   }
 
-  async getPlaylists(offset: number | undefined = undefined): Promise<Playlist[]> {
-    const params: BatchQuery = { time_range: 'long_term', limit: 50, ...(offset && { offset }) }
+  async getPlaylists(): Promise<Playlist[]> {
+    const params: BatchQuery = { time_range: 'long_term', limit: 50 }
     const batch: LinearBatchResponse<Playlist> = await this.call('me/playlists', params)
-    const { items: playlists, offset: responseOffset } = batch
-    if (batch.next) {
-      const count = playlists.length
-      return playlists.concat(await this.getPlaylists(responseOffset + count))
-    }
-    console.log('playlists')
-    playlists.forEach(p => console.log('>', p.name, p.tracks))
-    return playlists
+    return batch.items
   }
 
   async getTracksForPlaylist(playlistId: string, offset: number | undefined = undefined): Promise<Track[]> {

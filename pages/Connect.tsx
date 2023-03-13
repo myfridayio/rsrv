@@ -202,6 +202,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     const dedupedMatched = _.uniq(allMatched, false, getArtistIdentifier)
     console.log('have', allMatched.length, 'deduped to', dedupedMatched.length, 'matches')
 
+    setMatchedArtists(dedupedMatched)
     setScore(score)
   }, [dataSyncDone])
 
@@ -256,9 +257,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
         <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginVertical: 20, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
         <Text style={{ color: 'white', fontSize: 16, fontWeight: '500', marginTop: 20 }}>SCORING:</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>In a Playlist - 5 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Followed Artist - 10 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Top Artist - 20 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>In a Playlist - 1 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Recently Played - 5 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Following - 10 pt</Text>
+        <Text style={{ color: 'white', fontSize: 14, marginTop: 8 }}>Top Artist - 50 pt</Text>
       </View>
     )
   }
