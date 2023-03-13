@@ -22,7 +22,7 @@ export default class Cache {
 
   async getRecentlyPlayedTracks(): Promise<Track[] | null> {
     const storedJSON = await AsyncStorage.getItem('@Friday:spotify:recentTracks')
-    return storedJSON ? JSON.parse(storedJSON) : []
+    return storedJSON ? JSON.parse(storedJSON) : null
   }
 
   async setRecentlyPlayedTracks(tracks: Track[]) {

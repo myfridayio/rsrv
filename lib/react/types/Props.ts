@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack"
 type RootStackParamList = {
   Dashboard: undefined
   Connect: undefined
+  NFTs: undefined
 }
 
 

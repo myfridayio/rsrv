@@ -100,6 +100,31 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [score, setScore] = React.useState(0)
   const [displayingArtist, setDisplayingArtist] = React.useState(_.sample(DISPLAY_ARTISTS, 1)[0])
 
+  const saveData = () => {
+    const data = {
+      score,
+      twitterHandle,
+      twitterFollows,
+      followedArtists,
+      topArtists,
+      topTracks,
+      recentTracks,
+      matchedArtists,
+    }
+    const url = 'https://us-central1-friday-8bf41.cloudfunctions.net/saveRecord'
+    fetch(url, {
+      method: 'post',
+      body: JSON.stringify(data),
+      headers: {
+      'Content-Type': 'application/json'
+      }
+    }).then(() => {
+      console.log('ok')
+    }).catch(e => {
+      console.error(e)
+    })
+  }
+
   React.useEffect(() => {
     Wallet.shared().then(wallet => { if (wallet) { setViewState(viewState => viewState === ViewState.Splash ? ViewState.Prompt : viewState) }})
     getHandle().then(handle => { if (handle) { setTwitterHandle(handle) } })
@@ -205,6 +230,15 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     setScore(score)
   }, [dataSyncDone, twitterFollows])
 
+  React.useEffect(() => {
+    if (recentTracks.length) {
+      console.log('saving')
+      saveData()
+    } else {
+      console.log('not saving', recentTracks.length)
+    }
+  }, [matchedArtists])
+
   const authenticate = () => {
     if (authState !== AuthState.AUTHENTICATED) {
       console.log('authenticating')
@@ -264,6 +298,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     return (
       <>
         <Text style={{ marginTop: 50, fontSize: 80, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Are you a true fan?</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 250, textAlign: 'center', lineHeight: 28}}>Connect Spotify to check what artists you listen to, and Twitter for whether you follow the artists or our sponsors.</Text>
         <Button onPress={authenticate} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal' }} style={{ width: 200, marginBottom: 50 }}>CHECK SPOTIFY</Button>
       </>
     )
@@ -297,7 +332,12 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
         <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginVertical: 20, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
 
-        {!twitterHandle && <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>}
+
+
+        {twitterHandle ?
+        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
+        :
+         <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>}
         <DialogInput
           isDialogVisible={isGettingTwitterHandle}
           title={"Twitter Handle"}
@@ -305,15 +345,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
           submitInput={ (text: string) => { setTwitterHandle(text.trim()); setGettingTwitterHandle(false) } }
           closeDialog={ () => setGettingTwitterHandle(false) }
         ></DialogInput>
-
-        <Text style={{ color: 'white', fontSize: 16, fontWeight: '500', marginTop: 10 }}>SCORING:</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>In a Playlist - 1 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>Recently Played - 5 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>Following - 10 pt</Text>
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 4 }}>Top Artist - 50 pt</Text>
-        {!!twitterHandle &&
-        <Text style={{ color: 'white', fontSize: 14, marginTop: 4, fontStyle: 'italic' }}>Twitter Follow - 1 pt</Text>
-        }
       </View>
     )
   }
@@ -352,7 +383,8 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <SafeAreaView style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100%', width: '100%' }}>
 
         <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '100%', paddingRight: 20, paddingVertical: 20 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
+            <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
             <Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>
           </View>
           <Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>

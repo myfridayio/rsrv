@@ -12,7 +12,7 @@ import Dashboard from "./Dashboard"
 import NetflixConnect from "./NetflixConnect"
 import Mercedes from './Mercedes'
 import Menu from './Menu'
-import { Connect } from "./pages"
+import { Connect, NFTs } from "./pages"
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +32,7 @@ export default function App() {
         <Stack.Screen name="Mercedes" component={Mercedes} />
         <Stack.Screen name="Menu" component={Menu} />
         <Stack.Screen name="Connect" component={Connect} />
+        <Stack.Screen name="NFTs" component={NFTs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
