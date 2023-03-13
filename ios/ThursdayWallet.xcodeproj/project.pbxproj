@@ -12,14 +12,14 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		24B2F75AD2934629A1D93F5E /* AkzidenzGroteskBQ-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */; };
+		566FBC1CD1324DF9A6F89470 /* netflix-hue.csv in Resources */ = {isa = PBXBuildFile; fileRef = F61534DC46D146288C8A1474 /* netflix-hue.csv */; };
 		7699B88040F8A987B510C191 /* libPods-ThursdayWallet-ThursdayWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-ThursdayWallet-ThursdayWalletTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		B732CDFAF2E74286861B2CE9 /* AkzidenzGroteskBQ-BdCnd.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5D4FC717FB46C29E0584C2 /* AkzidenzGroteskBQ-BdCnd.ttf */; };
-		24B2F75AD2934629A1D93F5E /* AkzidenzGroteskBQ-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */; };
 		DE56FF4517AB47B18BBC92CC /* AkzidenzGroteskBQ-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC5A1BEC3632404697D72430 /* AkzidenzGroteskBQ-Light.ttf */; };
-		F8928A0568EB47CA80C62728 /* AkzidenzGroteskBQ-Reg.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9CAF79259A3143E5B6E25AA7 /* AkzidenzGroteskBQ-Reg.ttf */; };
 		F6B21E97090846D7ABC76CEE /* RubikMonoOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9FF4CDBD34C94054A7F3B467 /* RubikMonoOne-Regular.ttf */; };
-		566FBC1CD1324DF9A6F89470 /* netflix-hue.csv in Resources */ = {isa = PBXBuildFile; fileRef = F61534DC46D146288C8A1474 /* netflix-hue.csv */; };
+		F8928A0568EB47CA80C62728 /* AkzidenzGroteskBQ-Reg.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9CAF79259A3143E5B6E25AA7 /* AkzidenzGroteskBQ-Reg.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,18 +44,18 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ThursdayWallet/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-ThursdayWallet-ThursdayWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThursdayWallet-ThursdayWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-ThursdayWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet.debug.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Bold.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Bold.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-ThursdayWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet.release.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-ThursdayWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThursdayWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ThursdayWallet/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig"; sourceTree = "<group>"; };
+		9CAF79259A3143E5B6E25AA7 /* AkzidenzGroteskBQ-Reg.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Reg.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Reg.ttf"; sourceTree = "<group>"; };
+		9FF4CDBD34C94054A7F3B467 /* RubikMonoOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "RubikMonoOne-Regular.ttf"; path = "../assets/fonts/RubikMonoOne-Regular.ttf"; sourceTree = "<group>"; };
+		DA5D4FC717FB46C29E0584C2 /* AkzidenzGroteskBQ-BdCnd.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-BdCnd.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-BdCnd.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		DA5D4FC717FB46C29E0584C2 /* AkzidenzGroteskBQ-BdCnd.ttf */ = {isa = PBXFileReference; name = "AkzidenzGroteskBQ-BdCnd.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-BdCnd.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */ = {isa = PBXFileReference; name = "AkzidenzGroteskBQ-Bold.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		FC5A1BEC3632404697D72430 /* AkzidenzGroteskBQ-Light.ttf */ = {isa = PBXFileReference; name = "AkzidenzGroteskBQ-Light.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9CAF79259A3143E5B6E25AA7 /* AkzidenzGroteskBQ-Reg.ttf */ = {isa = PBXFileReference; name = "AkzidenzGroteskBQ-Reg.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Reg.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9FF4CDBD34C94054A7F3B467 /* RubikMonoOne-Regular.ttf */ = {isa = PBXFileReference; name = "RubikMonoOne-Regular.ttf"; path = "../assets/fonts/RubikMonoOne-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F61534DC46D146288C8A1474 /* netflix-hue.csv */ = {isa = PBXFileReference; name = "netflix-hue.csv"; path = "../assets/netflix-hue.csv"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F61534DC46D146288C8A1474 /* netflix-hue.csv */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "netflix-hue.csv"; path = "../assets/netflix-hue.csv"; sourceTree = "<group>"; };
+		FC5A1BEC3632404697D72430 /* AkzidenzGroteskBQ-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Light.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,7 +162,7 @@
 			sourceTree = "<group>";
 		};
 		E5916C3158B74BC4AA761B85 /* Resources */ = {
-			isa = "PBXGroup";
+			isa = PBXGroup;
 			children = (
 				DA5D4FC717FB46C29E0584C2 /* AkzidenzGroteskBQ-BdCnd.ttf */,
 				5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */,
@@ -172,8 +172,8 @@
 				F61534DC46D146288C8A1474 /* netflix-hue.csv */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
 			path = "";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
