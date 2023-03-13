@@ -299,8 +299,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         {centerContent()}
       </View>
 
-      <View style={{ height: 75, width: '100%' }}>
-
+      <View style={{ height: 75, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        <Image source={require('../images/afa_logo.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+        <Image source={require('../images/give-a-note.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+        <Image source={require('../images/lilfri.png')} style={{ width: 20, height: 20, marginLeft: 20 }}/>
       </View>
     </LinearGradient>
   )

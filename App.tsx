@@ -19,7 +19,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="About" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Connect" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
         <Stack.Screen name="CreateWallet" component={CreateWallet} />
