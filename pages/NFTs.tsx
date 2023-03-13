@@ -2,12 +2,13 @@
 import * as React from "react";
 import { View, Text, Image, StyleSheet, SafeAreaView } from "react-native"
 import Wallet from '../Wallet'
-import { FakeNav } from "../Types"
 import { Button } from '../views'
 import { Metadata } from "@metaplex-foundation/js";
 import { sleep } from "../lib/util";
 import { Props } from '../lib/react/types'
 import LinearGradient from 'react-native-linear-gradient'
+import { Cache as SpotifyCache } from '../lib/spotify'
+import { clearHandle } from "../lib/twitter";
 
 
 const NftView = ({ nft }: { nft: Metadata }) => (
@@ -25,7 +26,7 @@ export default function NFTs({ navigation }: Props<'NFTs'>) {
 
     const loadNfts = async () => {
         const wallet = (await Wallet.shared())!
-        setNfts([await wallet.getMercedes(), await wallet.getTwitter()].filter(x => !!x) as Metadata[])
+        setNfts(await wallet.getNfts())
     }
 
     const loadDataTwice = async () => {
@@ -37,8 +38,14 @@ export default function NFTs({ navigation }: Props<'NFTs'>) {
     React.useEffect(() => navigation.addListener('focus', loadDataTwice), [])
 
     React.useEffect(() => {
-        loadDataTwice()
-        return navigation.addListener('focus', loadNfts)
+      if (false) {
+        Wallet.reset()
+        SpotifyCache.shared().clearCreds()
+        clearHandle()
+      }
+
+      loadDataTwice()
+      return navigation.addListener('focus', loadNfts)
     }, [])
 
     return (

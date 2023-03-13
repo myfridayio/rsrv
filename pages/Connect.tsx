@@ -206,7 +206,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     const savedArtistsMatched = _.uniq(myTrackArtistMatches.concat(playlistArtistMatches), false, getArtistIdentifier)
     const savedCount = savedArtistsMatched.length
 
-    const TOP_PTS = 50
+    const TOP_PTS = 60
     const FOLLOWED_PTS = 10
     const RECENT_PTS = 5
     const SAVED_PTS = 1
@@ -388,7 +388,11 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
         <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
+            {viewState != ViewState.Splash ?
             <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
+            :
+            <View></View>
+          }
             <Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>
           </View>
           <Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>

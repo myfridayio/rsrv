@@ -7,6 +7,10 @@ export default class Cache {
     return this._instance
   }
 
+  async clearCreds() {
+    await AsyncStorage.removeItem('@Friday:spotify:creds')
+  }
+
   async getCredentials(): Promise<Credentials|null> {
     const storedJSON = await AsyncStorage.getItem('@Friday:spotify:creds')
     return storedJSON ? JSON.parse(storedJSON) : null

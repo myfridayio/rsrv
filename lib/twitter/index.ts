@@ -15,6 +15,10 @@ export const saveHandle = async(handle: string) => {
   await Cache.shared().setHandle(handle)
 }
 
+export const clearHandle = async () => {
+  await Cache.shared().clearHandle()
+}
+
 const twitter = async (path: string, params: { [key: string]: string | number } | undefined = undefined) => {
     let url = new URL(path, API_BASE).toString()
     if (params && Object.keys(params).length > 0) {

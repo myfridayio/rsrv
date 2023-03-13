@@ -15,6 +15,10 @@ export default class Cache {
     return AsyncStorage.getItem('@Friday:twitter:handle')
   }
 
+  async clearHandle() {
+    await AsyncStorage.removeItem('@Friday:twitter:handle')
+  }
+
   async saveFollows(handle: string, follows: string[]) {
     await AsyncStorage.setItem(`@Friday:twitter:follows:${handle}`, JSON.stringify(follows))
   }
