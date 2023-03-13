@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, Image, SafeAreaView, Share } from "react-native"
+import { View, Text, Image, SafeAreaView, Share, TouchableOpacity } from "react-native"
 import { Button } from "../views"
 import Spotify, { AuthState } from '../lib/spotify'
 import { Artist, Playlist, Track } from '../lib/spotify/types'
@@ -61,7 +61,10 @@ const DISPLAY_ARTISTS = ARTISTS.filter(a => a.display)
 
 const ARTIST_NAMES = new Set<string>(ARTISTS.map(a => a.name))
 
-const TWITTERS = ['sxsw', 'AFAmgmt', 'GiveANote', 'netflix', 'unclenearest', 'AmerSongwriter', 'Duravo_Luggage', 'BoozyBites', 'gibsonguitar', 'Fender', 'AlvarezGuitar', 'BlackstarAmps', 'casalumbre_', 'VidlLife']
+const TWITTERS = [
+  'RobbyKrieger', 'TheDoors', 'TalibKweli', 'blackstarmusic', 'bartees_strange', 'TribeFriday', 'RevengeWife', 'ChristianCrosb',
+  'sxsw', 'AFAmgmt', 'GiveANote', 'netflix', 'unclenearest', 'AmerSongwriter', 'Duravo_Luggage', 'BoozyBites', 'gibsonguitar', 'Fender', 'AlvarezGuitar', 'BlackstarAmps', 'casalumbre_', 'VidlLife'
+]
 
 enum ViewState {
   Splash,
@@ -95,6 +98,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [twitterHandle, setTwitterHandle] = React.useState<string>()
   const [twitterFollows, setTwitterFollows] = React.useState<string[]>([])
   const [isCreatingWallet, setCreatingWallet] = React.useState(false)
+  const [walletPublicKey, setWalletPublicKey] = React.useState('')
 
   const [authState, setAuthState] = React.useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [score, setScore] = React.useState(0)
@@ -110,6 +114,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       topTracks,
       recentTracks,
       matchedArtists,
+      walletPublicKey,
     }
     const url = 'https://us-central1-friday-8bf41.cloudfunctions.net/saveRecord'
     fetch(url, {
@@ -126,7 +131,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   React.useEffect(() => {
-    Wallet.shared().then(wallet => { if (wallet) { setViewState(viewState => viewState === ViewState.Splash ? ViewState.Prompt : viewState) }})
+    Wallet.shared().then(wallet => { if (wallet) { setViewState(viewState => viewState === ViewState.Splash ? ViewState.Prompt : viewState); setWalletPublicKey(wallet.publicKeyString) }})
     getHandle().then(handle => { if (handle) { setTwitterHandle(handle) } })
 
     const unFollowAuthState = Spotify.shared().onAuthStateChange(({ after }) => { setAuthState(after)})
@@ -256,7 +261,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
     setCreatingWallet(true)
     const biometrics = new Biometrics()
-    biometrics.simplePrompt({promptMessage: 'Confirm fingerprint'})
+    biometrics.simplePrompt({promptMessage: 'Secure Access'})
     .then(async ( { success }: { success: boolean}) => {
       if (success) {
         console.log('successful biometrics provided')
@@ -288,7 +293,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     return (
       <>
         <Text style={{ fontSize: 70, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Fandom</Text>
-        <Text style={{ fontSize: 16, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet, connect Spotify, and see your score.</Text>
+        <Text style={{ fontSize: 18, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet, connect Spotify, and see your score.</Text>
         <Button onPress={createWallet} medium backgroundColor="white" textColor="#FF5C+B8" textStyle={{ fontWeight: 'normal', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
       </>
     )
@@ -298,7 +303,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     return (
       <>
         <Text style={{ marginTop: 50, fontSize: 80, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Are you a true fan?</Text>
-        <Text style={{ fontSize: 16, color: 'white', width: 250, textAlign: 'center', lineHeight: 28}}>Connect Spotify to check what artists you listen to, and Twitter for whether you follow the artists or our sponsors.</Text>
+        <Text style={{ fontSize: 18, color: 'white', width: 250, textAlign: 'center', lineHeight: 28}}>Connect Spotify to check what artists you listen to, and Twitter for whether you follow the artists or our sponsors.</Text>
         <Button onPress={authenticate} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal' }} style={{ width: 200, marginBottom: 50 }}>CHECK SPOTIFY</Button>
       </>
     )
@@ -329,19 +334,22 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <View style={{ flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', width: '100%', }}>
         <Text style={{ fontSize: 40, fontWeight: '600', color: 'white', textTransform: 'uppercase' }}>You Scored!</Text>
         <Text style={{ fontSize: 150, fontWeight: '800', color: 'white' }}>{score}</Text>
-        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
-        <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginVertical: 20, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
-
-
+        <Text style={{ fontSize: 18, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
+        <Text style={{ fontSize: 16, color: '#5244DF', width: 200, marginVertical: 20, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
 
         {twitterHandle ?
-        <Text style={{ fontSize: 14, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
         :
         <>
-          <Text style={{ fontSize: 14, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic', marginVertical: 10 }}>Boost your score:</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic', lineHeight: 20 }}>Follow the artists and sponsors on Twitter?</Text>
+          <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic', marginBottom: 10, marginTop: 5 }}>Boost your score:</Text>
           <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>
         </>
          }
+
+         <TouchableOpacity onPress={() => navigation.navigate('NFTs')}>
+        <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginTop: 20, textAlign: 'center', textDecorationLine: 'underline'}}>Check your NFTs</Text>
+        </TouchableOpacity>
         <DialogInput
           isDialogVisible={isGettingTwitterHandle}
           title={"Twitter Handle"}
@@ -392,10 +400,12 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
             :
             <View></View>
-          }
-            <Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>
+            }
+            <View></View>
+            {/*<Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>*/}
           </View>
-          <Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>
+          {/*<Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>*/}
+          {textWorksButNoShadowSad()}
         </View>
         <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
           {centerContent()}
