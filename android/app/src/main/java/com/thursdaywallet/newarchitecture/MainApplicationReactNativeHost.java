@@ -19,7 +19,7 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.thursdaywallet.BuildConfig;
+//import io.myfriday.musicunitesus.BuildConfig;
 import com.thursdaywallet.newarchitecture.components.MainComponentsRegistry;
 import com.thursdaywallet.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;

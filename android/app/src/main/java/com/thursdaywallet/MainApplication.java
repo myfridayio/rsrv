@@ -12,6 +12,7 @@ import com.facebook.soloader.SoLoader;
 import com.thursdaywallet.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+//import io.myfriday.musicunitesus.BuildConfig;
 
 public class MainApplication extends Application implements ReactApplication {
 
