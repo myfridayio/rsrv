@@ -285,7 +285,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <>
         <Text style={{ fontSize: 70, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Fandom</Text>
         <Text style={{ fontSize: 18, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet, connect Spotify, and see your score.</Text>
-        <Button onPress={createWallet} medium backgroundColor="white" textColor="#FF5C+B8" textStyle={{ fontWeight: 'normal', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
+        <Button onPress={createWallet} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
       </>
     )
   }
