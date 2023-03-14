@@ -16,7 +16,7 @@ module.exports = {
   },
   resolver: {
     sourceExts: ['js', 'jsx', 'ts', 'tsx', 'json'],
-    assetExts: ['txt', 'csv', 'png'],
+    assetExts: ['txt', 'csv', 'png', 'jpg'],
   },
   extraNodeModules: {
     stream: require.resolve('readable-stream'),

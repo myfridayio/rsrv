@@ -246,7 +246,7 @@ export default function Mercedes({ navigation }: Props) {
                     <Image
                         style={{ width: 60, height: 60 }}
                         resizeMode='stretch'
-                        source={require('./images/friday_logo.png')}
+                        source={require('./images/friday_logo.jpg')}
                     />
                 </TouchableOpacity>
             </View>

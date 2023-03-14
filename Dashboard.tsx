@@ -57,7 +57,7 @@ export default function Dashboard({ navigation }: { navigation: FakeNav }) {
         <View style={styles.container}>
             <View>
                 <TouchableOpacity onPress={() => navigation.navigate('Menu')}>
-                    <Image style={styles.logo} resizeMode='stretch' source={require('./images/friday_logo.png')}/>
+                    <Image style={styles.logo} resizeMode='stretch' source={require('./images/friday_logo.jpg')}/>
                 </TouchableOpacity>
             </View>
             <View style={styles.list}>

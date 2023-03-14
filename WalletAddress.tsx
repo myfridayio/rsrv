@@ -29,7 +29,7 @@ export default function WalletAddressScreen({route, navigation}) {
             <Image
                 style={{ width: 60, height: 60, marginLeft: 20, marginTop: 40 }}
                 resizeMode='stretch'
-                source={require('./images/friday_logo.png')}
+                source={require('./images/friday_logo.jpg')}
             />
             <View style={{ position: 'absolute', width: '100%', justifyContent: 'center', bottom: 0, marginBottom: 30}}>
                 {showQRCode()}

@@ -48,7 +48,7 @@ export default function HomeScreen({ navigation }: Props) {
                 <Image
                     style={{ width: 80, height: 80, borderWidth: 1, borderColor: 'white' }}
                     resizeMode='stretch'
-                    source={require('./images/friday_logo.png')}
+                    source={require('./images/friday_logo.jpg')}
                 />
                 <Text style={{ marginTop: 100, fontSize: 50, alignContent: 'center', marginHorizontal: 50, textAlign: 'center', fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: 'white' }}>GET PAID FOR YOUR DATA</Text>
             </View>

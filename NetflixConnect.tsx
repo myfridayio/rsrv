@@ -47,7 +47,7 @@ export default function NetflixConnectScreen({ navigation }:  { navigation: Fake
                 <Image
                     style={{ width: 60, height: 60, marginLeft: 20, marginTop: 40 }}
                     resizeMode='stretch'
-                    source={require('./images/friday_logo.png')}
+                    source={require('./images/friday_logo.jpg')}
                 />
                 <Text style={{ marginTop: 30, fontSize: 60, marginLeft: 40, fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f' }}>CONNECT YOUR NETFLIX ACCOUNT</Text>
                 <WebView

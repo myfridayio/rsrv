@@ -30,7 +30,7 @@ export default function AboutScreen({navigation}) {
                 <Image
                     style={{ width: 80, height: 80, borderWidth: 1, borderColor: 'white' }}
                     resizeMode='stretch'
-                    source={require('./images/friday_logo.png')}
+                    source={require('./images/friday_logo.jpg')}
                 />
             </View>
       </View>

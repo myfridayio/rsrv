@@ -109,7 +109,7 @@ export default function TwitterConnectScreen({ navigation }: { navigation: FakeN
                 <Image
                     style={{ width: 60, height: 60, marginLeft: 20, marginTop: 40 }}
                     resizeMode='stretch'
-                    source={require('./images/friday_logo.png')}
+                    source={require('./images/friday_logo.jpg')}
                 />
                 <Text style={{ marginTop: 50, fontSize: 60, marginLeft: 40, marginBottom: 30, fontFamily: 'AkzidenzGroteskBQ-BdCnd', color: '#ef390f' }}>Log into Twitter</Text>
                 <TextInput
