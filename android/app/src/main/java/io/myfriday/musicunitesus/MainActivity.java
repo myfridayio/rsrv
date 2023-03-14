@@ -1,8 +1,10 @@
-package com.thursdaywallet;
+package io.myfriday.musicunitesus;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import io.myfriday.musicunitesus.BuildConfig;
+
 import android.os.Bundle;
 //import io.myfriday.musicunitesus.BuildConfig;
 

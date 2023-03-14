@@ -1,4 +1,4 @@
-package com.thursdaywallet;
+package io.myfriday.musicunitesus;
 
 import android.app.Application;
 import android.content.Context;
@@ -9,7 +9,9 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
-import com.thursdaywallet.newarchitecture.MainApplicationReactNativeHost;
+import io.myfriday.musicunitesus.BuildConfig;
+
+import io.myfriday.musicunitesus.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 //import io.myfriday.musicunitesus.BuildConfig;
@@ -74,7 +76,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.thursdaywallet.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("io.myfriday.musicunitesus.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);

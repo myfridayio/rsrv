@@ -1,4 +1,4 @@
-package com.thursdaywallet.newarchitecture.modules;
+package io.myfriday.musicunitesus.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

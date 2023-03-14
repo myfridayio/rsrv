@@ -1,7 +1,10 @@
-package com.thursdaywallet.newarchitecture;
+package io.myfriday.musicunitesus.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
+import io.myfriday.musicunitesus.newarchitecture.components.MainComponentsRegistry;
+import io.myfriday.musicunitesus.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -19,9 +22,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-//import io.myfriday.musicunitesus.BuildConfig;
-import com.thursdaywallet.newarchitecture.components.MainComponentsRegistry;
-import com.thursdaywallet.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import io.myfriday.musicunitesus.BuildConfig;
+// import com.thursdaywallet.BuildConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 
