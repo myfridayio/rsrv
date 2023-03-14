@@ -9,7 +9,7 @@ import { generateMnemonic } from "@dreson4/react-native-quick-bip39"
 import { repeatUntil } from './lib/util/f'
 
 
-const connection = new Connection(clusterApiUrl("devnet"))
+const connection = new Connection(clusterApiUrl("mainnet-beta"))
 const tempKeypair = Keypair.generate() // should this be my keypair? confused...
 
 
@@ -71,6 +71,7 @@ export default class Wallet {
         console.log(`${publicKey}`)
         Keychain.setGenericPassword(publicKey, privateKey)
 
+        /*
         const wallet = (await this.store(new PublicKey(publicKey)))!
         await connection.requestAirdrop(wallet.publicKey, 1e8)
         const checkAccount = async () => connection.getAccountInfo(wallet.publicKey, 'processed')
@@ -85,11 +86,12 @@ export default class Wallet {
             console.log('unable to retrieve account info')
             console.error(e)
         })
+        */
     }
 
 
     async getNfts(): Promise<Metadata[]> {
-        const allNFTs = await metaplex.nfts().findAllByOwner({ owner: this.publicKey }) as Metadata[]
+        const allNFTs = await metaplex.nfts().findAllByOwner({ owner: this.publicKey }).catch(e => []) as Metadata[]
 
         return (await Promise.all(allNFTs.map(async (nft: Metadata) => {
             const response = await fetch(nft.uri)
