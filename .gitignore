@@ -4,3 +4,6 @@ android/.gradle
 .DS_Storeandroid/.gradle/*
 yarn-error.log
 ios/Pods
+*.keystore
+*.pepk
+android/app/release
