@@ -25,8 +25,6 @@ export default function App() {
         <Stack.Screen name="CreateWallet" component={CreateWallet} />
         <Stack.Screen name="WalletAddress" component={WalletAddressScreen} />
         <Stack.Screen name="TwitterConnect" component={TwitterConnectScreen} />
-        <Stack.Screen name="MoreTokensConnect" component={MoreTokensConnectScreen} />
-        <Stack.Screen name="TwitterScreen" component={TwitterScreen} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="NetflixConnect" component={NetflixConnect} />
         <Stack.Screen name="Mercedes" component={Mercedes} />
