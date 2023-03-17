@@ -33,6 +33,7 @@ const IMAGES = {
   tribe: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Ftribefriday_nft.png?alt=media&token=8dbe2967-7fd3-4f3e-b810-078f5cb13eb2'
 }
 
+Object.values(IMAGES).forEach(Image.prefetch)
 
 const ARTISTS: ArtistConfig[] = [
   {
