@@ -19,22 +19,37 @@ type ArtistConfig = {
   image?: any,
 }
 
+
+const IMAGES = {
+  afa: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fafa_logo.png?alt=media&token=b869ae10-ca6f-42df-b07e-a67065e3a3d3',
+  giveanote: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fgive-a-note.png?alt=media&token=ac7b52ee-3846-4b37-9764-49076da74589',
+  blackfriday: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c',
+
+  bartees: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fbartees_nft.png?alt=media&token=5586b942-1290-4958-bd56-ec27190debbb',
+  crosby: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fcrosby_nft.png?alt=media&token=e1f6bded-e949-4884-8eed-592137a387b7',
+  kweli: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fkweli_nft.png?alt=media&token=dd7fefe0-025c-49da-a0fb-ba64fb89a3a4',
+  revenge: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Frevengewife_nft.png?alt=media&token=06cd8d8c-1bed-47e7-a51b-e64c3c186502',
+  robby: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Frobby_nft.png?alt=media&token=3ebaec5e-641d-4811-90d1-c4473b801d96',
+  tribe: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Ftribefriday_nft.png?alt=media&token=8dbe2967-7fd3-4f3e-b810-078f5cb13eb2'
+}
+
+
 const ARTISTS: ArtistConfig[] = [
   {
     name: "Robby Krieger",
     displayName: "Robby Krieger of The Doors",
     display: true,
-    image: require('../images/robby_nft.png'),
+    image: IMAGES.robby,
   },
   {
     name: "Talib Kweli",
     display: true,
-    image: require('../images/kweli_nft.png'),
+    image: IMAGES.kweli,
   },
   {
     name: "Tribe Friday",
     display: true,
-    image: require('../images/tribefriday_nft.png'),
+    image: IMAGES.tribe,
   },
   {
     name: "The Doors",
@@ -43,17 +58,17 @@ const ARTISTS: ArtistConfig[] = [
   {
     name: "Bartees Strange",
     display: true,
-    image: require('../images/bartees_nft.png'),
+    image: IMAGES.bartees,
   },
   {
     name: "Revenge Wife",
     display: true,
-    image: require('../images/revengewife_nft.png'),
+    image: IMAGES.revenge,
   },
   {
     name: "Christian Crosby",
     display: true,
-    image: require('../images/crosby_nft.png'),
+    image: IMAGES.crosby,
   }
 ]
 
@@ -74,10 +89,10 @@ enum ViewState {
 }
 
 
-const ArtistImage = ({ source }: { source: any }) => {
+const ArtistImage = ({ source }: { source: string }) => {
   return (
     <View style={{ borderRadius: 131, width: 262, height: 262, overflow: 'hidden' }}>
-      <Image source={source} style={{ width: 360, height: 360, marginLeft: -49, marginRight: -49, marginTop: -69, marginBottom: -29 }} />
+      <Image source={{ uri: source }} style={{ width: 360, height: 360, marginLeft: -49, marginRight: -49, marginTop: -69, marginBottom: -29 }} />
     </View>
   )
 }
@@ -403,9 +418,9 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         </View>
 
         <View style={{ height: 75, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('../images/afa_logo.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-          <Image source={require('../images/give-a-note.png')} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-          <Image source={require('../images/lilfri.png')} style={{ width: 20, height: 20, marginLeft: 20 }}/>
+          <Image source={{ uri: IMAGES.afa }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+          <Image source={{ uri: IMAGES.giveanote }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+          <Image source={{ uri: IMAGES.blackfriday }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
         </View>
       </SafeAreaView>
     </LinearGradient>
