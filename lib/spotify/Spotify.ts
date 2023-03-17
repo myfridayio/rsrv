@@ -5,6 +5,7 @@ import { AuthState, AuthStateChangeHandler } from './auth'
 import { BatchQuery, Playlist, BatchResponse, Artist, Track, LinearBatchResponse, Batch, PlayedItem, Credentials, PlaylistItem } from './types'
 import Cache from './Cache'
 import { createSftBuilder } from '@metaplex-foundation/js'
+import { Buffer } from 'buffer'
 
 const CLIENT_ID     = '5adf97582e2149e9a9b0f3a91131c028'
 const CLIENT_SECRET = '14b1696fcf904b48ac1ec1e2ca3c9a47'

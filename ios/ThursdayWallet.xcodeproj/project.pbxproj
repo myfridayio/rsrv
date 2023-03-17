@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* ThursdayWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ThursdayWalletTests.m */; };
+		125176649D734A6F9778122A /* libPods-ThursdayWallet-ThursdayWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F660496E7ACAE02C8871399F /* libPods-ThursdayWallet-ThursdayWalletTests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		24B2F75AD2934629A1D93F5E /* AkzidenzGroteskBQ-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */; };
-		2E9BB7E07E4625F7D425947B /* libPods-ThursdayWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CF9990965D7013619A42F62 /* libPods-ThursdayWallet.a */; };
 		566FBC1CD1324DF9A6F89470 /* netflix-hue.csv in Resources */ = {isa = PBXBuildFile; fileRef = F61534DC46D146288C8A1474 /* netflix-hue.csv */; };
-		654445F51745E1A3C68DE095 /* libPods-ThursdayWallet-ThursdayWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E583E20712AC597B08B99AC3 /* libPods-ThursdayWallet-ThursdayWalletTests.a */; };
+		66758406D539F715C1753E70 /* libPods-ThursdayWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 577946D0A570CE82873ECDC6 /* libPods-ThursdayWallet.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		B732CDFAF2E74286861B2CE9 /* AkzidenzGroteskBQ-BdCnd.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5D4FC717FB46C29E0584C2 /* AkzidenzGroteskBQ-BdCnd.ttf */; };
 		DE56FF4517AB47B18BBC92CC /* AkzidenzGroteskBQ-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC5A1BEC3632404697D72430 /* AkzidenzGroteskBQ-Light.ttf */; };
@@ -44,19 +44,19 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ThursdayWallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ThursdayWallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ThursdayWallet/main.m; sourceTree = "<group>"; };
-		2CF9990965D7013619A42F62 /* libPods-ThursdayWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThursdayWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Bold.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Bold.ttf"; sourceTree = "<group>"; };
-		5465EE574A09C6EBE5D0A46C /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
-		680FF9F3ACD5F5C81B5AA92C /* Pods-ThursdayWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet.release.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet.release.xcconfig"; sourceTree = "<group>"; };
+		577946D0A570CE82873ECDC6 /* libPods-ThursdayWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThursdayWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B6EC3182F415C0081BC08D8 /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ThursdayWallet/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		95E5E288F53BFA0E1A0FF327 /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig"; sourceTree = "<group>"; };
 		9CAF79259A3143E5B6E25AA7 /* AkzidenzGroteskBQ-Reg.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Reg.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Reg.ttf"; sourceTree = "<group>"; };
+		9CD7DB0B218742B4DB55582E /* Pods-ThursdayWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet.release.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet.release.xcconfig"; sourceTree = "<group>"; };
 		9FF4CDBD34C94054A7F3B467 /* RubikMonoOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RubikMonoOne-Regular.ttf"; path = "../assets/fonts/RubikMonoOne-Regular.ttf"; sourceTree = "<group>"; };
-		C214F351FE51354C778016C0 /* Pods-ThursdayWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet.debug.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		D22E555EA14A8CD46E05B3BD /* Pods-ThursdayWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet.debug.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		DA5D4FC717FB46C29E0584C2 /* AkzidenzGroteskBQ-BdCnd.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-BdCnd.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-BdCnd.ttf"; sourceTree = "<group>"; };
-		E583E20712AC597B08B99AC3 /* libPods-ThursdayWallet-ThursdayWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThursdayWallet-ThursdayWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F1DB80D0F57282B98708535F /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F61534DC46D146288C8A1474 /* netflix-hue.csv */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "netflix-hue.csv"; path = "../assets/netflix-hue.csv"; sourceTree = "<group>"; };
+		F660496E7ACAE02C8871399F /* libPods-ThursdayWallet-ThursdayWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThursdayWallet-ThursdayWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB2A2A9E29C0E44E00A0F01B /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		FB862CD229C10B4F00AA8602 /* FRI_MusicUnites_splash_page_Dropshadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FRI_MusicUnites_splash_page_Dropshadow.png; sourceTree = "<group>"; };
 		FC5A1BEC3632404697D72430 /* AkzidenzGroteskBQ-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Light.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Light.ttf"; sourceTree = "<group>"; };
@@ -67,7 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				654445F51745E1A3C68DE095 /* libPods-ThursdayWallet-ThursdayWalletTests.a in Frameworks */,
+				125176649D734A6F9778122A /* libPods-ThursdayWallet-ThursdayWalletTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,7 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2E9BB7E07E4625F7D425947B /* libPods-ThursdayWallet.a in Frameworks */,
+				66758406D539F715C1753E70 /* libPods-ThursdayWallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,8 +117,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				2CF9990965D7013619A42F62 /* libPods-ThursdayWallet.a */,
-				E583E20712AC597B08B99AC3 /* libPods-ThursdayWallet-ThursdayWalletTests.a */,
+				577946D0A570CE82873ECDC6 /* libPods-ThursdayWallet.a */,
+				F660496E7ACAE02C8871399F /* libPods-ThursdayWallet-ThursdayWalletTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -159,10 +159,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C214F351FE51354C778016C0 /* Pods-ThursdayWallet.debug.xcconfig */,
-				680FF9F3ACD5F5C81B5AA92C /* Pods-ThursdayWallet.release.xcconfig */,
-				5465EE574A09C6EBE5D0A46C /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */,
-				95E5E288F53BFA0E1A0FF327 /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */,
+				D22E555EA14A8CD46E05B3BD /* Pods-ThursdayWallet.debug.xcconfig */,
+				9CD7DB0B218742B4DB55582E /* Pods-ThursdayWallet.release.xcconfig */,
+				F1DB80D0F57282B98708535F /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */,
+				6B6EC3182F415C0081BC08D8 /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -187,12 +187,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "ThursdayWalletTests" */;
 			buildPhases = (
-				ED6A76605A7F8431B3EAD0AC /* [CP] Check Pods Manifest.lock */,
+				47277B1AB6C4E9A086001EE0 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				64B53AA71D808B92699ACE27 /* [CP] Embed Pods Frameworks */,
-				6545290712AF10FB1DB4FD18 /* [CP] Copy Pods Resources */,
+				8F6480AC4C34D182D9194999 /* [CP] Embed Pods Frameworks */,
+				A60217A636368B1BA8087864 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -208,14 +208,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ThursdayWallet" */;
 			buildPhases = (
-				C75D7938CDA8FC5F8993C1AF /* [CP] Check Pods Manifest.lock */,
+				72D7EEFBA429B7FC5B8149E5 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				C83FFF5A9D475BD4CF90B74B /* [CP] Embed Pods Frameworks */,
-				06D920BDF5B1FAD82B54F16B /* [CP] Copy Pods Resources */,
+				0502AEFC18DECAE79C65F249 /* [CP] Embed Pods Frameworks */,
+				FE651F109CACAA10CA4B9376 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -306,80 +306,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\nexport NODE_BINARY=\"/Users/kiril/.nvm/versions/node/v19.0.0/bin/node\"\n../node_modules/react-native/scripts/react-native-xcode.sh\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		06D920BDF5B1FAD82B54F16B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		64B53AA71D808B92699ACE27 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6545290712AF10FB1DB4FD18 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C75D7938CDA8FC5F8993C1AF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ThursdayWallet-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C83FFF5A9D475BD4CF90B74B /* [CP] Embed Pods Frameworks */ = {
+		0502AEFC18DECAE79C65F249 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -396,7 +323,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		ED6A76605A7F8431B3EAD0AC /* [CP] Check Pods Manifest.lock */ = {
+		47277B1AB6C4E9A086001EE0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -418,6 +345,62 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		72D7EEFBA429B7FC5B8149E5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ThursdayWallet-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8F6480AC4C34D182D9194999 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A60217A636368B1BA8087864 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet-ThursdayWalletTests/Pods-ThursdayWallet-ThursdayWalletTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -435,6 +418,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		FE651F109CACAA10CA4B9376 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThursdayWallet/Pods-ThursdayWallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -470,7 +470,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5465EE574A09C6EBE5D0A46C /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */;
+			baseConfigurationReference = F1DB80D0F57282B98708535F /* Pods-ThursdayWallet-ThursdayWalletTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -497,7 +497,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 95E5E288F53BFA0E1A0FF327 /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */;
+			baseConfigurationReference = 6B6EC3182F415C0081BC08D8 /* Pods-ThursdayWallet-ThursdayWalletTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -521,7 +521,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C214F351FE51354C778016C0 /* Pods-ThursdayWallet.debug.xcconfig */;
+			baseConfigurationReference = D22E555EA14A8CD46E05B3BD /* Pods-ThursdayWallet.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -615,7 +615,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 680FF9F3ACD5F5C81B5AA92C /* Pods-ThursdayWallet.release.xcconfig */;
+			baseConfigurationReference = 9CD7DB0B218742B4DB55582E /* Pods-ThursdayWallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
