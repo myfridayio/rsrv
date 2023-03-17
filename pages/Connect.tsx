@@ -33,7 +33,7 @@ const IMAGES = {
   tribe: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Ftribefriday_nft.png?alt=media&token=8dbe2967-7fd3-4f3e-b810-078f5cb13eb2'
 }
 
-Object.values(IMAGES).forEach(Image.prefetch)
+Object.values(IMAGES).forEach(uri => Image.prefetch(uri))
 
 const ARTISTS: ArtistConfig[] = [
   {
@@ -320,7 +320,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     React.useEffect(() => {
       const interval = setInterval(() => {
         setDisplayingArtist(_.sample(DISPLAY_ARTISTS, 1)[0])
-      }, 1500)
+      }, 1000)
       return () => {
         clearInterval(interval)
       }
