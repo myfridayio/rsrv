@@ -40,8 +40,10 @@ export default class Wallet {
         if (!this._shared) {
             const keyString = await AsyncStorage.getItem('@Friday:publicKey')
             if (!keyString) {
+                console.log('no key')
                 return null
             }
+            console.log('setting wallet')
             this._shared = new Wallet(new PublicKey(keyString))
         }
         return this._shared
@@ -69,24 +71,8 @@ export default class Wallet {
         const publicKey = keypair.publicKey.toBase58()
         const privateKey = JSON.stringify(keypair.secretKey)
         console.log(`${publicKey}`)
-        Keychain.setGenericPassword(publicKey, privateKey)
-
-        /*
-        const wallet = (await this.store(new PublicKey(publicKey)))!
-        await connection.requestAirdrop(wallet.publicKey, 1e8)
-        const checkAccount = async () => connection.getAccountInfo(wallet.publicKey, 'processed')
-        const isNotNull = (a: {}) => a !== null
-
-        const started = new Date().getTime()
-        repeatUntil(checkAccount, isNotNull, 1000, 10000)
-        .then(info => {
-            console.log(`WALLET: https://explorer.solana.com/address/${publicKey}?cluster=devnet`)
-        })
-        .catch(e => {
-            console.log('unable to retrieve account info')
-            console.error(e)
-        })
-        */
+        await Keychain.setGenericPassword(publicKey, privateKey)
+        return this.store(new PublicKey(publicKey))
     }
 
 
