@@ -8,3 +8,4 @@ ios/Pods
 *.pepk
 android/app/release
 ios/ThursdayWallet.xcworkspace/xcuserdata/kiril.xcuserdatad
+.DS_Store
