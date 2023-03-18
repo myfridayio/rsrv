@@ -9,7 +9,7 @@ import { generateMnemonic } from "@dreson4/react-native-quick-bip39"
 import { repeatUntil } from './lib/util/f'
 
 
-const connection = new Connection(clusterApiUrl("mainnet-beta"))
+const connection = new Connection(clusterApiUrl("devnet"))
 const tempKeypair = Keypair.generate() // should this be my keypair? confused...
 
 
