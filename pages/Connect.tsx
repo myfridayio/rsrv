@@ -12,6 +12,23 @@ import Biometrics from 'react-native-biometrics'
 import { getHandle, saveHandle, getFollows } from "../lib/twitter"
 import DialogInput from 'react-native-dialog-input'
 
+const cyrb53 = (str: string, seed = 0) => {
+  let h1 = 0xdeadbeef ^ seed,
+    h2 = 0x41c6ce57 ^ seed
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i)
+    h1 = Math.imul(h1 ^ ch, 2654435761)
+    h2 = Math.imul(h2 ^ ch, 1597334677)
+  }
+  
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
+  
+  return (h2>>>0).toString(16).padStart(8,'0')+(h1>>>0).toString(16).padStart(8,'0')
+}
+
+const hashString = cyrb53
+
 type ArtistConfig = {
   name: string,
   display: boolean,
@@ -120,34 +137,67 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [score, setScore] = React.useState(0)
   const [displayingArtist, setDisplayingArtist] = React.useState(_.sample(DISPLAY_ARTISTS, 1)[0])
 
+  const simplifyArtist = (artist: Artist) => {
+    return { name: artist.name, id: artist.id, uri: artist.uri }
+  }
+
+  const simplifyTrack = (track: Track) => {
+    return { id: track.id, name: track.name, uri: track.uri }
+  }
+
+  let savedHash: string
   const saveData = () => {
+    if (!walletPublicKey) {
+      console.log('no wallet')
+      return
+    }
+
     const data = {
+      _id: walletPublicKey,
       score,
       twitterHandle,
       twitterFollows,
-      followedArtists,
-      topArtists,
-      topTracks,
-      recentTracks,
-      matchedArtists,
+      followedArtists: followedArtists.map(simplifyArtist),
+      topArtists: topArtists.map(simplifyArtist),
+      topTracks: topTracks.map(simplifyTrack),
+      recentTracks: recentTracks.map(simplifyTrack),
+      matchedArtists: matchedArtists.map(simplifyArtist),
       walletPublicKey,
+    }
+    const body = JSON.stringify(data)
+    const hash = hashString(body)
+    if (hash === savedHash) {
+      console.log('not duplicating send')
+      return
+    } else {
+      console.log('sending')
     }
     const url = 'https://us-central1-friday-8bf41.cloudfunctions.net/saveRecord'
     fetch(url, {
       method: 'post',
-      body: JSON.stringify(data),
-      headers: {
-      'Content-Type': 'application/json'
+      body,
+      headers: { 'Content-Type': 'application/json' }
+    }).then(async response => {
+      try {
+        await response.json().then(j => console.log('got bck', j)).catch(e => console.error(e))
+        console.log('successfully saved data')
+        savedHash = hash
+      } catch(e) {
+        console.log('failed to parse response', response.statusText)
       }
-    }).then(() => {
-      console.log('ok')
     }).catch(e => {
+      console.log('OH NOES')
       console.error(e)
     })
   }
 
+  const loadWallet = async () => {
+    const wallet = (await Wallet.shared()) || (await Wallet.create())!
+    setWalletPublicKey(wallet.publicKeyString)
+  }
+
   React.useEffect(() => {
-    Wallet.shared().then(wallet => { if (wallet) { setViewState(viewState => viewState === ViewState.Splash ? ViewState.Prompt : viewState); setWalletPublicKey(wallet.publicKeyString) }})
+    loadWallet()
     getHandle().then(handle => { if (handle) { setTwitterHandle(handle) } })
 
     const unFollowAuthState = Spotify.shared().onAuthStateChange(({ after }) => { setAuthState(after)})
@@ -252,13 +302,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }, [dataSyncDone, twitterFollows])
 
   React.useEffect(() => {
-    if (recentTracks.length) {
-      console.log('saving')
+    if (recentTracks.length && walletPublicKey) {
+      console.log('saving data')
       saveData()
     } else {
-      console.log('not saving', recentTracks.length)
+      console.log('not saving...', recentTracks.length, walletPublicKey)
     }
-  }, [matchedArtists])
+  }, [matchedArtists, walletPublicKey])
 
   const authenticate = () => {
     if (authState !== AuthState.AUTHENTICATED) {
