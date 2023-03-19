@@ -349,7 +349,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const SplashScene = () => {
     return (
       <>
-        <Text style={{ fontSize: 70, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Fandom</Text>
+        <Text style={{ fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Fandom</Text>
         <Text style={{ fontSize: 18, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet, connect Spotify, and see your score.</Text>
         <Button onPress={createWallet} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
       </>
@@ -390,9 +390,9 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     return (
       <View style={{ flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', width: '100%', }}>
         <Text style={{ fontSize: 40, fontWeight: '600', color: 'white', textTransform: 'uppercase' }}>You Scored!</Text>
-        <Text style={{ fontSize: 150, fontWeight: '800', color: 'white' }}>{score}</Text>
+        <Text style={{ fontSize: 130, fontWeight: '800', color: 'white' }}>{score}</Text>
         <Text style={{ fontSize: 18, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
-        <Text style={{ fontSize: 16, color: '#5244DF', width: 200, marginVertical: 20, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
+        <Text style={{ fontSize: 16, color: '#5244DF', width: 200, marginVertical: 10, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
 
         {twitterHandle ?
         <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
@@ -449,29 +449,29 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
       colors={['#5504F1', '#FF48C0', '#FF88BB', '#FF2D1D']}
       style={{ height: '100%', width: '100%' }}>
-      <SafeAreaView style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100%', width: '100%' }}>
-
-        <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
-            {viewState != ViewState.Splash ?
-            <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
-            :
-            <View></View>
-            }
-            <View></View>
-            {/*<Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>*/}
+      <SafeAreaView>
+        <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '95%', width: '100%' }}>
+          <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
+              {viewState != ViewState.Splash ?
+              <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
+              :
+              <View></View>
+              }
+              <View></View>
+              {/*<Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>*/}
+            </View>
+            {/*<Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>*/}
+            {textWorksButNoShadowSad()}
           </View>
-          {/*<Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>*/}
-          {textWorksButNoShadowSad()}
+          <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
+            {centerContent()}
+          </View>
         </View>
-        <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
-          {centerContent()}
-        </View>
-
-        <View style={{ height: 75, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={{ uri: IMAGES.afa }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-          <Image source={{ uri: IMAGES.giveanote }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-          <Image source={{ uri: IMAGES.blackfriday }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
+        <View style={{ height: 50, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 20 }}>
+            <Image source={{ uri: IMAGES.afa }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+            <Image source={{ uri: IMAGES.giveanote }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
+            <Image source={{ uri: IMAGES.blackfriday }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
         </View>
       </SafeAreaView>
     </LinearGradient>

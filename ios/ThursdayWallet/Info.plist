@@ -13,15 +13,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string></string>
-			<key>LSHandlerRank</key>
-			<string>Default</string>
-		</dict>
-	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Music Unites Us</string>
 	<key>CFBundleExecutable</key>
