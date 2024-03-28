@@ -349,9 +349,9 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const SplashScene = () => {
     return (
       <>
-        <Text style={{ fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Fandom</Text>
-        <Text style={{ fontSize: 18, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet, connect Spotify, and see your score.</Text>
-        <Button onPress={createWallet} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
+        <Text style={{ fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Credit</Text>
+        <Text style={{ fontSize: 18, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet. Connect your bank account with Plaid, and see your score.</Text>
+        <Button onPress={createWallet} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
       </>
     )
   }
@@ -447,7 +447,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     <LinearGradient
       start={{ x: 0.0, y: 0.0 }} end={{x: 1.2, y: 1.0}}
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
-      colors={['#5504F1', '#FF48C0', '#FF88BB', '#FF2D1D']}
+      colors={['#626567', '#797D7F', '#909497', '#797D7F']}
       style={{ height: '100%', width: '100%' }}>
       <SafeAreaView>
         <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '95%', width: '100%' }}>
@@ -459,18 +459,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
               <View></View>
               }
               <View></View>
-              {/*<Button onPress={share} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>SHARE</Button>*/}
             </View>
-            {/*<Text style={styles.musicUnitesUs}>MUSIC UNITES US!</Text>*/}
-            {textWorksButNoShadowSad()}
           </View>
           <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
             {centerContent()}
           </View>
         </View>
         <View style={{ height: 50, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 20 }}>
-            <Image source={{ uri: IMAGES.afa }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
-            <Image source={{ uri: IMAGES.giveanote }} style={{ width: 35, height: 20, marginLeft: 20 }}/>
             <Image source={{ uri: IMAGES.blackfriday }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
         </View>
       </SafeAreaView>
