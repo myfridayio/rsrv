@@ -5,6 +5,7 @@ platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'ThursdayWallet' do
+  pod 'react-native-incode-sdk', :path => '../node_modules/react-native-incode-sdk/ios'
   config = use_native_modules!
 
   # Flags change depending on the env values.

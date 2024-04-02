@@ -11,6 +11,7 @@ import Wallet from "../Wallet"
 import Biometrics from 'react-native-biometrics'
 import { getHandle, saveHandle, getFollows } from "../lib/twitter"
 import DialogInput from 'react-native-dialog-input'
+import IncodeSdk from 'react-native-incode-sdk';
 
 const cyrb53 = (str: string, seed = 0) => {
   let h1 = 0xdeadbeef ^ seed,
@@ -101,6 +102,7 @@ const TWITTERS = [
 
 enum ViewState {
   Splash,
+  KYC,
   Prompt,
   Scoring,
   Scored,
@@ -310,6 +312,34 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     }
   }, [matchedArtists, walletPublicKey])
 
+  const initializeAndRunOnboarding = () => {
+    IncodeSdk.initialize({
+      testMode: false,
+      apiConfig: {
+        key: '50d4d4c1cb6fa0a1d64dd1951bb0270892e1dd3c',
+        url: 'https://demo-api.incodesmile.com/',
+      },
+    })
+      .then(_ => {
+        // 2. configure and start onboarding
+        IncodeSdk.showCloseButton(true);
+        startOnboarding();
+      })
+      .catch(e => console.error('Incode SDK failed init', e));
+  };
+
+  const startOnboarding = () =>
+    IncodeSdk.startOnboarding({
+      flowConfig: [
+        {module: 'IdScan'},
+      ],
+    })
+      .then(result => {
+        console.log(result);
+        setViewState(ViewState.Prompt)
+      })
+      .catch(error => console.log(error));
+
   const authenticate = () => {
     if (authState !== AuthState.AUTHENTICATED) {
       console.log('authenticating')
@@ -321,13 +351,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   const createWallet = async () => {
     if (await Wallet.shared()) {
-      setViewState(ViewState.Prompt)
+      setViewState(ViewState.KYC)
       return
     }
 
     setCreatingWallet(true)
     Wallet.create().then(() => {
-      setViewState(ViewState.Prompt)
+      setViewState(ViewState.KYC)
     })
   }
 
@@ -356,12 +386,22 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     )
   }
 
+  const KYCScene = () => {
+    return (
+      <>
+        <Text style={{ marginTop: 40, fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>VERIFY YOURSELF</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Verify yourself with a valid id or passport.</Text>
+        <Button onPress={initializeAndRunOnboarding} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, marginTop: 14 }}>VERIFY YOURSELF</Button>
+      </>
+    )
+  }
+
   const PromptScene = () => {
     return (
       <>
-        <Text style={{ marginTop: 40, fontSize: 80, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Are you a true fan?</Text>
-        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Connect Spotify to check what artists you listen to, and Twitter for whether you follow the artists or our sponsors.</Text>
-        <Button onPress={authenticate} medium backgroundColor="white" textColor="#FF5CB8" textStyle={{ fontWeight: 'normal' }} style={{ width: 200, marginBottom: 50, marginTop: 14 }}>CHECK SPOTIFY</Button>
+        <Text style={{ marginTop: 40, fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>CONNECT VIA PLAID</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Connect your bank account securely via Plaid.</Text>
+        <Button onPress={authenticate} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold' }} style={{ width: 200, marginBottom: 50, marginTop: 14 }}>Connect</Button>
       </>
     )
   }
@@ -436,6 +476,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const centerContent = () => {
     switch (viewState) {
       case ViewState.Splash: return <SplashScene/>
+      case ViewState.KYC: return <KYCScene/>
       case ViewState.Prompt: return <PromptScene/>
       case ViewState.Scoring: return <WaitingScene/>
       case ViewState.Scored: return <ScoreScene/>
@@ -447,13 +488,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     <LinearGradient
       start={{ x: 0.0, y: 0.0 }} end={{x: 1.2, y: 1.0}}
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
-      colors={['#626567', '#797D7F', '#909497', '#797D7F']}
+      colors={['#020D43', '#1140A1', '#1977FF', '#020D43']}
       style={{ height: '100%', width: '100%' }}>
       <SafeAreaView>
         <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '95%', width: '100%' }}>
           <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
-              {viewState != ViewState.Splash ?
+              {viewState === ViewState.Prompt ?
               <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
               :
               <View></View>

@@ -45,7 +45,8 @@
     "readable-stream": "^4.3.0",
     "stream": "^0.0.2",
     "underscore": "^1.13.6",
-    "zlib": "^1.0.5"
+    "zlib": "^1.0.5",
+    "react-native-incode-sdk": "https://sdk-js.s3.amazonaws.com/react-native/react-native-incode-sdk-5.5.0-nvc.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
