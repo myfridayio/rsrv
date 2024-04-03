@@ -204,7 +204,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   const createLinkToken = React.useCallback(async () => {
     console.log(address)
-    await fetch(`http://${address}:8080/api/create_link_token`, {
+    await fetch(`https://friday-8bf41.web.app/api/create_link_token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -220,6 +220,22 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       console.log(err);
     });
   }, [setLinkToken])
+
+  const getBalance = React.useCallback(async () => {
+    await fetch(`https://friday-8bf41.web.app/api/balance`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Sandeep - balance data - '+JSON.stringify(data))
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
 
   React.useEffect(() => {
     loadWallet()
@@ -375,14 +391,14 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   const createWallet = async () => {
     if (await Wallet.shared()) {
-      setViewState(ViewState.Prompt)
+      setViewState(ViewState.KYC)
       createLinkToken()
       return
     }
 
     setCreatingWallet(true)
     Wallet.create().then(() => {
-      setViewState(ViewState.Prompt)
+      setViewState(ViewState.KYC)
       createLinkToken()
     })
   }
@@ -433,7 +449,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
-            await fetch(`http://${address}:8080/api/exchange_public_token`, {
+            await fetch(`https://friday-8bf41.web.app/api/exchange_public_token`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
