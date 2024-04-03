@@ -16,6 +16,7 @@ PODS:
   - hermes-engine (0.70.6)
   - libevent (2.1.12)
   - OpenSSL-Universal (1.1.2200)
+  - Plaid (5.3.3)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -248,6 +249,9 @@ PODS:
     - React-Core
   - react-native-incode-sdk (5.5.0-nvc):
     - React-Core
+  - react-native-plaid-link-sdk (11.6.0):
+    - Plaid (~> 5.3.1)
+    - React-Core
   - react-native-quick-base64 (2.0.5):
     - React-Core
   - react-native-quick-crypto (0.5.0):
@@ -372,6 +376,7 @@ DEPENDENCIES:
   - react-native-biometrics (from `../node_modules/react-native-biometrics`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-incode-sdk (from `../node_modules/react-native-incode-sdk/ios`)
+  - react-native-plaid-link-sdk (from `../node_modules/react-native-plaid-link-sdk`)
   - react-native-quick-base64 (from `../node_modules/react-native-quick-base64`)
   - react-native-quick-crypto (from `../node_modules/react-native-quick-crypto`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -401,6 +406,7 @@ SPEC REPOS:
     - fmt
     - libevent
     - OpenSSL-Universal
+    - Plaid
 
 EXTERNAL SOURCES:
   boost:
@@ -453,6 +459,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-get-random-values"
   react-native-incode-sdk:
     :path: "../node_modules/react-native-incode-sdk/ios"
+  react-native-plaid-link-sdk:
+    :path: "../node_modules/react-native-plaid-link-sdk"
   react-native-quick-base64:
     :path: "../node_modules/react-native-quick-base64"
   react-native-quick-crypto:
@@ -511,6 +519,7 @@ SPEC CHECKSUMS:
   hermes-engine: 2af7b7a59128f250adfd86f15aa1d5a2ecd39995
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: 6e1ae0555546e604dbc632a2b9a24a9c46c41ef6
+  Plaid: 8f7c0dd273ed98421c73c8f817016bc69a416c72
   RCT-Folly: 0080d0a6ebf2577475bda044aa59e2ca1f909cda
   RCTRequired: e1866f61af7049eb3d8e08e8b133abd38bc1ca7a
   RCTTypeSafety: 27c2ac1b00609a432ced1ae701247593f07f901e
@@ -529,6 +538,7 @@ SPEC CHECKSUMS:
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-incode-sdk: 2f6e7b74d563cd42be4be9bf8bef9ff355c7a92f
+  react-native-plaid-link-sdk: 3f208a472b285df6f8479a8373b87c3eabba3db0
   react-native-quick-base64: e657e9197e61b60a9dec49807843052b830da254
   react-native-quick-crypto: a903ff39ac8fea78bb9d37cccc5cc0596afc9670
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
@@ -553,6 +563,6 @@ SPEC CHECKSUMS:
   RNSVG: c1e76b81c76cdcd34b4e1188852892dc280eb902
   Yoga: 99caf8d5ab45e9d637ee6e0174ec16fbbb01bcfc
 
-PODFILE CHECKSUM: 7cf4310dd67528ce1624c134d3135c7d49f030b7
+PODFILE CHECKSUM: f3d61ecbb5d587944f51afefe8fc38df5bb3d525
 
 COCOAPODS: 1.11.3

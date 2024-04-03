@@ -46,6 +46,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ThursdayWallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ThursdayWallet/main.m; sourceTree = "<group>"; };
 		263FA47929C7BFE00097437F /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		264D17A82BBD1462004F545A /* ThursdayWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ThursdayWallet.entitlements; path = ThursdayWallet/ThursdayWallet.entitlements; sourceTree = "<group>"; };
 		26E2AA9E2BB53D8400F2BADC /* ThursdayWallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ThursdayWallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		26E2AA9F2BB53D8400F2BADC /* Void.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Void.swift; sourceTree = "<group>"; };
 		5268DDA8158D416A9F49159D /* AkzidenzGroteskBQ-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AkzidenzGroteskBQ-Bold.ttf"; path = "../assets/fonts/AkzidenzGroteskBQ-Bold.ttf"; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 		13B07FAE1A68108700A75B9A /* ThursdayWallet */ = {
 			isa = PBXGroup;
 			children = (
+				264D17A82BBD1462004F545A /* ThursdayWallet.entitlements */,
 				263FA47929C7BFE00097437F /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -534,6 +536,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ThursdayWallet/ThursdayWallet.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7Y78Z5556P;
 				ENABLE_BITCODE = NO;
@@ -631,6 +634,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ThursdayWallet/ThursdayWallet.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 7Y78Z5556P;

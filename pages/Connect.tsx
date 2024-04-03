@@ -1,10 +1,10 @@
 import * as React from "react"
-import { View, Text, Image, SafeAreaView, Share, TouchableOpacity } from "react-native"
+import { View, Text, Image, SafeAreaView, Share, TouchableOpacity, Platform } from "react-native"
 import { Button } from "../views"
 import Spotify, { AuthState } from '../lib/spotify'
 import { Artist, Playlist, Track } from '../lib/spotify/types'
 import { Props } from '../lib/react/types'
-import _ from 'underscore'
+import _, { create } from 'underscore'
 import LinearGradient from 'react-native-linear-gradient'
 import { Svg, Defs, Path, Text as SvgText, TextPath } from "react-native-svg"
 import Wallet from "../Wallet"
@@ -12,6 +12,7 @@ import Biometrics from 'react-native-biometrics'
 import { getHandle, saveHandle, getFollows } from "../lib/twitter"
 import DialogInput from 'react-native-dialog-input'
 import IncodeSdk from 'react-native-incode-sdk';
+import {PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk';
 
 const cyrb53 = (str: string, seed = 0) => {
   let h1 = 0xdeadbeef ^ seed,
@@ -139,6 +140,9 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [score, setScore] = React.useState(0)
   const [displayingArtist, setDisplayingArtist] = React.useState(_.sample(DISPLAY_ARTISTS, 1)[0])
 
+  const [linkToken, setLinkToken] = React.useState(null);
+  const address = Platform.OS === 'ios' ? 'localhost' : '10.0.2.2';
+
   const simplifyArtist = (artist: Artist) => {
     return { name: artist.name, id: artist.id, uri: artist.uri }
   }
@@ -197,6 +201,25 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     const wallet = (await Wallet.shared()) || (await Wallet.create())!
     setWalletPublicKey(wallet.publicKeyString)
   }
+
+  const createLinkToken = React.useCallback(async () => {
+    console.log(address)
+    await fetch(`http://${address}:8080/api/create_link_token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ address: address })
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('data - '+JSON.stringify(data))
+      setLinkToken(data.link_token);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, [setLinkToken])
 
   React.useEffect(() => {
     loadWallet()
@@ -336,7 +359,8 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     })
       .then(result => {
         console.log(result);
-        setViewState(ViewState.Prompt)
+        if(result.status === 'success')
+          setViewState(ViewState.Prompt)
       })
       .catch(error => console.log(error));
 
@@ -351,13 +375,15 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   const createWallet = async () => {
     if (await Wallet.shared()) {
-      setViewState(ViewState.KYC)
+      setViewState(ViewState.Prompt)
+      createLinkToken()
       return
     }
 
     setCreatingWallet(true)
     Wallet.create().then(() => {
-      setViewState(ViewState.KYC)
+      setViewState(ViewState.Prompt)
+      createLinkToken()
     })
   }
 
@@ -401,7 +427,32 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <>
         <Text style={{ marginTop: 40, fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>CONNECT VIA PLAID</Text>
         <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Connect your bank account securely via Plaid.</Text>
-        <Button onPress={authenticate} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold' }} style={{ width: 200, marginBottom: 50, marginTop: 14 }}>Connect</Button>
+        <PlaidLink
+          tokenConfig={{
+            token: linkToken,
+            noLoadingState: false,
+          }}
+          onSuccess={async (success: LinkSuccess) => {
+            await fetch(`http://${address}:8080/api/exchange_public_token`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ public_token: success.publicToken }),
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+            console.log(success);
+            //navigation.navigate('Success', success);
+          }}
+          onExit={(response: LinkExit) => {
+            console.log(response);
+          }}>
+          <View style={{width: 200, marginBottom: 50, marginTop: 14, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, borderRadius: 15, height: 30, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: "#626567", fontWeight: 'bold', textTransform: 'uppercase'}}>CONNECT</Text>
+          </View>
+        </PlaidLink>
       </>
     )
   }

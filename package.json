@@ -21,8 +21,12 @@
     "assert": "^2.0.0",
     "bip39": "^3.0.4",
     "csv-parse": "^5.3.5",
+    "dotenv": "^16.4.5",
     "eventemitter3": "^5.0.0",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "path": "^0.12.7",
+    "plaid": "^22.0.1",
     "querystring": "^0.2.1",
     "react": "18.1.0",
     "react-native": "0.70.6",
@@ -31,8 +35,10 @@
     "react-native-dialog-input": "^1.0.8",
     "react-native-fs": "^2.20.0",
     "react-native-get-random-values": "^1.8.0",
+    "react-native-incode-sdk": "https://sdk-js.s3.amazonaws.com/react-native/react-native-incode-sdk-5.5.0-nvc.tgz",
     "react-native-keychain": "^8.1.1",
     "react-native-linear-gradient": "^2.6.2",
+    "react-native-plaid-link-sdk": "^11.6.0",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-quick-base64": "^2.0.5",
     "react-native-quick-crypto": "^0.5.0",
@@ -45,8 +51,7 @@
     "readable-stream": "^4.3.0",
     "stream": "^0.0.2",
     "underscore": "^1.13.6",
-    "zlib": "^1.0.5",
-    "react-native-incode-sdk": "https://sdk-js.s3.amazonaws.com/react-native/react-native-incode-sdk-5.5.0-nvc.tgz"
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
