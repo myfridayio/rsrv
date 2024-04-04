@@ -141,7 +141,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [displayingArtist, setDisplayingArtist] = React.useState(_.sample(DISPLAY_ARTISTS, 1)[0])
 
   const [linkToken, setLinkToken] = React.useState(null);
-  const address = Platform.OS === 'ios' ? 'localhost' : '10.0.2.2';
 
   const simplifyArtist = (artist: Artist) => {
     return { name: artist.name, id: artist.id, uri: artist.uri }
@@ -203,7 +202,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   const createLinkToken = React.useCallback(async () => {
-    console.log(address)
     await fetch(`https://friday-8bf41.web.app/api/create_link_token`, {
     method: "POST",
     headers: {
