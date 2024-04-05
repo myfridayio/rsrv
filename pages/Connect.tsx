@@ -207,7 +207,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ address: address })
     })
     .then((response) => response.json())
     .then((data) => {
@@ -228,7 +227,23 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log('Sandeep - balance data - '+JSON.stringify(data))
+      //console.log('Sandeep - balance data - '+JSON.stringify(data))
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
+  const getTransactions = React.useCallback(async () => {
+    await fetch(`https://friday-8bf41.web.app/api/transactions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Sandeep - transaction data - '+JSON.stringify(data))
     })
     .catch((err) => {
       console.log(err);
@@ -457,11 +472,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             .catch((err) => {
               console.log(err);
             });
-            console.log(success);
+            //console.log(success);
             //navigation.navigate('Success', success);
+            //getBalance()
+            getTransactions()
           }}
           onExit={(response: LinkExit) => {
-            console.log(response);
+            //console.log(response);
           }}>
           <View style={{width: 200, marginBottom: 50, marginTop: 14, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, borderRadius: 15, height: 30, alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: "#626567", fontWeight: 'bold', textTransform: 'uppercase'}}>CONNECT</Text>
