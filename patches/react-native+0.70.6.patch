@@ -1,18 +1,20 @@
-diff --git a/node_modules/react-native/ReactAndroid/src/main/jni/first-party/fbjni/.npmignore b/node_modules/react-native/ReactAndroid/src/main/jni/first-party/fbjni/.gitignore
-similarity index 100%
-rename from node_modules/react-native/ReactAndroid/src/main/jni/first-party/fbjni/.npmignore
-rename to node_modules/react-native/ReactAndroid/src/main/jni/first-party/fbjni/.gitignore
-diff --git a/node_modules/react-native/ReactCommon/hermes/inspector/tools/msggen/.npmignore b/node_modules/react-native/ReactCommon/hermes/inspector/tools/msggen/.gitignore
-similarity index 100%
-rename from node_modules/react-native/ReactCommon/hermes/inspector/tools/msggen/.npmignore
-rename to node_modules/react-native/ReactCommon/hermes/inspector/tools/msggen/.gitignore
 diff --git a/node_modules/react-native/scripts/react_native_pods.rb b/node_modules/react-native/scripts/react_native_pods.rb
-index 1d78993..fdfb6e9 100644
+index 1d78993..a18a9cf 100644
 --- a/node_modules/react-native/scripts/react_native_pods.rb
 +++ b/node_modules/react-native/scripts/react_native_pods.rb
-@@ -284,7 +284,7 @@ def __apply_Xcode_12_5_M1_post_install_workaround(installer)
+@@ -277,14 +277,14 @@ end
+ def __apply_Xcode_12_5_M1_post_install_workaround(installer)
+   # Flipper podspecs are still targeting an older iOS deployment target, and may cause an error like:
+   #   "error: thread-local storage is not supported for the current target"
+-  # The most reliable known workaround is to bump iOS deployment target to match react-native (iOS 11 now).
++  # The most reliable known workaround is to bump iOS deployment target to match react-native (iOS 12 now).
+   installer.pods_project.targets.each do |target|
+     target.build_configurations.each do |config|
+-      # ensure IPHONEOS_DEPLOYMENT_TARGET is at least 11.0
++      # ensure IPHONEOS_DEPLOYMENT_TARGET is at least 12.0
        deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f
-       should_upgrade = deployment_target < 11.0 && deployment_target != 0.0
+-      should_upgrade = deployment_target < 11.0 && deployment_target != 0.0
++      should_upgrade = deployment_target < 12 && deployment_target != 0.0
        if should_upgrade
 -        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
 +        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
