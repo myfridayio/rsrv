@@ -1,12 +1,12 @@
 import * as React from "react"
-import { View, Text, Image, SafeAreaView, TouchableOpacity } from "react-native"
+import { View, Text, Image, SafeAreaView } from "react-native"
+
 import { Button } from "../views"
 import { Props } from '../lib/react/types'
-import _ from 'underscore'
 import LinearGradient from 'react-native-linear-gradient'
 import Wallet from "../Wallet"
 import IncodeSdk from 'react-native-incode-sdk'
-import {PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
+import { PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
 import { Style } from "../lib/ui"
 
 enum ViewState {
@@ -70,7 +70,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     await fetch(`https://app.rsrv.credit/api/transactions`)
     .then((response) => response.json())
     .then((data) => {
-      console.log('Sandeep - transaction data - '+JSON.stringify(data))
+      // console.log('Sandeep - transaction data - '+JSON.stringify(data))
     })
     .catch((err) => {
       console.log(err);
@@ -90,38 +90,28 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       },
     })
       .then(_ => {
-        // 2. configure and start onboarding
         IncodeSdk.showCloseButton(true);
         startOnboarding();
       })
-      .catch(e => console.error('Incode SDK failed init', e));
+      .catch(e => { console.log('initializeAndRunOnboarding/error'); console.error(e) });
   };
 
   const startOnboarding = () =>
-    IncodeSdk.startOnboarding({
-      flowConfig: [
-        {module: 'IdScan'},
-      ],
-    })
+    IncodeSdk.startOnboarding({ flowConfig: [{ module: 'IdScan' }] })
       .then(result => {
-        console.log(result);
-        if(result.status === 'success')
+        console.log('startOnboarding/result<OnboardingResponse>', result)
+        if (result.status === 'success') {
           setViewState(ViewState.Prompt)
+        }
       })
-      .catch(error => console.log(error));
+      .catch(error => { console.log('startOnboarding/error'); console.error(error) })
 
   const createWallet = async () => {
-    if (await Wallet.shared()) {
-      setViewState(ViewState.KYC)
-      createLinkToken()
-      return
+    if (!await Wallet.shared()) {
+      await Wallet.create()
     }
-
-    setCreatingWallet(true)
-    Wallet.create().then(() => {
-      setViewState(ViewState.KYC)
-      createLinkToken()
-    })
+    setViewState(ViewState.KYC)
+    createLinkToken()
   }
 
   const SplashScene = () => {
@@ -155,7 +145,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
-            console.log('PlaidLink.onSuccess...')
+            console.log('PlaidLink.onSuccess')
             await fetch(`https://app.rsrv.credit/api/exchange_public_token`, {
               method: "POST",
               headers: {
@@ -164,7 +154,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
               body: JSON.stringify({ public_token: success.publicToken }),
             })
             .catch((err) => {
-              console.log('PlaidLink.onSuccess error')
+              console.log('PlaidLink.onSuccess/error')
               console.error(err);
             });
             //console.log(success);
@@ -227,29 +217,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       </SafeAreaView>
     </LinearGradient>
   )
-}
-
-const styles = {
-  musicUnitesUs: {
-    fontSize: 24,
-    color: '#B0AAFF',
-    fontFamily: "RubikMonoOne-Regular",
-    textShadowColor: 'rgba(176, 170, 255, 0.75)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10
-  },
-
-  smallText: {
-    fontSize: 16
-  },
-
-  mediumText: {
-    fontSize: 20
-  },
-
-  largeText: {
-    fontSize: 24
-  },
 }
 
 export default Connect
