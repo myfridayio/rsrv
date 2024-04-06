@@ -5,25 +5,8 @@ import { Props } from '../lib/react/types'
 import _ from 'underscore'
 import LinearGradient from 'react-native-linear-gradient'
 import Wallet from "../Wallet"
-import IncodeSdk from 'react-native-incode-sdk';
-import {PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk';
-
-const cyrb53 = (str: string, seed = 0) => {
-  let h1 = 0xdeadbeef ^ seed,
-    h2 = 0x41c6ce57 ^ seed
-  for (let i = 0, ch; i < str.length; i++) {
-    ch = str.charCodeAt(i)
-    h1 = Math.imul(h1 ^ ch, 2654435761)
-    h2 = Math.imul(h2 ^ ch, 1597334677)
-  }
-  
-  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
-  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
-  
-  return (h2>>>0).toString(16).padStart(8,'0')+(h1>>>0).toString(16).padStart(8,'0')
-}
-
-const hashString = cyrb53
+import IncodeSdk from 'react-native-incode-sdk'
+import {PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
 
 enum ViewState {
   Splash,
@@ -50,10 +33,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const createLinkToken = React.useCallback(async () => {
     console.log('createLinkToken.fetch...')
     await fetch(`https://app.rsrv.credit/api/create_link_token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
     })
     .then((response) => response.json())
     .then((data) => {
@@ -83,12 +66,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }, []);
 
   const getTransactions = React.useCallback(async () => {
-    await fetch(`https://app.rsrv.credit/api/transactions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    await fetch(`https://app.rsrv.credit/api/transactions`)
     .then((response) => response.json())
     .then((data) => {
       console.log('Sandeep - transaction data - '+JSON.stringify(data))
@@ -218,10 +196,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <View style={{ flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', width: '100%', }}>
         <Text style={{ fontSize: 40, fontWeight: '600', color: 'white', textTransform: 'uppercase' }}>You Scored!</Text>
         <Text style={{ fontSize: 130, fontWeight: '800', color: 'white' }}>{score}</Text>
-
-         <TouchableOpacity onPress={() => navigation.navigate('NFTs')}>
-          <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginTop: 20, textAlign: 'center', textDecorationLine: 'underline'}}>Check your NFTs</Text>
-        </TouchableOpacity>
       </View>
     )
   }
@@ -248,16 +222,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             <Image style={{height: 100, width: 100}} source={require('../images/RSRV_logo_white.png')} />
         </View>
         <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '95%', width: '100%' }}>
-          <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
-              {viewState === ViewState.Prompt ?
-              <Button onPress={() => navigation.navigate('NFTs')} medium backgroundColor="white" textColor="#550451" textStyle={{ fontWeight: 'normal' }} style={{ opacity: 0.4, width: 100 }}>NFTs</Button>
-              :
-              <View></View>
-              }
-              <View></View>
-            </View>
-          </View>
           <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
             {centerContent()}
           </View>
