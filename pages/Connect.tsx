@@ -202,7 +202,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   const createLinkToken = React.useCallback(async () => {
-    await fetch(`https://friday-8bf41.web.app/api/create_link_token`, {
+    await fetch(`https://app.rsrv.credit/api/create_link_token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -219,7 +219,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }, [setLinkToken])
 
   const getBalance = React.useCallback(async () => {
-    await fetch(`https://friday-8bf41.web.app/api/balance`, {
+    await fetch(`https://app.rsrv.credit/api/balance`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -235,7 +235,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }, []);
 
   const getTransactions = React.useCallback(async () => {
-    await fetch(`https://friday-8bf41.web.app/api/transactions`, {
+    await fetch(`https://app.rsrv.credit/api/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -462,7 +462,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
-            await fetch(`https://friday-8bf41.web.app/api/exchange_public_token`, {
+            await fetch(`https://app.rsrv.credit/api/exchange_public_token`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -570,9 +570,12 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     <LinearGradient
       start={{ x: 0.0, y: 0.0 }} end={{x: 1.2, y: 1.0}}
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
-      colors={['#020D43', '#1140A1', '#1977FF', '#020D43']}
+      colors={['#05D3D1', '#00B6C3', '#004C91', '#001840']}
       style={{ height: '100%', width: '100%' }}>
       <SafeAreaView>
+        <View style={{ position: 'absolute', top: 60, left: 30}}>
+            <Image style={{height: 100, width: 100}} source={require('../images/RSRV_logo_white.png')} />
+        </View>
         <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '95%', width: '100%' }}>
           <View style={{ height: 120, width: '100%', flexDirection: 'column', alignItems: 'center' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 20, paddingVertical: 20 }}>
