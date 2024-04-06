@@ -31,76 +31,6 @@ const cyrb53 = (str: string, seed = 0) => {
 
 const hashString = cyrb53
 
-type ArtistConfig = {
-  name: string,
-  display: boolean,
-  displayName?: string,
-  image?: any,
-}
-
-
-const IMAGES = {
-  afa: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fafa_logo.png?alt=media&token=b869ae10-ca6f-42df-b07e-a67065e3a3d3',
-  giveanote: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fgive-a-note.png?alt=media&token=ac7b52ee-3846-4b37-9764-49076da74589',
-  blackfriday: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c',
-
-  bartees: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fbartees_nft.png?alt=media&token=5586b942-1290-4958-bd56-ec27190debbb',
-  crosby: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fcrosby_nft.png?alt=media&token=e1f6bded-e949-4884-8eed-592137a387b7',
-  kweli: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Fkweli_nft.png?alt=media&token=dd7fefe0-025c-49da-a0fb-ba64fb89a3a4',
-  revenge: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Frevengewife_nft.png?alt=media&token=06cd8d8c-1bed-47e7-a51b-e64c3c186502',
-  robby: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Frobby_nft.png?alt=media&token=3ebaec5e-641d-4811-90d1-c4473b801d96',
-  tribe: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Ftribefriday_nft.png?alt=media&token=8dbe2967-7fd3-4f3e-b810-078f5cb13eb2'
-}
-
-Object.values(IMAGES).forEach(uri => Image.prefetch(uri))
-
-const ARTISTS: ArtistConfig[] = [
-  {
-    name: "Robby Krieger",
-    displayName: "Robby Krieger of The Doors",
-    display: true,
-    image: IMAGES.robby,
-  },
-  {
-    name: "Talib Kweli",
-    display: true,
-    image: IMAGES.kweli,
-  },
-  {
-    name: "Tribe Friday",
-    display: true,
-    image: IMAGES.tribe,
-  },
-  {
-    name: "The Doors",
-    display: false,
-  },
-  {
-    name: "Bartees Strange",
-    display: true,
-    image: IMAGES.bartees,
-  },
-  {
-    name: "Revenge Wife",
-    display: true,
-    image: IMAGES.revenge,
-  },
-  {
-    name: "Christian Crosby",
-    display: true,
-    image: IMAGES.crosby,
-  }
-]
-
-const DISPLAY_ARTISTS = ARTISTS.filter(a => a.display)
-
-const ARTIST_NAMES = new Set<string>(ARTISTS.map(a => a.name))
-
-const TWITTERS = [
-  'RobbyKrieger', 'TheDoors', 'TalibKweli', 'blackstarmusic', 'bartees_strange', 'TribeFriday', 'RevengeWife', 'ChristianCrosb',
-  'sxsw', 'AFAmgmt', 'GiveANote', 'netflix', 'unclenearest', 'AmerSongwriter', 'Duravo_Luggage', 'BoozyBites', 'gibsonguitar', 'Fender', 'AlvarezGuitar', 'BlackstarAmps', 'casalumbre_', 'VidlLife'
-]
-
 enum ViewState {
   Splash,
   KYC,
@@ -109,92 +39,18 @@ enum ViewState {
   Scored,
 }
 
-
-const ArtistImage = ({ source }: { source: string }) => {
-  return (
-    <View style={{ borderRadius: 131, width: 262, height: 262, overflow: 'hidden' }}>
-      <Image source={{ uri: source }} style={{ width: 360, height: 360, marginLeft: -49, marginRight: -49, marginTop: -69, marginBottom: -29 }} />
-    </View>
-  )
-}
-
 const Connect = ({ navigation }: Props<'Connect'>) => {
   const [viewState, setViewState] = React.useState<ViewState>(ViewState.Splash)
 
-  const [followedArtists, setFollowedArtists] = React.useState<Artist[]>([])
-  const [topArtists, setTopArtists] = React.useState<Artist[]>([])
-  const [topTracks, setTopTracks] = React.useState<Track[]>([])
-  const [recentTracks, setRecentTracks] = React.useState<Track[]>([])
-  const [myTracks, setMyTracks] = React.useState<Track[]>([])
-  const [playlistTracks, setPlaylistTracks] = React.useState<Track[]>([])
-  const [matchedArtists, setMatchedArtists] = React.useState<Artist[]>([])
-
   const [dataSyncDone, setDataSyncDone] = React.useState(false)
   const [isGettingTwitterHandle, setGettingTwitterHandle] = React.useState(false)
-  const [twitterHandle, setTwitterHandle] = React.useState<string>()
-  const [twitterFollows, setTwitterFollows] = React.useState<string[]>([])
   const [isCreatingWallet, setCreatingWallet] = React.useState(false)
   const [walletPublicKey, setWalletPublicKey] = React.useState('')
 
   const [authState, setAuthState] = React.useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [score, setScore] = React.useState(0)
-  const [displayingArtist, setDisplayingArtist] = React.useState(_.sample(DISPLAY_ARTISTS, 1)[0])
 
-  const [linkToken, setLinkToken] = React.useState(null);
-
-  const simplifyArtist = (artist: Artist) => {
-    return { name: artist.name, id: artist.id, uri: artist.uri }
-  }
-
-  const simplifyTrack = (track: Track) => {
-    return { id: track.id, name: track.name, uri: track.uri }
-  }
-
-  let savedHash: string
-  const saveData = () => {
-    if (!walletPublicKey) {
-      console.log('no wallet')
-      return
-    }
-
-    const data = {
-      _id: walletPublicKey,
-      score,
-      twitterHandle,
-      twitterFollows,
-      followedArtists: followedArtists.map(simplifyArtist),
-      topArtists: topArtists.map(simplifyArtist),
-      topTracks: topTracks.map(simplifyTrack),
-      recentTracks: recentTracks.map(simplifyTrack),
-      matchedArtists: matchedArtists.map(simplifyArtist),
-      walletPublicKey,
-    }
-    const body = JSON.stringify(data)
-    const hash = hashString(body)
-    if (hash === savedHash) {
-      console.log('not duplicating send')
-      return
-    } else {
-      console.log('sending')
-    }
-    const url = 'https://us-central1-friday-8bf41.cloudfunctions.net/saveRecord'
-    fetch(url, {
-      method: 'post',
-      body,
-      headers: { 'Content-Type': 'application/json' }
-    }).then(async response => {
-      try {
-        await response.json().then(j => console.log('got bck', j)).catch(e => console.error(e))
-        console.log('successfully saved data')
-        savedHash = hash
-      } catch(e) {
-        console.log('failed to parse response', response.statusText)
-      }
-    }).catch(e => {
-      console.log('OH NOES')
-      console.error(e)
-    })
-  }
+  const [linkToken, setLinkToken] = React.useState<string>();
 
   const loadWallet = async () => {
     const wallet = (await Wallet.shared()) || (await Wallet.create())!
@@ -252,117 +108,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   React.useEffect(() => {
     loadWallet()
-    getHandle().then(handle => { if (handle) { setTwitterHandle(handle) } })
-
-    const unFollowAuthState = Spotify.shared().onAuthStateChange(({ after }) => { setAuthState(after)})
-    setAuthState(Spotify.shared().authState)
-    return unFollowAuthState
   }, [])
-
-  React.useEffect(() => {
-    if (dataSyncDone) {
-      console.log('done')
-      return
-    }
-    if (authState === AuthState.AUTHENTICATED) {
-      console.log('authenticated')
-      setViewState(ViewState.Scoring)
-      
-      const showScore = () => { setViewState(ViewState.Scored) }
-      let isTimeUp = false
-      let isScoringComplete = false
-      setTimeout(() => {
-        if (isScoringComplete) {
-          showScore()
-        } else {
-          isTimeUp = true
-        }
-      }, 10000)
-
-      Promise.all([
-        Spotify.shared().getRecentlyPlayedTracks().then(ts => { console.log('got', ts.length, 'recently played tracks'); setRecentTracks(ts)}),
-        Spotify.shared().getFollowedArtists().then(as => { console.log('got followed artists', as.length); setFollowedArtists(as) } ),
-        Spotify.shared().getTopArtists().then(as => { console.log('got top artists', as.length); setTopArtists(as) } ),
-        Spotify.shared().getTopTracks().then(ts => { console.log('got top tracks', ts.length); setTopTracks(ts) } ),
-        Spotify.shared().getSavedTracks().then(ts => { console.log('got saved tracks', ts.length); setMyTracks(ts) } ),
-        Spotify.shared().getPlaylistTracks().then(ts => { console.log('got', ts.length, 'playlist tracks'); setPlaylistTracks(ts) } ),
-      ])
-      .then(() => {
-        setDataSyncDone(true)
-        if (isTimeUp) {
-          showScore()
-        } else {
-          isScoringComplete = true
-        }
-      })
-    }
-  }, [authState, dataSyncDone])
-
-  React.useEffect(() => {
-    if (!dataSyncDone) return
-
-    console.log('scoring')
-
-    const firstArtistMatch = (track: Track) => track.artists.find(a => ARTIST_NAMES.has(a.name))
-    const getArtistIdentifier = (a: Artist) => a.id || a.name
-    const tracksToArtists = (tracks: Track[]) => tracks.map(firstArtistMatch) as Artist[]
-
-    const recentTrackMatches = recentTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const recentArtistMatches = _.uniq(tracksToArtists(recentTrackMatches), false, getArtistIdentifier)
-    const recentMatchCount = recentArtistMatches.length
-
-    const followedMatches = followedArtists.filter(a => ARTIST_NAMES.has(a.name))
-    const followedArtistCount = followedMatches.length
-
-    const topArtistMatches = topArtists.filter(a => ARTIST_NAMES.has(a.name))
-    
-    const topTrackMatches = topTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const topTrackArtistMatches = _.uniq(tracksToArtists(topTrackMatches), false, getArtistIdentifier)
-
-    const myTrackMatches = myTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const myTrackArtistMatches = _.uniq(tracksToArtists(myTrackMatches), false, getArtistIdentifier)
-
-    const playlistTrackMatches = playlistTracks.filter(t => _.any(t.artists, a => ARTIST_NAMES.has(a.name)))
-    const playlistArtistMatches = _.uniq(tracksToArtists(playlistTrackMatches), false, getArtistIdentifier)
-
-    const topArtistsMatched = _.uniq(topArtistMatches.concat(topTrackArtistMatches), false, getArtistIdentifier)
-    const topCount = topArtistMatches.length
-
-    const savedArtistsMatched = _.uniq(myTrackArtistMatches.concat(playlistArtistMatches), false, getArtistIdentifier)
-    const savedCount = savedArtistsMatched.length
-
-    const TOP_PTS = 60
-    const FOLLOWED_PTS = 10
-    const RECENT_PTS = 5
-    const SAVED_PTS = 1
-
-    const savedScore = savedCount * SAVED_PTS
-    const recentScore = recentMatchCount * RECENT_PTS
-    const followedScore = followedArtistCount * FOLLOWED_PTS
-    const topScore = topCount * TOP_PTS
-
-    const twitterScore = _.intersection(TWITTERS.map(t => t.toLowerCase()), twitterFollows.map(t => t.toLowerCase())).length
-    console.log('found', twitterScore, 'matching twitter follows of', twitterFollows.length)
-
-    const score = savedScore + recentScore + followedScore + topScore + twitterScore
-    console.log('saved', savedScore, '+ recent', recentScore, '+ followed', followedScore, '+ top', topScore, '+ twitter', twitterScore, '=', score)
-
-    const allMatched = recentArtistMatches.concat(followedMatches).concat(topArtistsMatched).concat(savedArtistsMatched)
-    const dedupedMatched = _.uniq(allMatched, false, getArtistIdentifier)
-    console.log('have', allMatched.length, 'deduped to', dedupedMatched.length, 'matches')
-
-    setMatchedArtists(dedupedMatched)
-    setScore(score)
-  }, [dataSyncDone, twitterFollows])
-
-  React.useEffect(() => {
-    if (recentTracks.length && walletPublicKey) {
-      console.log('saving data')
-      saveData()
-    } else {
-      console.log('not saving...', recentTracks.length, walletPublicKey)
-    }
-  }, [matchedArtists, walletPublicKey])
 
   const initializeAndRunOnboarding = () => {
     IncodeSdk.initialize({
@@ -393,15 +139,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       })
       .catch(error => console.log(error));
 
-  const authenticate = () => {
-    if (authState !== AuthState.AUTHENTICATED) {
-      console.log('authenticating')
-      Spotify.shared().askUserToAuthenticate()
-    } else {
-      console.log('already authenticated')
-    }
-  }
-
   const createWallet = async () => {
     if (await Wallet.shared()) {
       setViewState(ViewState.KYC)
@@ -415,21 +152,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       createLinkToken()
     })
   }
-
-  const share = () => {
-    Share.share({ message: 'Music Unites Us! Download now at https://www.myfriday.io/music_unites_us' })
-  }
-
-  const checkTwitter = () => {
-    setGettingTwitterHandle(true)
-  }
-
-  React.useEffect(() => {
-    if (twitterHandle) {
-      saveHandle(twitterHandle)
-      getFollows(twitterHandle).then(setTwitterFollows)
-    }
-  }, [twitterHandle])
 
   const SplashScene = () => {
     return (
@@ -458,7 +180,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
         <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Connect your bank account securely via Plaid.</Text>
         <PlaidLink
           tokenConfig={{
-            token: linkToken,
+            token: linkToken!,
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
@@ -489,21 +211,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   const WaitingScene = () => {
-    React.useEffect(() => {
-      const interval = setInterval(() => {
-        setDisplayingArtist(_.sample(DISPLAY_ARTISTS, 1)[0])
-      }, 1000)
-      return () => {
-        clearInterval(interval)
-      }
-    }, [])
 
     return (
       <View style={{ flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', width: '100%', }}>
-        <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginBottom: 18 }}>Checking Spotify</Text>
-        <Image style={{ width: 50, height: 50, marginBottom: 20 }} source={require('../images/spotify_logo.png')}/>
-        <ArtistImage source={displayingArtist.image}/>
-        <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginTop: 30 }}>{displayingArtist.name}...</Text>
+        <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginBottom: 18 }}></Text>
       </View>
     )
   }
@@ -513,45 +224,11 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <View style={{ flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', width: '100%', }}>
         <Text style={{ fontSize: 40, fontWeight: '600', color: 'white', textTransform: 'uppercase' }}>You Scored!</Text>
         <Text style={{ fontSize: 130, fontWeight: '800', color: 'white' }}>{score}</Text>
-        <Text style={{ fontSize: 18, color: 'white', width: 200, textAlign: 'center', lineHeight: 28}}>You are a fan of {matchedArtists.length} artist{matchedArtists.length === 1 ? '' : 's'} in the line up tonight!</Text>
-        <Text style={{ fontSize: 16, color: '#5244DF', width: 200, marginVertical: 10, textAlign: 'center'}}>{matchedArtists.map(a => a.name).join(' / ')}</Text>
-
-        {twitterHandle ?
-        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic' }}>Twitter connected</Text>
-        :
-        <>
-        <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic', lineHeight: 20 }}>Follow the artists and sponsors on Twitter?</Text>
-          <Text style={{ fontSize: 16, color: 'white', width: 200, textAlign: 'center', fontStyle: 'italic', marginBottom: 10, marginTop: 5 }}>Boost your score:</Text>
-          <Button onPress={checkTwitter} small textColor="white" textStyle={{ fontSize: 10, fontWeight: 'normal' }} style={{ width: 125, borderWidth: 1, borderColor: 'white', backgroundColor: 'rgba(0,0,0,0)' }}>CHECK TWITTER</Button>
-        </>
-         }
 
          <TouchableOpacity onPress={() => navigation.navigate('NFTs')}>
-        <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginTop: 20, textAlign: 'center', textDecorationLine: 'underline'}}>Check your NFTs</Text>
+          <Text style={{ fontSize: 14, color: '#5244DF', width: 200, marginTop: 20, textAlign: 'center', textDecorationLine: 'underline'}}>Check your NFTs</Text>
         </TouchableOpacity>
-        <DialogInput
-          isDialogVisible={isGettingTwitterHandle}
-          title={"Twitter Handle"}
-          hintInput={"@yourname"}
-          submitInput={ (text: string) => { setTwitterHandle(text.trim()); setGettingTwitterHandle(false) } }
-          closeDialog={ () => setGettingTwitterHandle(false) }
-        ></DialogInput>
       </View>
-    )
-  }
-
-  const textWorksButNoShadowSad = () => {
-    return (
-      <View style={{ width: 320, height: 40, shadowColor: 'black', shadowOffset: { width: 0, height: 0 }, shadowRadius: 10 }}>
-      <Svg width='100%' height={40}>
-        <Defs>
-          <Path id='bigArc' d='m 0 35 a 160 18, 0, 0, 1, 320 35'/>
-        </Defs>
-        <SvgText x='0' fill='#A595FC' fontSize={24} fontFamily="RubikMonoOne-Regular">
-          <TextPath xlinkHref="#bigArc">MUSIC UNITES US!</TextPath>
-        </SvgText>
-      </Svg>
-    </View>
     )
   }
 
@@ -592,7 +269,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
           </View>
         </View>
         <View style={{ height: 50, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 20 }}>
-            <Image source={{ uri: IMAGES.blackfriday }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
+            <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c' }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
         </View>
       </SafeAreaView>
     </LinearGradient>
