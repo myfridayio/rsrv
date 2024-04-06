@@ -202,7 +202,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   const createLinkToken = React.useCallback(async () => {
-    await fetch(`https://app.rsrv.credit/api/create_link_token`, {
+    await fetch(`https://friday-8bf41.web.app/api/create_link_token`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -219,7 +219,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }, [setLinkToken])
 
   const getBalance = React.useCallback(async () => {
-    await fetch(`https://app.rsrv.credit/api/balance`, {
+    await fetch(`https://friday-8bf41.web.app/api/balance`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -235,7 +235,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }, []);
 
   const getTransactions = React.useCallback(async () => {
-    await fetch(`https://app.rsrv.credit/api/transactions`, {
+    await fetch(`https://friday-8bf41.web.app/api/transactions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -462,7 +462,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
-            await fetch(`https://app.rsrv.credit/api/exchange_public_token`, {
+            await fetch(`https://friday-8bf41.web.app/api/exchange_public_token`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
