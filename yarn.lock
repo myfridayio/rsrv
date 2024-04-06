@@ -2434,6 +2434,14 @@
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.5.tgz"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
+"@types/react-native-dialog-input@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/@types/react-native-dialog-input/-/react-native-dialog-input-1.0.1.tgz"
+  integrity sha512-nGtH7hn0Etd7tA8slE+py4aisIjXrP4iiIjU/vkskmsf0zoK4h/0Ek5iPKvtkcicKQ56LYymhW8xnZj71vFixg==
+  dependencies:
+    "@types/react" "*"
+    react-native "*"
+
 "@types/react-native@^0.70.10":
   version "0.70.10"
   resolved "https://registry.npmjs.org/@types/react-native/-/react-native-0.70.10.tgz"
