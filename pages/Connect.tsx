@@ -1,16 +1,10 @@
 import * as React from "react"
-import { View, Text, Image, SafeAreaView, Share, TouchableOpacity, Platform } from "react-native"
+import { View, Text, Image, SafeAreaView, TouchableOpacity } from "react-native"
 import { Button } from "../views"
-import Spotify, { AuthState } from '../lib/spotify'
-import { Artist, Playlist, Track } from '../lib/spotify/types'
 import { Props } from '../lib/react/types'
-import _, { create } from 'underscore'
+import _ from 'underscore'
 import LinearGradient from 'react-native-linear-gradient'
-import { Svg, Defs, Path, Text as SvgText, TextPath } from "react-native-svg"
 import Wallet from "../Wallet"
-import Biometrics from 'react-native-biometrics'
-import { getHandle, saveHandle, getFollows } from "../lib/twitter"
-import DialogInput from 'react-native-dialog-input'
 import IncodeSdk from 'react-native-incode-sdk';
 import {PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk';
 
@@ -42,12 +36,8 @@ enum ViewState {
 const Connect = ({ navigation }: Props<'Connect'>) => {
   const [viewState, setViewState] = React.useState<ViewState>(ViewState.Splash)
 
-  const [dataSyncDone, setDataSyncDone] = React.useState(false)
-  const [isGettingTwitterHandle, setGettingTwitterHandle] = React.useState(false)
   const [isCreatingWallet, setCreatingWallet] = React.useState(false)
   const [walletPublicKey, setWalletPublicKey] = React.useState('')
-
-  const [authState, setAuthState] = React.useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [score, setScore] = React.useState(0)
 
   const [linkToken, setLinkToken] = React.useState<string>();
@@ -58,6 +48,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   }
 
   const createLinkToken = React.useCallback(async () => {
+    console.log('createLinkToken.fetch...')
     await fetch(`https://app.rsrv.credit/api/create_link_token`, {
     method: "POST",
     headers: {
@@ -70,7 +61,8 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       setLinkToken(data.link_token);
     })
     .catch((err) => {
-      console.log(err);
+      console.log('createLinkToken.fetch fail')
+      console.error(err);
     });
   }, [setLinkToken])
 
@@ -184,15 +176,17 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
+            console.log('PlaidLink.onSuccess...')
             await fetch(`https://app.rsrv.credit/api/exchange_public_token`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ public_token: success.publicToken }),
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ public_token: success.publicToken }),
             })
             .catch((err) => {
-              console.log(err);
+              console.log('PlaidLink.onSuccess error')
+              console.error(err);
             });
             //console.log(success);
             //navigation.navigate('Success', success);
@@ -200,7 +194,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             getTransactions()
           }}
           onExit={(response: LinkExit) => {
-            //console.log(response);
+            console.log('PlaidLink.onExit', response)
           }}>
           <View style={{width: 200, marginBottom: 50, marginTop: 14, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, borderRadius: 15, height: 30, alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: "#626567", fontWeight: 'bold', textTransform: 'uppercase'}}>CONNECT</Text>
