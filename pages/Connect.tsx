@@ -7,6 +7,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Wallet from "../Wallet"
 import IncodeSdk from 'react-native-incode-sdk'
 import {PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
+import { Style } from "../lib/ui"
 
 enum ViewState {
   Splash,
@@ -217,17 +218,11 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
       colors={['#05D3D1', '#00B6C3', '#004C91', '#001840']}
       style={{ height: '100%', width: '100%' }}>
-      <SafeAreaView>
-        <View style={{ position: 'absolute', top: 60, left: 30}}>
-            <Image style={{height: 100, width: 100}} source={require('../images/RSRV_logo_white.png')} />
-        </View>
-        <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '95%', width: '100%' }}>
-          <View style={{ flexGrow: 1, paddingHorizontal: 30, flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center' }}>
-            {centerContent()}
-          </View>
-        </View>
-        <View style={{ height: 50, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', position: 'absolute', bottom: 20 }}>
-            <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c' }} style={{ width: 20, height: 20, marginLeft: 20 }}/>
+      <SafeAreaView style={{flex: 1}}>
+        <Image style={{ height: 100, width: 100, position: 'absolute', top: 60, left: 30 }} source={require('../images/RSRV_logo_white.png')} />
+        <View style={[Style.column, Style.justifyBetween, Style.alignCenter, Style.ph32, { width: '100%', flex: 1, marginTop: 150, marginBottom: 50 }]}>
+          {centerContent()}
+          <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c' }} style={{ width: 20, height: 20 }}/>
         </View>
       </SafeAreaView>
     </LinearGradient>

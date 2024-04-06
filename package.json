@@ -1,5 +1,5 @@
 {
-  "name": "ThursdayWallet",
+  "name": "rsrv",
   "version": "1.0.1",
   "private": true,
   "scripts": {
@@ -8,7 +8,9 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'"
+    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --minify=false --platform='ios'",
+    "build:ios:dev": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --platform='ios'",
+    "postinstall": "npx patch-package"
   },
   "dependencies": {
     "@dreson4/react-native-quick-bip39": "^0.0.5",
