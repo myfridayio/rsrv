@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image, StyleSheet, View } from "react-native"
+import { Image, StyleSheet, View, Text } from "react-native"
 import LinearGradient from "react-native-linear-gradient";
 import { Props } from "../lib/react/types";
 
@@ -19,6 +19,7 @@ export default function Intro({ navigation }: Props<'Intro'>) {
         style={{ height: '100%', width: '100%' }}>
         <View style={{ justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
             <Image style={{height: 200, width: 200}} source={require('../images/RSRV_logo_white.png')} />
+            <Text style={{fontSize: 20, color: 'white', fontWeight: 'bold'}}>NEVER TOUCH FIAT AGAIN</Text>
         </View>
       </LinearGradient>
     );

@@ -23,12 +23,15 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const [isCreatingWallet, setCreatingWallet] = React.useState(false)
   const [walletPublicKey, setWalletPublicKey] = React.useState('')
   const [score, setScore] = React.useState(0)
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const [linkToken, setLinkToken] = React.useState<string>();
+  var walletKey: String
 
   const loadWallet = async () => {
     const wallet = (await Wallet.shared()) || (await Wallet.create())!
     setWalletPublicKey(wallet.publicKeyString)
+    walletKey = wallet.publicKeyString
   }
 
   const createLinkToken = React.useCallback(async () => {
@@ -59,7 +62,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     })
     .then((response) => response.json())
     .then((data) => {
-      //console.log('Sandeep - balance data - '+JSON.stringify(data))
+      //console.log('balance data - '+JSON.stringify(data))
     })
     .catch((err) => {
       console.log(err);
@@ -70,7 +73,32 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     await fetch(`https://app.rsrv.credit/api/transactions`)
     .then((response) => response.json())
     .then((data) => {
-      // console.log('Sandeep - transaction data - '+JSON.stringify(data))
+      getScore(walletKey, data)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
+  const getScore = React.useCallback(async (address: String, transactions: any) => {
+    console.log('wallet address - '+address)
+    await fetch(`https://app.rsrv.credit/api/score`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        wallet: address,
+        transactions
+      }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setIsLoading(false)
+      navigation.navigate('Score', {
+        score: data.score,
+        imageUrl: data.imageUri
+      })
     })
     .catch((err) => {
       console.log(err);
@@ -107,20 +135,23 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       .catch(error => { console.log('startOnboarding/error'); console.error(error) })
 
   const createWallet = async () => {
+    var wallet
     if (!await Wallet.shared()) {
-      await Wallet.create()
+      wallet = await Wallet.create()
     }
+    wallet = await Wallet.shared()
+    setWalletPublicKey(wallet!.publicKeyString)
+    walletKey = wallet!.publicKeyString
     setViewState(ViewState.KYC)
     createLinkToken()
   }
 
   const SplashScene = () => {
     return (
-      <>
-        <Text style={{ fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>Prove Your Credit</Text>
-        <Text style={{ fontSize: 18, color: 'white', width: 210, textAlign: 'center', lineHeight: 28}}>Create your wallet. Connect your bank account with Plaid, and see your score.</Text>
+      <View style={{flex: 1, height: '100%', justifyContent: 'space-between', alignItems: 'center'}}>
+        <Text style={{ fontSize: 20, color: 'white', width: 300, textAlign: 'center', lineHeight: 28, marginTop: 100}}>{`i. GET YOUR DATA \n ii. GET YOUR SCORE \n iii. GET THE CREDIT YOU RSRV`}</Text>
         <Button onPress={createWallet} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
-      </>
+      </View>
     )
   }
 
@@ -145,7 +176,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
             noLoadingState: false,
           }}
           onSuccess={async (success: LinkSuccess) => {
-            console.log('PlaidLink.onSuccess')
+            setIsLoading(true)
             await fetch(`https://app.rsrv.credit/api/exchange_public_token`, {
               method: "POST",
               headers: {
@@ -157,9 +188,6 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
               console.log('PlaidLink.onSuccess/error')
               console.error(err);
             });
-            //console.log(success);
-            //navigation.navigate('Success', success);
-            //getBalance()
             getTransactions()
           }}
           onExit={(response: LinkExit) => {
@@ -208,13 +236,21 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       locations={[ 0.0, 0.3, 0.65, 1.0 ]}
       colors={['#05D3D1', '#00B6C3', '#004C91', '#001840']}
       style={{ height: '100%', width: '100%' }}>
-      <SafeAreaView style={{flex: 1}}>
-        <Image style={{ height: 100, width: 100, position: 'absolute', top: 60, left: 30 }} source={require('../images/RSRV_logo_white.png')} />
-        <View style={[Style.column, Style.justifyBetween, Style.alignCenter, Style.ph32, { width: '100%', flex: 1, marginTop: 150, marginBottom: 50 }]}>
-          {centerContent()}
-          <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c' }} style={{ width: 20, height: 20 }}/>
-        </View>
-      </SafeAreaView>
+      <View style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1}}>
+          <Image style={{ height: 100, width: 100, position: 'absolute', top: 60, left: 30 }} source={require('../images/RSRV_logo_white.png')} />
+          <View style={[Style.column, Style.justifyBetween, Style.alignCenter, Style.ph32, { width: '100%', flex: 1, marginTop: 150, marginBottom: 50 }]}>
+            {centerContent()}
+            <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c' }} style={{ width: 20, height: 20 }}/>
+          </View>
+        </SafeAreaView>
+        {
+          isLoading && 
+          <View style={{position: 'absolute', height: '100%', width: '100%', backgroundColor: "#00000099", alignItems: 'center', justifyContent: 'center'}}>
+            <Image style={{width: 150, height: 150}} source={{uri: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDY5aWV6bmx2d21hOXVramg5cGt0bDJ0NTY2M2JueHl1dnhuejV4OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PkoBC2GlkLJ5yFIWtf/giphy.gif'}}/>
+          </View>
+        }
+      </View>
     </LinearGradient>
   )
 }
