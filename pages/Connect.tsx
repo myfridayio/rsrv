@@ -8,6 +8,7 @@ import Wallet from "../Wallet"
 import IncodeSdk from 'react-native-incode-sdk'
 import { PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
 import { Style } from "../lib/ui"
+import Toast from 'react-native-toast-message';
 
 enum ViewState {
   Splash,
@@ -94,6 +95,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     })
     .then((response) => response.json())
     .then((data) => {
+      console.log(data)
       setIsLoading(false)
       navigation.navigate('Score', {
         score: data.score,
@@ -101,6 +103,13 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       })
     })
     .catch((err) => {
+      setIsLoading(false)
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong.',
+        text2: 'Please try again!'
+      });
+      createLinkToken()
       console.log(err);
     });
   }, []);
