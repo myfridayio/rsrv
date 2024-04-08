@@ -9,6 +9,7 @@ import IncodeSdk from 'react-native-incode-sdk'
 import { PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
 import { Style } from "../lib/ui"
 import Toast from 'react-native-toast-message';
+import { ScoringResponse } from "../lib/types/Scores"
 
 enum ViewState {
   Splash,
@@ -94,13 +95,10 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       }),
     })
     .then((response) => response.json())
-    .then((data) => {
+    .then((data: ScoringResponse) => {
       console.log(data)
       setIsLoading(false)
-      navigation.navigate('Score', {
-        score: data.score,
-        imageUrl: data.imageUri
-      })
+      navigation.navigate('Score', { response: data })
     })
     .catch((err) => {
       setIsLoading(false)

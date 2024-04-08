@@ -1,9 +1,11 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack"
+import { ScoringResponse } from "../../types/Scores"
 
 type RootStackParamList = {
   Dashboard: undefined
   Connect: undefined
   NFTs: undefined
+  Score: { response: ScoringResponse }
 }
 
 
