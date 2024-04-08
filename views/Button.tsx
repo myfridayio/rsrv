@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontWeight: 'bold',
-        textTransform: 'uppercase'
-
+        textTransform: 'uppercase',
+        fontFamily: 'Helvetica',
     }
 })

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, Text, Image, SafeAreaView } from "react-native"
+import { View, Text, Image, SafeAreaView, StyleProp, Dimensions, TextStyle, ViewStyle } from "react-native"
 
 import { Button } from "../views"
 import { Props } from '../lib/react/types'
@@ -10,6 +10,7 @@ import { PlaidLink, LinkExit, LinkSuccess } from 'react-native-plaid-link-sdk'
 import { Style } from "../lib/ui"
 import Toast from 'react-native-toast-message';
 import { ScoringResponse } from "../lib/types/Scores"
+import { range } from "underscore"
 
 enum ViewState {
   Splash,
@@ -29,6 +30,8 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
 
   const [linkToken, setLinkToken] = React.useState<string>();
   var walletKey: String
+
+  const screen = Dimensions.get('screen')
 
   const loadWallet = async () => {
     const wallet = (await Wallet.shared()) || (await Wallet.create())!
@@ -153,11 +156,35 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
     createLinkToken()
   }
 
+
   const SplashScene = () => {
+    const textStyle: StyleProp<TextStyle> = {
+      fontSize: 24,
+      fontFamily: 'Helvetica',
+      fontWeight: 'bold',
+      color: 'white',
+      lineHeight: 32
+    }
+    const Step = ({ n, children: text }: { n: number, children: React.ReactNode }) => {
+      const is = new Array(n).fill('i').join('')
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+          <View style={{ width: 36, marginRight: 5 }}>
+            <Text style={[textStyle, { textAlign: 'right' }]}>{is}.</Text>
+          </View>
+          <Text style={[textStyle, { letterSpacing: -1}]}>{text}</Text>
+        </View>
+      )
+      // <Text style={textStyle}><Text style={[numStyle]}>i.</Text><Text>GET YOUR DATA</Text></Text>
+    }
     return (
-      <View style={{flex: 1, height: '100%', justifyContent: 'space-between', alignItems: 'center'}}>
-        <Text style={{ fontSize: 20, color: 'white', width: 300, textAlign: 'center', lineHeight: 28, marginTop: 100}}>{`i. GET YOUR DATA \n ii. GET YOUR SCORE \n iii. GET THE CREDIT YOU RSRV`}</Text>
-        <Button onPress={createWallet} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
+      <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'column', justifyContent: 'flex-end', flex: 2, marginBottom: 200 }}>
+          <Step n={1}><Text>GET YOUR DATA</Text></Step>
+          <Step n={2}><Text>GET YOUR SCORE</Text></Step>
+          <Step n={3}><Text>GET THE CREDIT YOU <Text style={{ color: '#2acec6' }}>RSRV</Text></Text></Step>
+        </View>
+        <Button onPress={createWallet} large backgroundColor="white" textColor="#626567" style={{ width: 200, marginBottom: 50, opacity: isCreatingWallet ? 0.7 : 1.0  }} disabled={isCreatingWallet}>Create Wallet</Button>
       </View>
     )
   }
@@ -165,18 +192,30 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
   const KYCScene = () => {
     return (
       <>
-        <Text style={{ marginTop: 40, fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>VERIFY YOURSELF</Text>
-        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Verify yourself with a valid id or passport.</Text>
-        <Button onPress={initializeAndRunOnboarding} medium backgroundColor="white" textColor="#626567" textStyle={{ fontWeight: 'bold', textTransform: 'uppercase' }} style={{ width: 200, marginBottom: 50, marginTop: 14 }}>VERIFY YOURSELF</Button>
+        <Text style={{ marginTop: 40, fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase", fontFamily: 'Helvetica' }}>VERIFY YOURSELF</Text>
+        <Text style={{ fontSize: 16, fontFamily: 'Helvetica', color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Verify yourself with a valid id or passport.</Text>
+        <Button onPress={initializeAndRunOnboarding} large backgroundColor="white" textColor="#626567" style={{ width: 200, marginBottom: 50, marginTop: 175 }}>VERIFY YOURSELF</Button>
       </>
     )
   }
 
   const PromptScene = () => {
+
+    const largeButtonStyle: StyleProp<ViewStyle> = {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'white',
+      paddingVertical: 8,
+      paddingHorizontal: 25,
+      borderRadius: 22,
+      height: 44, width: 200,
+      marginBottom: 50, marginTop: 150,
+    }
     return (
       <>
-        <Text style={{ marginTop: 40, fontSize: 60, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase" }}>CONNECT VIA PLAID</Text>
-        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20}}>Connect your bank account securely via Plaid.</Text>
+        <Text style={{ marginTop: 40, fontSize: 60, lineHeight: 62, color: 'white', textAlign: 'center', fontWeight: 'bold', textTransform: "uppercase", fontFamily: 'Helvetica' }}>CONNECT VIA PLAID</Text>
+        <Text style={{ fontSize: 16, color: 'white', width: 300, textAlign: 'center', lineHeight: 20, fontFamily: 'Helvetica'}}>Connect your bank account securely via Plaid.</Text>
         <PlaidLink
           tokenConfig={{
             token: linkToken!,
@@ -200,7 +239,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
           onExit={(response: LinkExit) => {
             console.log('PlaidLink.onExit', response)
           }}>
-          <View style={{width: 200, marginBottom: 50, marginTop: 14, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 16, borderRadius: 15, height: 30, alignItems: 'center', justifyContent: 'center'}}>
+          <View style={[largeButtonStyle]}>
             <Text style={{color: "#626567", fontWeight: 'bold', textTransform: 'uppercase'}}>CONNECT</Text>
           </View>
         </PlaidLink>
@@ -246,7 +285,7 @@ const Connect = ({ navigation }: Props<'Connect'>) => {
       <View style={{flex: 1}}>
         <SafeAreaView style={{flex: 1}}>
           <Image style={{ height: 100, width: 100, position: 'absolute', top: 60, left: 30 }} source={require('../images/RSRV_logo_white.png')} />
-          <View style={[Style.column, Style.justifyBetween, Style.alignCenter, Style.ph32, { width: '100%', flex: 1, marginTop: 150, marginBottom: 50 }]}>
+          <View style={[Style.column, Style.justifyEnd, Style.alignCenter, Style.ph24, { width: '100%', flex: 1, marginTop: '30%', marginBottom: 50 }]}>
             {centerContent()}
             <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/friday-8bf41.appspot.com/o/images%2Flilfri.png?alt=media&token=06015a13-4396-459c-88e8-3900d2b2916c' }} style={{ width: 20, height: 20 }}/>
           </View>
