@@ -4,7 +4,8 @@ import LinearGradient from "react-native-linear-gradient";
 import { Props } from "../lib/react/types";
 import ConfettiCannon from 'react-native-confetti-cannon';
 
-const paleWhite = 'rgba(255,255,255,0.1)'
+const paleWhite = 'rgba(255,255,255,0.2)'
+const paleDarkBlue = 'rgba(0,05,10,0.2)'
 
 export default function Score({ route, navigation }: Props<'Score'>) {
   const response = route.params.response
@@ -15,13 +16,15 @@ export default function Score({ route, navigation }: Props<'Score'>) {
         colors={['#05D3D1', '#00B6C3', '#004C91', '#001840']}
         style={{ height: '100%', width: '100%' }}>
         <View style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%'}}>
-            <Text style={{fontSize: 100, color: '#ef3d67', fontWeight: 'bold'}}>{Math.round(response.scores.repaymentLikelihood*1000)/100}%</Text>
-            <Image style={{width: 300, height: 300, marginVertical: 20, borderWidth: 10, borderColor: paleWhite }} source={{uri: response.imageUri}}/>
+            <View style={{ padding: 15, backgroundColor: paleWhite, marginVertical: 20, borderRadius: 20 }}>
+              <Image style={{width: 300, height: 300, borderRadius: 10 }} source={{uri: response.imageUri}}/>
+
+            </View>
             <TouchableOpacity
-              style={{ padding: 20, borderRadius: 20,  justifyContent: 'center', alignItems: 'center' }}
+              style={{ paddingVertical: 20, paddingHorizontal: 30, borderRadius: 25,  justifyContent: 'center', alignItems: 'center', backgroundColor: paleDarkBlue }}
               onPress={() => Linking.openURL(response.exploreUri)}
             >
-              <Text>View on Solana</Text>
+              <Text style={{ fontFamily: 'Helvetica', color: '#2acec6' }}>View on Solana</Text>
             </TouchableOpacity>
             <ConfettiCannon
                 count={300}
