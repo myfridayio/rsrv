@@ -1,0 +1,11 @@
+node_modules
+android/app/build
+android/.gradle
+.DS_Storeandroid/.gradle/*
+yarn-error.log
+ios/Pods
+*.keystore
+*.pepk
+android/app/release
+ios/ThursdayWallet.xcworkspace/xcuserdata/kiril.xcuserdatad
+.DS_Store
