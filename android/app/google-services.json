@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "179074296119",
+    "firebase_url": "https://myfriday-app-default-rtdb.firebaseio.com",
+    "project_id": "myfriday-app",
+    "storage_bucket": "myfriday-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179074296119:android:e56345000dbb4a9cdad2b2",
+        "android_client_info": {
+          "package_name": "io.myfriday.musicunitesus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179074296119-e3pidbvnhs0u3qteskc4q1ubk210l4bg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnIUsoNyjap-NWxLQXSTh1XilzH9BTpAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179074296119-e3pidbvnhs0u3qteskc4q1ubk210l4bg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "179074296119-ii1hcfmgtfr02phf4msv792pcf2o5fut.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.myfriday.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
